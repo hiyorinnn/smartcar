@@ -1,15 +1,19 @@
+<!-- HomePage.vue -->
 <template>
   <div>
-    <h1>Welcome to the Home Page</h1>
+    <h1>{{ msg }}</h1>  <!-- Displaying the msg prop passed from App.vue -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HomePage', // Export the component to use in other files
-};
+  name: 'HomePage',
+  props: {
+    msg: String  // Defining the 'msg' prop
+  }
+}
 </script>
 
 <style scoped>
-/* Your styles here */
+/* Add your styles here */
 </style>
