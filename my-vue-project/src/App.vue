@@ -1,17 +1,20 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HomePage msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/locations">Locations</router-link> |
+      <router-link to="/booking">Booking</router-link> |
+      <router-link to="/payment">Payment</router-link>
+    </nav>
+
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-import HomePage from './components/HomePage.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HomePage
-  }
-}
+  name: 'App'
+};
 </script>
 
 <style>
@@ -22,5 +25,20 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+nav {
+  padding: 10px;
+  background: #f8f9fa;
+}
+
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #007bff;
+}
+
+nav a:hover {
+  text-decoration: underline;
 }
 </style>
