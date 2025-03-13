@@ -1,40 +1,37 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-
-// Import the components/pages from the correct path
+import { createRouter, createWebHistory } from 'vue-router';  // Correct import for Vue Router 4
 import HomePage from '../components/HomePage.vue';
 import LocationPage from '../components/LocationPage.vue';
 import BookingPage from '../components/BookingPage.vue';
 import PaymentPage from '../components/PaymentPage.vue';
 
-Vue.use(Router);
-
+// Define your routes
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: HomePage,  // Correct component name
+    name: 'HomePage',
+    component: HomePage,
   },
   {
     path: '/locations',
-    name: 'Locations',
-    component: LocationPage,  // Correct component name
+    name: 'LocationsPage',
+    component: LocationPage,
   },
   {
     path: '/booking',
-    name: 'Booking',
-    component: BookingPage,  // Correct component name
+    name: 'BookingPage',
+    component: BookingPage,
   },
   {
     path: '/payment',
-    name: 'Payment',
-    component: PaymentPage,  // Correct component name
+    name: 'PaymentPage',
+    component: PaymentPage,
   },
 ];
 
-const router = new Router({
-  routes, // Short for `routes: routes`
-  mode: 'history', // This removes the hash (`#`) from the URL
+// Create a router instance using the new API
+const router = createRouter({
+  history: createWebHistory(),  // Use createWebHistory for modern SPA history mode
+  routes,  // Define the routes
 });
 
 export default router;
