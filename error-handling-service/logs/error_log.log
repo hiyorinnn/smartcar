@@ -1,0 +1,312 @@
+2025-03-17 23:57:39,241 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-17 23:57:39,241 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-17 23:57:39,251 - INFO -  * Restarting with stat
+2025-03-17 23:57:39,481 - WARNING -  * Debugger is active!
+2025-03-17 23:57:39,496 - INFO -  * Debugger PIN: 983-655-674
+2025-03-17 23:57:54,845 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-17 23:57:54,845 - INFO - 127.0.0.1 - - [17/Mar/2025 23:57:54] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-17 23:57:54,880 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-17 23:57:54,881 - INFO - 127.0.0.1 - - [17/Mar/2025 23:57:54] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-17 23:57:59,934 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-17 23:57:59,934 - INFO - 127.0.0.1 - - [17/Mar/2025 23:57:59] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-17 23:58:10,892 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:10] code 400, message Bad request version ('localhost\x003\x04ï\x04í::\x00\x01\x00\x11ì\x04ÀR«d-Ð°\x86\x08r\x89uT¾P£\x1bEÂÁæ§B`Ãg')
+2025-03-17 23:58:10,892 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:10] "[31m[1m\x16\x03\x01\x06Ò\x01\x00\x06Î\x03\x03%%IÉÌ%\x83ÂxH±\x9b§ÞT$\x01Æfçä\x134¶í\x8d\x85\x1a\x84\x1b\x8dL u,\x9d(¿[%óª-lR<AáëzØ\x02ç\x85C\x97\x1b\x18î½L°\x87º"\x00 ªª\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06eZZ\x00\x00\x00\x0d\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00\x10\x00\x0e\x00\x0c\x02h2\x08http/1.1\x00-\x00\x02\x01\x01\x00\x00\x00\x0e\x00\x0c\x00\x00\x09localhost\x003\x04ï\x04í::\x00\x01\x00\x11ì\x04ÀR«d-Ð°\x86\x08r\x89uT¾P£\x1bEÂÁæ§B`Ãg[0m" 400 -
+2025-03-17 23:58:10,894 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:10] code 400, message Bad request version ('@wñî')
+2025-03-17 23:58:10,894 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:10] "[31m[1m\x16\x03\x01\x06Ò\x01\x00\x06Î\x03\x03\x10Ã\x8d\x18\x06ïþ\x06ØÍ³rÝ%Ñ\x19\x91_¿\x085]à´ëÎ'\x9e²'\x9d\x8f *Y3\x969vÜzÃHW"ïêµ Ð\x06\x1b´ea4 @wñî[0m" 400 -
+2025-03-17 23:58:11,165 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:11] code 400, message Bad request version ('\x00\x02\x01\x00\x00+\x00\x07\x06êê\x03\x04\x03\x03\x00')
+2025-03-17 23:58:11,165 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:11] "[31m[1m\x16\x03\x01\x06²\x01\x00\x06®\x03\x03"\x1e_Ê&mã\x1d´L­\x89#3\x9b&\x9d\x13ÒEÒyB¦{±ÓcÜGf½ \x08l!µ,\x84\x0f4$°ÁtO5\x8d\x15MR\x81EáY\x0bf\x9fÏý,Þ\x8bZê\x00 **\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06E\x8a\x8a\x00\x00\x00\x10\x00\x0e\x00\x0c\x02h2\x08http/1.1DÍ\x00\x05\x00\x03\x02h2\x00\x0b\x00\x02\x01\x00\x00+\x00\x07\x06êê\x03\x04\x03\x03\x00[0m" 400 -
+2025-03-17 23:58:11,199 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:11] code 400, message Bad request version ('ZZ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06')
+2025-03-17 23:58:11,199 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:11] "[31m[1m\x16\x03\x01\x06ò\x01\x00\x06î\x03\x03\x881Ç\x1d\x95f«·×j®}÷£ËéWHMta\x1e\x07Ç\x07`\x84#'´p\x98 \x8f\x1f¨\x9azÅÝtJT,\x9b\x93§Bñ9\x82Pç/O[§\\\x80\x8el\x0eXÓ;\x00 ZZ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06\x85[0m" 400 -
+2025-03-17 23:58:11,199 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:11] code 400, message Bad request version ('\x00\x02\x01\x00\x00-\x00\x02\x01\x01\x00#\x00\x00\x00\x1b\x00\x03\x02\x00\x02\x00')
+2025-03-17 23:58:11,199 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:11] "[31m[1m\x16\x03\x01\x06Ò\x01\x00\x06Î\x03\x03ô|×\x037\x18þTÞ\x09\x0c-¬\x0cWÏlº5&ÔËËEç­¾dÕÔPê C\x04\x17\x15´K°¾/\x02\x92\x1b¼ÃÿÞ¢¨\x80ë\x98ã\x03ï$Õ©\x0e\x8a\x12ú-\x00 úú\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06eºº\x00\x00\x00\x0b\x00\x02\x01\x00\x00-\x00\x02\x01\x01\x00#\x00\x00\x00\x1b\x00\x03\x02\x00\x02\x00[0m" 400 -
+2025-03-17 23:58:11,478 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:11] code 400, message Bad request version ('\x84Eé\x92\x84ë\x81\x82qZeÿêv')
+2025-03-17 23:58:11,478 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:11] "[31m[1m\x16\x03\x01\x07\x12\x01\x00\x07\x0e\x03\x03\x05ÕrjjòþFHç;òê\x10\x85¸lê\x92\x10\x9e;\x81\x16qmø\x11\x05\x04\x12¥ +·\x00¼Ydè\x14\x8dF\x94½,z\x8b! K\x02÷«Ï4\x86®ÀL\x9a\x95w¼\x9a\x00 \x1a\x1a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥zz\x00\x00\x00\x0b\x00\x02\x01\x00\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00\x10\x00\x0e\x00\x0c\x02h2\x08http/1.1\x00\x17\x00\x00\x00\x1b\x00\x03\x02\x00\x02DÍ\x00\x05\x00\x03\x02h2\x00#\x00\x00\x00\x00\x00\x0e\x00\x0c\x00\x00\x09localhost\x00-\x00\x02\x01\x01\x003\x04ï\x04íJJ\x00\x01\x00\x11ì\x04Àñ$\x8bÌè\x80¤÷ÆDC`\x1dÒÊØ5¤\x8e\x0b±ñX\x7f\x02t)\x17Bu\x8c%\x9f>\x98\x9dý\x14\x81&ægµó\x00X\x00_ï\x98\x80"\x91\x8fÔÑ8~H¯T¦X\x16Zaé(@Û\x94É¦\x1cÇ¢ÉÄ\x8b²9|Ì\x03\x1c»\x12n\x14¶$\x08qjÉ=©¢"U*»)\x12Vë\x090ÃÖ\x0d\x8eÔCß¢\x03ÌúÊ`\x0b\\Ì6»7BaDS>\x94À\x14m\x93£\x99Ë\x16\x97¨K#HOÄ\x01vÑ!k\x16\\Å{ÜÇ#Ë]\\ÓG\x88t\x91g\x088¨ª\x85\x06¤¨\x89jµXtPº"\x1dy0EHr¡\x985\x8fÆÀe\x17\x17¨\x14äY Ü»þ\x8bfr \x90\x84I\x0cK\x11p] \x97¦é\x18q 1_«\x03¡{\x90äº\x8c\x1b[ª\x82L¶\x1fC\x99E\x05³ÜB|P&p*P¢Ù\x87\x89Û\x10V3\x185ï«Ë\x1bã(!im\x91ÅOß\x02_º)h&è¬\x92\x19¶\x94Â\x1a®V¢ø£\x1f\x9bú¯\x1e\x84Eé\x92\x84ë\x81\x82qZeÿêv[0m" 400 -
+2025-03-17 23:58:16,540 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:16] code 400, message Bad request version ('\x9b\x11j\x04E\x93\x9byÊ\x81V\x88\x93Pz')
+2025-03-17 23:58:16,541 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:16] "[31m[1m\x16\x03\x01\x07\x12\x01\x00\x07\x0e\x03\x03ùxK=\x87\x96`Û\x0fh\x93ß9lÜÖº,øÏjgþß#W7&\x9e}\x0f³ ä\x94Y\x87éïßï`\x91\x1e»\x97×\x87ßÂ_Düg\x0côÌ2 ½O\x8c/p\x07\x00 \x1a\x1a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥jj\x00\x00\x00+\x00\x07\x06\x8a\x8a\x03\x04\x03\x03\x00\x0d\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00\x0b\x00\x02\x01\x00ÿ\x01\x00\x01\x00\x00-\x00\x02\x01\x01\x00\x12\x00\x00DÍ\x00\x05\x00\x03\x02h2þ\x0d\x01\x1a\x00\x00\x01\x00\x01õ\x00 \x8d"Å;oâ\x05$+ïgaÝxìpÌùòG2¸üÇPcn\x942h p\x00ðH\x13åÇD£vkîd¢èÍÿiÒ\x042ÁXEË\x13\x81\x7f\x9dc\x95\x10ô·z\\¯jô\x81ó\x8d\x94\x7f°g.ê$D\x7f\x83ö¸\x7f\x80®&Æ¤+\x02;\x82¨Å\x0c\x03Õ/ÿ«a\x08f³ú×\x13\x15\x81«sþgFYâ@K\x1d¼!ãûÁçä7\x9fÀ\x08\x9eP\x1f,¡`\x01Gø\x08\x0b,Rð·\x8a^ãÓeóRgë\x8a\x13èM[IZ\x06G7À×òS¿GN\x1e\x13bÜ6wzà\x86ÝspÆ\x92\x1a\x85\x7fßìKBû\x0bjÚ\x9dwC\x81èÐÆË\x10r\x04OÛa¿ÁÇ\x11\x0d°m\x02Ý\x9aÁ¡\x8ak_`Ïtåßåd|þ\x88c*\x0c>¯äx\x8d\x12ª\x17aDá÷ß\x99N\x8chs_ðÚ\x15¿xD¶wò\x9bÕ;Æx\x003\x04ï\x04íªª\x00\x01\x00\x11ì\x04Àç¨\x04Ýóc\x9c\x05p6ÈU\x05DCÛa­=SSO¢¥êü\x91ååQæ\x0c\x85=ÆzÑ<4¾µ,Ë\x9c!4°\x86V\x15ÆÃ²\x98O¹\x19S¶:¢\x1a\x98RÙ\x0d²hyEÚSchm<{\x7fáä¾=k\x0f>\x139~f\x95Áæ¾ÐÅ[\x06ñ)h:\\6¸@\x1fE8sF;ÐÃ+\x9fj\x11R×\x88h\x92|V\x06a\x1e\x9b\x11j\x04E\x93\x9byÊ\x81V\x88\x93Pz[0m" 400 -
+2025-03-17 23:58:16,542 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:16] code 400, message Bad request version ('\x02h2\x08http/1.1\x00')
+2025-03-17 23:58:16,542 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:16] "[31m[1m\x16\x03\x01\x07\x12\x01\x00\x07\x0e\x03\x03T¶Ê\x8bãJ\x0bøç^<Lµ\x06\x9f\x1ck×¼þ§§¨\x87\x10\x8a8\x91þ½ÏÝ \x98=\x08_Íç\x1aÒ\x88\x83\x13MÿkëjË¨±B\x8c\x13Ò)h\x8d2ëôà¹\x87\x00 ÊÊ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥JJ\x00\x00\x00#\x00\x00DÍ\x00\x05\x00\x03\x02h2\x00\x10\x00\x0e\x00\x0c\x02h2\x08http/1.1\x00[0m" 400 -
+2025-03-17 23:58:16,798 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:16] code 400, message Bad request version ('A\x9c\x10\x02cLå\x038ÿ\x00\x88\x95%{\x80±®è\x08\x07\x01\x99<f3\x02')
+2025-03-17 23:58:16,798 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:16] "[31m[1m\x16\x03\x01\x06ò\x01\x00\x06î\x03\x03ÆÿµWâ#:`;]FYnt»ÊF[úÆÁÆõM}í,\x19{©\x8b! R\x0f\x18±=!õÐ\x00\x7f1\x82J\x01¸¬@jqz9Ej5¢Wc\x09\x0fTw\x9c\x00 **\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06\x85ZZ\x00\x00DÍ\x00\x05\x00\x03\x02h2ÿ\x01\x00\x01\x00\x00\x10\x00\x0e\x00\x0c\x02h2\x08http/1.1\x003\x04ï\x04íªª\x00\x01\x00\x11ì\x04À3QªÈ¶Acl\x97¤ã(\x15¹EßÙ·\x92û\x8d\x10T\x05m\x16CYû¦Y¼\x9c\x9aâ\x04\x1dÓ®\x7fu\x0bA\x9c\x10\x02cLå\x038ÿ\x00\x88\x95%{\x80±®è\x08\x07\x01\x99<f3\x02[0m" 400 -
+2025-03-17 23:58:16,857 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:16] code 400, message Bad request version ('§\\,¸\x9aÇÿãâ\x13ßYÁ{\x18l2µáwÕTÆ5q+Üx#×Ú9\x00')
+2025-03-17 23:58:16,857 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:16] "[31m[1m\x16\x03\x01\x06ò\x01\x00\x06î\x03\x03\x07Q\x02äÂ\\\x04c\x86Þ¼\x16ô»\x84E\x19âÌÇ\x09K<u\x84·¬|l\x04ÆP §\\,¸\x9aÇÿãâ\x13ßYÁ{\x18l2µáwÕTÆ5q+Üx#×Ú9\x00 [0m" 400 -
+2025-03-17 23:58:16,858 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:16] code 400, message Bad request version ('localhost\x00#\x00\x00\x00\x17\x00\x00\x00')
+2025-03-17 23:58:16,859 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:16] "[31m[1m\x16\x03\x01\x06²\x01\x00\x06®\x03\x031\x97Ø¦êi\x83\x09G\x9eëÞ*y\x0fäÁKì\x86\x85(ükòú\x0eÐ¾Vs£ \x03¡À\x98üS\x11ñ¿FÆ!Û7Î\x8eØ6{)Ö\x83[í3z\x02!AUù\x04\x00 \x1a\x1a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06E\x8a\x8a\x00\x00\x00-\x00\x02\x01\x01\x00\x1b\x00\x03\x02\x00\x02\x00\x10\x00\x0e\x00\x0c\x02h2\x08http/1.1\x00\x0b\x00\x02\x01\x00þ\x0d\x00º\x00\x00\x01\x00\x01\x05\x00 \x92I\x1bÃd7\x16\x93J_SÒÑ&[\x82\x16¶\x19ñ,ø?ô¨J\x86ø\x0f»É_\x00\x90\x0eE\x00è]=zwÇD%¿åä|\x07ê\x81Íä´ò\x12`üÞé\x94ñàï\x81a8ÏßeÿpEþ\x1bI2N\x7fh\x90\x99\x85Ñe;²\x95¡m G5\x1d÷\x1a¸\x9d "Êæk©R÷6?TS0oÎx\x00~ÎÍkî:\x09\x05µ\x03=,ÓEöb\x15?§\x82Ôms\x190nüUàñ\x1f»\x85ÚTlä÷ó"¼ÆÀªgLñÀ}%Ã\x03ú°¸ªÁ9å·ß6ÿ\x01\x00\x01\x00\x00+\x00\x07\x06::\x03\x04\x03\x03\x00\x00\x00\x0e\x00\x0c\x00\x00\x09localhost\x00#\x00\x00\x00\x17\x00\x00\x00[0m" 400 -
+2025-03-17 23:58:17,108 - ERROR - 127.0.0.1 - - [17/Mar/2025 23:58:17] code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06²\x01\x00\x06®\x03\x03¨\\')
+2025-03-17 23:58:17,108 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:17] "[31m[1m\x16\x03\x01\x06²\x01\x00\x06®\x03\x03¨\\\x0dý®U3\x84}t/Fê[0m" 400 -
+2025-03-17 23:58:25,160 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-17 23:58:25,160 - INFO - 127.0.0.1 - - [17/Mar/2025 23:58:25] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 01:09:25,340 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 01:09:25,340 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 01:09:25,340 - INFO -  * Restarting with stat
+2025-03-18 01:09:25,608 - WARNING -  * Debugger is active!
+2025-03-18 01:09:25,608 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 01:51:15,501 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 01:51:15,501 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 01:51:57,008 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 01:51:57,008 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 01:55:06,637 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 01:55:06,639 - INFO - 127.0.0.1 - - [18/Mar/2025 01:55:06] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 01:55:08,028 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 01:55:08,029 - INFO - 127.0.0.1 - - [18/Mar/2025 01:55:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-18 01:55:10,004 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 01:55:10,005 - INFO - 127.0.0.1 - - [18/Mar/2025 01:55:10] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 01:59:35,779 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 01:59:35,779 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:00:20,544 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:00:20,544 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:00:42,074 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:00:42,074 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:01:37,289 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:01:37,289 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:02:06,840 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:02:06,840 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:03:52,272 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:03:52,272 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:09:05,863 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:09:05,863 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:10:55,980 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:10:55,980 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:12:32,535 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:12:32,535 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:13:56,079 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:13:56,079 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:15:21,224 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:15:21,224 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:16:14,978 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:16:14,978 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:19:40,493 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:19:40,493 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:21:46,558 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:21:46,558 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:22:03,968 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 02:22:03,968 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:22:03,968 - INFO -  * Restarting with stat
+2025-03-18 02:22:04,235 - WARNING -  * Debugger is active!
+2025-03-18 02:22:04,235 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 02:22:11,913 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 02:22:11,914 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:22:11,915 - INFO -  * Restarting with stat
+2025-03-18 02:22:12,169 - WARNING -  * Debugger is active!
+2025-03-18 02:22:12,169 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 02:24:07,779 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:24:07,781 - INFO - 192.168.0.247 - - [18/Mar/2025 02:24:07] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 02:24:08,619 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:24:08,619 - INFO - 192.168.0.247 - - [18/Mar/2025 02:24:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-18 02:25:02,814 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:25:02,814 - INFO - 127.0.0.1 - - [18/Mar/2025 02:25:02] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 02:25:03,561 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:25:03,562 - INFO - 127.0.0.1 - - [18/Mar/2025 02:25:03] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-18 02:27:07,668 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-18 02:27:07,668 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:27:24,921 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:27:24,922 - INFO - 127.0.0.1 - - [18/Mar/2025 02:27:24] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 02:27:55,411 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 02:27:55,412 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 02:27:55,414 - INFO -  * Restarting with stat
+2025-03-18 02:27:55,664 - WARNING -  * Debugger is active!
+2025-03-18 02:27:55,664 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 02:28:43,989 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:28:43,989 - INFO - 127.0.0.1 - - [18/Mar/2025 02:28:43] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 02:28:46,349 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:28:46,349 - INFO - 127.0.0.1 - - [18/Mar/2025 02:28:46] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 02:28:48,062 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:28:48,063 - INFO - 127.0.0.1 - - [18/Mar/2025 02:28:48] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 02:29:00,293 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:29:00,293 - INFO - 192.168.0.247 - - [18/Mar/2025 02:29:00] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 02:29:02,302 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 02:29:02,304 - INFO - 192.168.0.247 - - [18/Mar/2025 02:29:02] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 14:30:31,260 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 14:30:31,260 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 14:30:31,263 - INFO -  * Restarting with stat
+2025-03-18 14:30:31,716 - WARNING -  * Debugger is active!
+2025-03-18 14:30:31,719 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 14:31:50,661 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 14:31:50,661 - INFO - 127.0.0.1 - - [18/Mar/2025 14:31:50] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 14:41:28,009 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 14:41:28,009 - INFO - 127.0.0.1 - - [18/Mar/2025 14:41:28] "[33mGET /HomePage HTTP/1.1[0m" 404 -
+2025-03-18 14:41:46,571 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 14:41:46,571 - INFO - 127.0.0.1 - - [18/Mar/2025 14:41:46] "[33mGET /BookingPage HTTP/1.1[0m" 404 -
+2025-03-18 14:41:55,709 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 14:41:55,709 - INFO - 127.0.0.1 - - [18/Mar/2025 14:41:55] "[33mGET /HomePage HTTP/1.1[0m" 404 -
+2025-03-18 14:42:10,926 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 14:42:10,926 - INFO - 127.0.0.1 - - [18/Mar/2025 14:42:10] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 14:50:46,839 - INFO -  * Detected change in 'C:\\wamp64\\www\\smartcar\\error-handling-service\\error_handler.py', reloading
+2025-03-18 14:50:46,887 - INFO -  * Restarting with stat
+2025-03-18 15:34:41,772 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 15:34:41,773 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 15:34:41,775 - INFO -  * Restarting with stat
+2025-03-18 15:34:42,065 - WARNING -  * Debugger is active!
+2025-03-18 15:34:42,065 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 15:35:08,561 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:08,561 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:08] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 15:35:10,672 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:10,672 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:10] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 15:35:11,516 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:11,516 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:11] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 15:35:12,289 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:12,289 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:12] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 15:35:12,796 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:12,811 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:12] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 15:35:30,025 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:30,025 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:30] "[33mGET /HomePage.html HTTP/1.1[0m" 404 -
+2025-03-18 15:35:32,917 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:32,917 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:32] "[33mGET /HomePage.html HTTP/1.1[0m" 404 -
+2025-03-18 15:35:36,007 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:35:36,007 - INFO - 127.0.0.1 - - [18/Mar/2025 15:35:36] "[33mGET /HomePage HTTP/1.1[0m" 404 -
+2025-03-18 15:38:06,896 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 15:38:06,896 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 15:38:06,903 - INFO -  * Restarting with stat
+2025-03-18 15:38:07,154 - WARNING -  * Debugger is active!
+2025-03-18 15:38:07,156 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 15:38:10,103 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:38:10,103 - INFO - 127.0.0.1 - - [18/Mar/2025 15:38:10] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 15:38:33,954 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 15:38:33,955 - INFO - 127.0.0.1 - - [18/Mar/2025 15:38:33] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 16:07:33,790 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 16:07:33,790 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 16:07:33,790 - INFO -  * Restarting with stat
+2025-03-18 16:07:34,046 - WARNING -  * Debugger is active!
+2025-03-18 16:07:34,046 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 16:07:58,200 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 16:07:58,201 - INFO - 127.0.0.1 - - [18/Mar/2025 16:07:58] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 16:08:08,805 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 16:08:08,805 - INFO - 127.0.0.1 - - [18/Mar/2025 16:08:08] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 16:08:15,347 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 16:08:15,348 - INFO - 127.0.0.1 - - [18/Mar/2025 16:08:15] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 16:08:39,270 - INFO - 127.0.0.1 - - [18/Mar/2025 16:08:39] "[33mGET /index.html HTTP/1.1[0m" 404 -
+2025-03-18 16:08:53,294 - INFO - 127.0.0.1 - - [18/Mar/2025 16:08:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-18 16:10:03,689 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 16:10:03,689 - INFO - 127.0.0.1 - - [18/Mar/2025 16:10:03] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 16:37:14,386 - INFO -  * Detected change in 'C:\\wamp64\\www\\smartcar\\error-handling-service\\error_handler.py', reloading
+2025-03-18 16:37:14,417 - INFO -  * Restarting with stat
+2025-03-18 19:23:24,002 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 19:23:24,002 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 19:23:24,002 - INFO -  * Restarting with stat
+2025-03-18 19:23:24,403 - WARNING -  * Debugger is active!
+2025-03-18 19:23:24,403 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 19:23:46,671 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 19:23:46,671 - INFO - 127.0.0.1 - - [18/Mar/2025 19:23:46] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 19:24:12,177 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 19:24:12,177 - INFO - 127.0.0.1 - - [18/Mar/2025 19:24:12] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 19:24:12,264 - INFO - 127.0.0.1 - - [18/Mar/2025 19:24:12] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-18 19:24:19,747 - INFO - 127.0.0.1 - - [18/Mar/2025 19:24:19] "[33mGET /log_error HTTP/1.1[0m" 404 -
+2025-03-18 19:24:44,446 - INFO - 127.0.0.1 - - [18/Mar/2025 19:24:44] "[33mGET /HomePage HTTP/1.1[0m" 404 -
+2025-03-18 19:24:51,886 - INFO - 127.0.0.1 - - [18/Mar/2025 19:24:51] "[33mGET /PaymentPage HTTP/1.1[0m" 404 -
+2025-03-18 19:25:18,615 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 19:25:18,615 - INFO - 192.168.0.247 - - [18/Mar/2025 19:25:18] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 19:25:59,728 - ERROR - 404 - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-03-18 19:25:59,729 - INFO - 127.0.0.1 - - [18/Mar/2025 19:25:59] "[33mGET / HTTP/1.1[0m" 404 -
+2025-03-18 19:26:05,363 - INFO - 127.0.0.1 - - [18/Mar/2025 19:26:05] "[33mGET /HomePage HTTP/1.1[0m" 404 -
+2025-03-18 19:39:26,904 - INFO -  * Detected change in 'C:\\wamp64\\www\\smartcar\\error-handling-service\\error_handler.py', reloading
+2025-03-18 19:39:26,953 - INFO -  * Restarting with stat
+2025-03-18 19:54:52,753 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://192.168.0.247:5002
+2025-03-18 19:54:52,753 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-18 19:54:52,758 - INFO -  * Restarting with stat
+2025-03-18 19:54:53,196 - WARNING -  * Debugger is active!
+2025-03-18 19:54:53,196 - INFO -  * Debugger PIN: 983-655-674
+2025-03-18 19:55:06,149 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:06] "GET / HTTP/1.1" 200 -
+2025-03-18 19:55:06,194 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:06] "GET /js/chunk-vendors.c0eeab7c.js HTTP/1.1" 200 -
+2025-03-18 19:55:06,209 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:06] "GET /css/app.8dd828f7.css HTTP/1.1" 200 -
+2025-03-18 19:55:06,209 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:06] "GET /js/app.2fd406af.js HTTP/1.1" 200 -
+2025-03-18 19:55:14,304 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:14] "[36mGET / HTTP/1.1[0m" 304 -
+2025-03-18 19:55:14,344 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:14] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 19:55:14,350 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:14] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 19:55:14,350 - INFO - 127.0.0.1 - - [18/Mar/2025 19:55:14] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 19:59:47,194 - INFO - 127.0.0.1 - - [18/Mar/2025 19:59:47] "GET /HomePage HTTP/1.1" 200 -
+2025-03-18 19:59:47,229 - INFO - 127.0.0.1 - - [18/Mar/2025 19:59:47] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 19:59:47,241 - INFO - 127.0.0.1 - - [18/Mar/2025 19:59:47] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 19:59:47,241 - INFO - 127.0.0.1 - - [18/Mar/2025 19:59:47] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:38:40,052 - INFO - 127.0.0.1 - - [18/Mar/2025 22:38:40] "GET /locations HTTP/1.1" 200 -
+2025-03-18 22:38:40,116 - INFO - 127.0.0.1 - - [18/Mar/2025 22:38:40] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:38:40,127 - INFO - 127.0.0.1 - - [18/Mar/2025 22:38:40] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:38:40,128 - INFO - 127.0.0.1 - - [18/Mar/2025 22:38:40] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:08,936 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:08] "GET /payment HTTP/1.1" 200 -
+2025-03-18 22:40:08,988 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:08] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:08,997 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:08] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:08,997 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:08] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:40:23,106 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:23] "GET /booking HTTP/1.1" 200 -
+2025-03-18 22:40:23,162 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:23] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:23,171 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:23] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:23,171 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:23] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:40:27,039 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:27] "[36mGET /booking HTTP/1.1[0m" 304 -
+2025-03-18 22:40:27,098 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:27] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:27,104 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:27] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:27,106 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:27] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:40:41,256 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:41] "[36mGET / HTTP/1.1[0m" 304 -
+2025-03-18 22:40:41,315 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:41] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:41,322 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:41] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:41,324 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:41] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:40:57,005 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:57] "[36mGET /booking HTTP/1.1[0m" 304 -
+2025-03-18 22:40:57,072 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:57] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:57,077 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:57] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:57,083 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:57] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:40:59,480 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:59] "[36mGET /payment HTTP/1.1[0m" 304 -
+2025-03-18 22:40:59,525 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:59] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:59,534 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:59] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:40:59,535 - INFO - 127.0.0.1 - - [18/Mar/2025 22:40:59] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:42:05,670 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:05] "[36mGET /payment HTTP/1.1[0m" 304 -
+2025-03-18 22:42:05,728 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:05] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:05,736 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:05] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:05,740 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:05] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:42:13,338 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:13] "[36mGET /locations HTTP/1.1[0m" 304 -
+2025-03-18 22:42:13,391 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:13] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:13,401 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:13] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:13,406 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:13] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:42:19,611 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:19] "[36mGET / HTTP/1.1[0m" 304 -
+2025-03-18 22:42:19,657 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:19] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:19,662 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:19] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:19,668 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:19] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-03-18 22:42:31,366 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:31] "[36mGET /booking HTTP/1.1[0m" 304 -
+2025-03-18 22:42:31,424 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:31] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:31,431 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:31] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
+2025-03-18 22:42:31,433 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:31] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
