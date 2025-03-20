@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import Router from 'vue-router';
+// Vue 3 requires using createRouter and createWebHistory instead of Vue.use(Router).
+import { createRouter, createWebHistory } from 'vue-router';   
 
 // Import the components/pages from the correct path
 import HomePage from '../components/HomePage.vue';
@@ -7,7 +7,6 @@ import LocationPage from '../components/LocationPage.vue';
 import BookingPage from '../components/BookingPage.vue';
 import PaymentPage from '../components/PaymentPage.vue';
 
-Vue.use(Router);
 
 const routes = [
   {
@@ -32,9 +31,10 @@ const routes = [
   },
 ];
 
-const router = new Router({
-  routes, // Short for `routes: routes`
-  mode: 'history', // This removes the hash (`#`) from the URL
+// Vue 3 requires using createRouter and createWebHistory instead of Vue.use(Router).
+const router = createRouter({
+  history: createWebHistory(),   
+  routes,
 });
 
 export default router;
