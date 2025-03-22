@@ -1,0 +1,12 @@
+1. pip install mysql-connector-python
+2. Update the 
+DB_CONFIG = {
+    'host': 'localhost',      # Update with your MySQL host
+    'user': 'your_username',  # Update with your MySQL username
+    'password': 'your_password', # Update with your MySQL password
+    'database': 'booking_system' # Update with your database name
+}
+3. Run the application: python booking_log.py
+4. Send a test POST request with curl or Postman
+5. Check console output
+6. Verify the data: SELECT * FROM booking_logs ORDER BY id DESC LIMIT 1;
