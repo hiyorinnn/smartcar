@@ -22,3 +22,11 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+### installation for gps microservice
+pip install flask requests
+
+### installation for geofence microservice, specifically gRPC libraries 
+conda install -c conda-forge grpcio
+conda install -c conda-forge grpcio-tools
