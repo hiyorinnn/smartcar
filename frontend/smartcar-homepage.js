@@ -14,11 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Setup navigation links
     setupNavLinks();
-
-    // Check if Google Maps API is loaded and initialize if available
-    if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-        initGoogleMapsAutocomplete();
-    }
 });
 
 
@@ -125,54 +120,6 @@ function initializeBasicLocationSearch() {
 }
 
 /**
- * Initialize Google Maps Places Autocomplete - called by the API callback
- */
-function initGoogleMapsAutocomplete() {
-    const locationInput = document.getElementById('location-input');
-    
-    if (!locationInput) return;
-    
-    // Create the autocomplete object
-    const autocomplete = new google.maps.places.Autocomplete(locationInput, {
-        types: ['(cities)'], // Restrict to cities only
-    });
-    
-    // Remove the datalist if using Google Maps
-    locationInput.removeAttribute('list');
-    const datalist = document.getElementById('location-suggestions');
-    if (datalist) {
-        datalist.remove();
-    }
-    
-    // Add place_changed event listener
-    autocomplete.addListener('place_changed', function() {
-        const place = autocomplete.getPlace();
-        
-        if (!place.geometry) {
-            console.warn("No location details available for this input: " + place.name);
-            return;
-        }
-        
-        // Get location details
-        const locationData = {
-            name: place.name,
-            address: place.formatted_address,
-            latitude: place.geometry.location.lat(),
-            longitude: place.geometry.location.lng()
-        };
-        
-        // Store location data for search
-        window.selectedLocation = locationData;
-        
-        // Update hidden fields with the coordinates
-        const latInput = document.getElementById('location-lat');
-        const lngInput = document.getElementById('location-lng');
-        
-        if (latInput) latInput.value = locationData.latitude;
-        if (lngInput) lngInput.value = locationData.longitude;
-    });
-}
-
 /**
  * Setup search button functionality
  */
