@@ -1,0 +1,56 @@
+[debug] [2025-03-25T14:45:05.527Z] ----------------------------------------------------------------------
+[debug] [2025-03-25T14:45:05.531Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] [2025-03-25T14:45:05.531Z] CLI Version:   13.35.1
+[debug] [2025-03-25T14:45:05.531Z] Platform:      darwin
+[debug] [2025-03-25T14:45:05.531Z] Node Version:  v20.17.0
+[debug] [2025-03-25T14:45:05.531Z] Time:          Tue Mar 25 2025 22:45:05 GMT+0800 (Singapore Standard Time)
+[debug] [2025-03-25T14:45:05.532Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-03-25T14:45:05.746Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-03-25T14:45:05.747Z] > authorizing via signed-in user (tnb.tran.2023@smu.edu.sg)
+[debug] [2025-03-25T14:45:05.747Z] [iam] checking project smartcar-g2g6 for permissions ["firebase.projects.get"]
+[debug] [2025-03-25T14:45:05.748Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:05.748Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:05.749Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6:testIamPermissions [none]
+[debug] [2025-03-25T14:45:05.749Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6:testIamPermissions x-goog-quota-user=projects/smartcar-g2g6
+[debug] [2025-03-25T14:45:05.750Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-03-25T14:45:06.837Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6:testIamPermissions 200
+[debug] [2025-03-25T14:45:06.838Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-03-25T14:45:06.838Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:06.838Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:06.838Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6 [none]
+[debug] [2025-03-25T14:45:07.098Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6 200
+[debug] [2025-03-25T14:45:07.098Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/smartcar-g2g6 {"projectNumber":"429315535620","projectId":"smartcar-g2g6","lifecycleState":"ACTIVE","name":"smartcar","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-03-25T13:23:00.819902Z","parent":{"type":"organization","id":"665141617008"}}
+[info] 
+[info] === Serving from '/Users/JoyceTran/Documents/GitHub/smartcar'...
+[info] 
+[debug] [2025-03-25T14:45:07.101Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:07.101Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:07.105Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartcar-g2g6/sites 
+[debug] [2025-03-25T14:45:07.112Z] defaultcredentials: writing to file /Users/JoyceTran/.config/firebase/tnb_tran.2023_smu.edu.sg_application_default_credentials.json
+[debug] [2025-03-25T14:45:07.114Z] Setting GAC to /Users/JoyceTran/.config/firebase/tnb_tran.2023_smu.edu.sg_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to /Users/JoyceTran/.config/firebase/tnb_tran.2023_smu.edu.sg_application_default_credentials.json"}}
+[debug] [2025-03-25T14:45:07.115Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:07.115Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:07.115Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6/adminSdkConfig [none]
+[debug] [2025-03-25T14:45:07.559Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6/adminSdkConfig 200
+[debug] [2025-03-25T14:45:07.560Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6/adminSdkConfig {"projectId":"smartcar-g2g6","storageBucket":"smartcar-g2g6.firebasestorage.app"}
+[debug] [2025-03-25T14:45:07.728Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartcar-g2g6/sites 200
+[debug] [2025-03-25T14:45:07.728Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartcar-g2g6/sites {"sites":[{"name":"projects/smartcar-g2g6/sites/smartcar-g2g6","defaultUrl":"https://smartcar-g2g6.web.app","appId":"1:429315535620:web:5730876e8f5a1180c15651","type":"DEFAULT_SITE"}]}
+[debug] [2025-03-25T14:45:07.728Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:07.728Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:07.728Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6/webApps/1:429315535620:web:5730876e8f5a1180c15651/config [none]
+[debug] [2025-03-25T14:45:08.424Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6/webApps/1:429315535620:web:5730876e8f5a1180c15651/config 200
+[debug] [2025-03-25T14:45:08.424Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6/webApps/1:429315535620:web:5730876e8f5a1180c15651/config {"projectId":"smartcar-g2g6","appId":"1:429315535620:web:5730876e8f5a1180c15651","storageBucket":"smartcar-g2g6.firebasestorage.app","apiKey":"AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w","authDomain":"smartcar-g2g6.firebaseapp.com","messagingSenderId":"429315535620"}
+[debug] [2025-03-25T14:45:08.455Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:08.455Z] Checked if tokens are valid: true, expires at: 1742917367257
+[debug] [2025-03-25T14:45:08.455Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6 [none]
+[debug] [2025-03-25T14:45:08.918Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6 200
+[debug] [2025-03-25T14:45:08.918Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/smartcar-g2g6 {"projectId":"smartcar-g2g6","projectNumber":"429315535620","displayName":"smartcar","name":"projects/smartcar-g2g6","resources":{"hostingSite":"smartcar-g2g6"},"state":"ACTIVE","etag":"1_1944daa0-ae9d-4b11-896d-1c69691167c2"}
+[info] i  functions: Watching "/Users/JoyceTran/Documents/GitHub/smartcar/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/Users/JoyceTran/Documents/GitHub/smartcar/functions\" for Cloud Functions..."}}
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: could not deploy functions because the "functions" directory was not found. Please create it or specify a different source directory in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: could not deploy functions because the \u001b[1m\"functions\"\u001b[22m directory was not found. Please create it or specify a different source directory in firebase.json"}}
+[info] i  hosting[smartcar-g2g6]: Serving hosting files from: frontend {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mfrontend\u001b[22m"}}
+[info] ✔  hosting[smartcar-g2g6]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [25/Mar/2025:14:50:48 +0000] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [25/Mar/2025:14:50:48 +0000] \"GET / HTTP/1.1\" 200 - \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [25/Mar/2025:14:50:48 +0000] "GET /src/Frame.svg HTTP/1.1" 200 - "http://localhost:5000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [25/Mar/2025:14:50:48 +0000] \"GET /src/Frame.svg HTTP/1.1\" 200 - \"http://localhost:5000/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [25/Mar/2025:14:50:48 +0000] "GET /smartcar-homepage.js HTTP/1.1" 200 - "http://localhost:5000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [25/Mar/2025:14:50:48 +0000] \"GET /smartcar-homepage.js HTTP/1.1\" 200 - \"http://localhost:5000/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [25/Mar/2025:14:50:48 +0000] "GET /src/car.png HTTP/1.1" 200 509516 "http://localhost:5000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [25/Mar/2025:14:50:48 +0000] \"GET /src/car.png HTTP/1.1\" 200 509516 \"http://localhost:5000/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36\""}}

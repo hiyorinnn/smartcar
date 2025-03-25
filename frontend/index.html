@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartCar - Home</title>
+    <style>
+      /* Basic Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:'Poppins', sans-serif;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        background-image: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.8) 50%,
+            transparent 50%
+          ),
+          linear-gradient(rgba(255, 255, 255, 0.8) 50%, transparent 50%);
+        background-size: 30px 30px;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 5%;
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        color: #2563eb;
+        font-weight: bold;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-icon {
+        margin-right: 10px;
+        font-size: 1.8rem;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+      }
+
+      nav ul li {
+        margin: 0 15px;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: #333;
+      }
+
+      .auth-buttons {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        border: none;
+      }
+      .btn:hover{
+        border: solid black 2px;
+      }
+
+      .btn-primary {
+        background-color: #2563eb;
+        color: white;
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        color: #333;
+        border: 1px solid #ccc;
+      }
+
+      /* Hero Section */
+      .hero {
+        display: flex;
+        padding: 40px 5%;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 80vh;
+      }
+
+      .hero-content {
+        width: 45%;
+      }
+
+      .hero-image {
+        width: 50%;
+        text-align: right;
+      }
+
+      .hero-image img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      h1 {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      h1 span {
+        color: #2563eb;
+        position: relative;
+      }
+
+      h1 span::after {
+        content: "";
+        position: absolute;
+        height: 10px;
+        background-color: #2563eb;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        opacity: 0.3;
+      }
+
+      .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        color: #555;
+      }
+
+      /* Search Form */
+      .search-form {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .search-form div {
+        flex: 1 1 200px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .search-button {
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+        align-self: flex-end;
+        height: 45px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .hero-content,
+        .hero-image {
+          width: 100%;
+        }
+
+        .hero-image {
+          width: 1048px;
+          height: 537px;
+          flex-shrink: 0;
+        }
+
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        .auth-buttons {
+          display: none;
+        }
+
+        nav {
+          display: none;
+        }
+
+        .search-form {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+            <img src="./src/Frame.svg">
+        </div>
+        SMARTCAR
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#" id="become-renter-link">Become a renter</a></li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        <button class="btn btn-outline" id="sign-in-button">
+            <a href="./login.html" id="signin-link"></a>
+            Sign in
+        </button>
+        <button class="btn btn-primary" id="sign-up-button">
+            <a href="./register.html" id="register-link"></a>
+            Sign up</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Find, book and<br />rent a car <span>Easily</span></h1>
+        <p class="hero-subtitle">
+          Get a car wherever and whenever you need it with SmartCar!
+        </p>
+
+        <div class="search-form">
+          <div class="form-group">
+            <label for="location-input">Location</label>
+            <input
+              type="text"
+              id="location-input"
+              placeholder="Search your location"
+            />
+            <!-- Hidden fields for Google Maps data -->
+            <input type="hidden" id="location-lat" name="location-lat" />
+            <input type="hidden" id="location-lng" name="location-lng" />
+          </div>
+
+          <div class="form-group">
+            <label for="pickup-date">Pickup date</label>
+            <input
+              type="text"
+              id="pickup-date"
+              placeholder="Tue 15 Feb, 09:00"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="return-date">Return date</label>
+            <input
+              type="text"
+              id="return-date"
+              placeholder="Thu 16 Feb, 11:00"
+            />
+            <button class="btn search-button" id="search-button">Search</button>
+          </div>
+
+          
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <img src="./src/car.png" alt="Blue sports car" />
+      </div>
+    </section>
+
+    <!-- Add Flatpickr for date selection -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Google Maps API - Replace YOUR_API_KEY with an actual API key -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initGoogleMapsAutocomplete" async defer></script> -->
+
+    <!-- Your JS will be included here -->
+    <script src="smartcar-homepage.js"></script>
+  </body>
+</html>
