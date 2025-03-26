@@ -59,8 +59,8 @@ channel = create_exchange(
 create_queue(
     channel=channel,
     exchange_name=exchange_name,
-    queue_name="Error",
-    routing_key="*.error",
+    queue_name="Notification",
+    routing_key="*.notif",
 )
 
 create_queue(
