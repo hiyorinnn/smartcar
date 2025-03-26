@@ -191,6 +191,41 @@
         align-self: flex-end;
         height: 45px;
       }
+      .location-input-wrapper {
+        position: relative;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .location-btn {
+        margin-top: 5px;
+        padding: 8px 12px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .location-btn:hover {
+        background-color: #e0e0e0;
+      }
+
+      .directions-btn {
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        margin-top: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .directions-btn:hover {
+        background-color: #3367d6;
+      }
 
       /* Responsive */
       @media (max-width: 768px) {
@@ -266,6 +301,13 @@
               id="location-input"
               placeholder="Search your location"
             />
+            <button
+              type="button"
+              id="current-location-btn"
+              class="location-btn"
+            >
+              <i class="fa fa-map-marker"></i> Use my current location
+            </button>
             <!-- Hidden fields for Google Maps data -->
             <input type="hidden" id="location-lat" name="location-lat" />
             <input type="hidden" id="location-lng" name="location-lng" />
@@ -294,7 +336,7 @@
 
       <div class="hero-image">
         <!-- <img src="./src/car.png" alt="Blue sports car" /> -->
-        <div id="map" style="height:600px; width:700px;"></div>
+        <div id="map" style="height: 600px; width: 700px"></div>
       </div>
     </section>
 
@@ -304,14 +346,15 @@
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
 
-
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="smartcar-homepage.js"></script>
 
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w&libraries=marker,geometry&loading=async&callback=initMap"></script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w&libraries=marker,geometry&loading=async&callback=initMap"
+    ></script>
 
     <script src="car.js"></script>
-
   </body>
 </html>
