@@ -4,6 +4,8 @@ import geofence_pb2
 import geofence_pb2_grpc
 from concurrent import futures
 
+from invokes import invoke_http
+
 def is_within_geofence(user_lat, user_lon, car_lat, car_lon, radius=0.01): #Change radius to define the geofence
     # Simple distance calculation 
     return (user_lat - car_lat)**2 + (user_lon - car_lon)**2 <= radius**2
@@ -13,11 +15,9 @@ class GeofenceServicer(geofence_pb2_grpc.GeofenceServiceServicer):
         user_lat = request.user_latitude
         user_lon = request.user_longitude
 
-        # Make an API call to car_avaliability microservice
         try:
-            response = requests.get('http://127.0.0.1:5000/car/available')  # Replace with your Flask service's URL
-            response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
-            car_data = response.json()
+            # Make an API call to car_avaliability microservice
+            car_data = self.get_all_available_car()
 
             if car_data['code'] != 200:
                 context.abort(grpc.StatusCode.INTERNAL, car_data['message']) #Return error if Flask returns an error.
@@ -37,6 +37,16 @@ class GeofenceServicer(geofence_pb2_grpc.GeofenceServiceServicer):
         except requests.exceptions.RequestException as e:
             context.abort(grpc.StatusCode.INTERNAL, f"Error calling Flask API: {e}")
             return
+        
+    def get_all_available_car(self):
+        # Make an API call to car_avaliability microservice
+        car_avaliable_URL = 'http://127.0.0.1:5000/car/available'
+        print("  Invoking car_available microservice...")
+        car_available_result = invoke_http(
+            car_avaliable_URL, method="GET"
+        )
+        print(f"  car_avaliable_result:{car_available_result}\n")
+        return car_available_result
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
