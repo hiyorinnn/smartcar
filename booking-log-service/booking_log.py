@@ -12,9 +12,9 @@ CORS(app)
 # MySQL Configuration
 DB_CONFIG = {
     'host': 'localhost',      # Update with your MySQL host
-    'user': 'your_username',  # Update with your MySQL username
-    'password': 'your_password', # Update with your MySQL password
-    'database': 'booking_system' # Update with your database name
+    'user': 'root',  # Update with your MySQL username
+    'password': '', # Update with your MySQL password
+    'database': 'car_service' # Update with your database name
 }
 
 def get_db_connection():
@@ -35,11 +35,22 @@ def create_booking_logs_table():
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS booking_logs (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    booking_id VARCHAR(50) NOT NULL,
                     user_id VARCHAR(50) NOT NULL,
+                    user_name VARCHAR(100) NOT NULL,
+                    start_time DATETIME NOT NULL,
+                    end_time DATETIME NOT NULL,
+                    contact_number VARCHAR(20) NOT NULL,
+                    email_address VARCHAR(100) NOT NULL,
+                    car_id VARCHAR(50) NOT NULL,
                     action ENUM('created', 'updated', 'cancelled', 'completed') NOT NULL,
                     timestamp DATETIME NOT NULL,
-                    details JSON
+                    payment_status ENUM('pending', 'paid', 'failed', 'refunded') NOT NULL DEFAULT 'pending',
+                    payment_method VARCHAR(50),
+                    total_amount DECIMAL(10, 2),
+                    transaction_id VARCHAR(100),
+                    payment_timestamp DATETIME,
+                    details JSON,
+                    FOREIGN KEY (car_id) REFERENCES car_available(id)
                 )
             ''')
             connection.commit()
@@ -62,7 +73,7 @@ def record_booking_log():
     log_data = request.get_json()
     
     # Validate required fields
-    required_fields = ['booking_id', 'user_id', 'action']
+    required_fields = ['user_id', 'user_name', 'start_time', 'end_time', 'contact_number', 'email_address', 'car_id', 'action']
     for field in required_fields:
         if field not in log_data:
             return jsonify({
@@ -83,8 +94,13 @@ def record_booking_log():
         log_data['timestamp'] = datetime.datetime.now().isoformat()
     
     # Extract main fields and any additional data
-    booking_id = log_data.pop('booking_id')
     user_id = log_data.pop('user_id')
+    user_name = log_data.pop('user_name')
+    start_time = log_data.pop('start_time')
+    end_time = log_data.pop('end_time')
+    contact_number = log_data.pop('contact_number')
+    email_address = log_data.pop('email_address')
+    car_id = log_data.pop('car_id')
     action = log_data.pop('action')
     
     # Parse timestamp
@@ -95,6 +111,30 @@ def record_booking_log():
     except ValueError:
         # Fallback to current time if parsing fails
         timestamp = datetime.datetime.now()
+    
+    # Parse start and end times
+    try:
+        start_time = datetime.datetime.fromisoformat(start_time)
+        end_time = datetime.datetime.fromisoformat(end_time)
+    except ValueError:
+        return jsonify({
+            "code": 400,
+            "message": "Invalid start_time or end_time format. Use ISO format."
+        }), 400
+    
+    # Payment details (optional)
+    payment_status = log_data.pop('payment_status', 'pending')
+    payment_method = log_data.pop('payment_method', None)
+    total_amount = log_data.pop('total_amount', None)
+    transaction_id = log_data.pop('transaction_id', None)
+    payment_timestamp = log_data.pop('payment_timestamp', None)
+    
+    # Parse payment timestamp if provided
+    if payment_timestamp:
+        try:
+            payment_timestamp = datetime.datetime.fromisoformat(payment_timestamp)
+        except ValueError:
+            payment_timestamp = None
     
     # Remaining data as details JSON
     details = log_data if log_data else None
@@ -107,8 +147,13 @@ def record_booking_log():
             
             # Insert record into database
             insert_query = """
-                INSERT INTO booking_logs (booking_id, user_id, action, timestamp, details)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO booking_logs (
+                    user_id, user_name, start_time, end_time, 
+                    contact_number, email_address, car_id, 
+                    action, timestamp, payment_status, 
+                    payment_method, total_amount, transaction_id, 
+                    payment_timestamp, details
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             
             # Convert details dict to JSON string if it exists
@@ -117,7 +162,13 @@ def record_booking_log():
                 import json
                 details_json = json.dumps(details)
                 
-            cursor.execute(insert_query, (booking_id, user_id, action, timestamp, details_json))
+            cursor.execute(insert_query, (
+                user_id, user_name, start_time, end_time, 
+                contact_number, email_address, car_id, 
+                action, timestamp, payment_status, 
+                payment_method, total_amount, transaction_id, 
+                payment_timestamp, details_json
+            ))
             connection.commit()
             
             print(f"Booking log saved to MySQL with ID: {cursor.lastrowid}")
@@ -127,10 +178,20 @@ def record_booking_log():
                 "code": 200, 
                 "message": "Booking log recorded successfully",
                 "data": {
-                    "booking_id": booking_id,
                     "user_id": user_id,
+                    "user_name": user_name,
+                    "start_time": start_time.isoformat(),
+                    "end_time": end_time.isoformat(),
+                    "contact_number": contact_number,
+                    "email_address": email_address,
+                    "car_id": car_id,
                     "action": action,
                     "timestamp": timestamp_str,
+                    "payment_status": payment_status,
+                    "payment_method": payment_method,
+                    "total_amount": total_amount,
+                    "transaction_id": transaction_id,
+                    "payment_timestamp": payment_timestamp.isoformat() if payment_timestamp else None,
                     "details": details
                 },
                 "log_id": cursor.lastrowid
@@ -154,6 +215,51 @@ def record_booking_log():
         return jsonify({
             "code": 500,
             "message": "Database connection failed, log recorded to console only"
+        }), 500
+
+@app.route("/api/booking-logs/<user_id>", methods=['GET'])
+def get_user_booking_logs(user_id):
+    """Retrieve booking logs for a specific user"""
+    connection = get_db_connection()
+    if connection:
+        try:
+            cursor = connection.cursor(dictionary=True)
+            
+            # Retrieve all booking logs for the user
+            query = """
+                SELECT * FROM booking_logs 
+                WHERE user_id = %s 
+                ORDER BY timestamp DESC
+            """
+            cursor.execute(query, (user_id,))
+            
+            # Fetch all logs
+            logs = cursor.fetchall()
+            
+            # Convert details from JSON string to dict if exists
+            for log in logs:
+                if log['details']:
+                    log['details'] = json.loads(log['details'])
+            
+            return jsonify({
+                "code": 200,
+                "message": "Booking logs retrieved successfully",
+                "data": logs
+            }), 200
+        
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+            return jsonify({
+                "code": 500,
+                "message": "Failed to retrieve booking logs"
+            }), 500
+        finally:
+            cursor.close()
+            connection.close()
+    else:
+        return jsonify({
+            "code": 500,
+            "message": "Database connection failed"
         }), 500
 
 if __name__ == "__main__":

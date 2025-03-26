@@ -167,6 +167,13 @@ function setupSearchButton() {
         
         console.log('Search parameters:', searchParams);
         
+        // Create URLSearchParams object from searchParams
+        const queryParams = new URLSearchParams();
+        for (const [key, value] of Object.entries(searchParams)) {
+            if (value) queryParams.append(key, value);
+        }
+        
+        window.location.href = `booking.html?${queryParams.toString()}`;
         // In a real application, you would redirect to search results or make an API call
         // window.location.href = `/search-results?location=${encodeURIComponent(locationInput)}&pickup=${encodeURIComponent(pickupDate)}&return=${encodeURIComponent(returnDate)}`;
     });
