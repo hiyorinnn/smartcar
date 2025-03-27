@@ -51,7 +51,7 @@ def show_custom_labels(model, bucket, photo, min_confidence):
 
     return custom_labels
 
-@app.route('/api/generate_presigned_url', methods=['POST'])
+@app.route('/api/generate-presigned-url', methods=['POST'])
 def generate_presigned_url():
     try:
         # Get the data from the request (assuming it's a JSON payload)
@@ -100,35 +100,43 @@ def generate_presigned_url():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/rekognition', methods=['GET'])
+@app.route('/api/rekognition', methods=['POST'])  # Use POST since you are sending a payload
 def detect_labels():
-    # Get the 'bucket' and 'photos' from query parameters in the request
-    bucket = "esmbucketmicroservice"
-    
-    # Get the list of photos from the query parameters
-    photos = request.args.getlist('file_name')  # multiple file names can be passed
 
-    if not bucket or not photos:
-        return jsonify({"error": "Bucket and photo parameters are required"}), 400
+    # Bucket used
+    BUCKET = "esmbucketmicroservice"
+
+    # Get the data from the request
+    data = request.get_json()
+    
+    # Extract the 'bookingID' and 'presigned_urls' from the request JSON
+    booking_id = data.get('bookingID')
+    presigned_urls = data.get('presigned_urls')  # This should be a list or dict of presigned URLs
+
+    if not booking_id or not presigned_urls:
+        return jsonify({"error": "bookingID and presigned_urls are required"}), 400
 
     # The model ARN can be static (or dynamic if needed)
-    model = 'arn:aws:rekognition:us-east-1:664724877413:project/carDefects/version/carDefects.2025-03-16T13.03.35/1742101419563'
+    MODEL = 'arn:aws:rekognition:us-east-1:664724877413:project/carDefects/version/carDefects.2025-03-16T13.03.35/1742101419563'
 
-    results = {}
+    defect_count = 0  # Counter to track images with defects
 
-    for photo in photos:
+    # Iterate over the presigned URLs to detect labels for each photo
+    for image_data in presigned_urls:
+        photo_url = image_data.get('presigned_url')  # Extract the actual URL from each image data
+
+        if not photo_url:
+            continue  # Skip if there is no URL
+
         # Call the function to detect custom labels for each photo
-        custom_labels = show_custom_labels(model, bucket, photo)
-        label_count = len(custom_labels)
+        custom_labels = show_custom_labels(MODEL, BUCKET, photo_url)
 
-        # Add the result for each image to the results dictionary
-        results[photo] = {
-            "CustomLabels": custom_labels,
-            "LabelCount": label_count
-        }
+        # Check if "defects" is present in custom_labels
+        if "defects" in custom_labels:
+            defect_count += 1  # Increment the defect count if "defects" is found
 
-    # Return a dictionary with the results for each image
-    return jsonify(results)
+    # Return the count of images with defects
+    return jsonify({"defect_count": defect_count}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port="5000")
+    app.run(debug=True, host='0.0.0.0', port="5003")
