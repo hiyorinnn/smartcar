@@ -1,5 +1,5 @@
 # All the dependencies
-import requests
+from invokes import invoke_http
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -68,20 +68,6 @@ ERRORHANDLINGURL = "http://localhost:5005/api/error-handling/" #To ask Jing Kai 
 # SMS will be sent to the customers
 
 # 5. Payment scenario abit weird. To be implemented later. Because IDK where payment is invoke from? Link in the SMS to pay? 
-
-from flask import Flask, jsonify, request
-from invokes import invoke_http  # Import the invoke_http function
-
-app = Flask(__name__)
-
-# Declare all the URLs to the microservices
-PAYMENTURL = "To be updated, port: 5000"  # To ask from Joyce
-NOTIFICATIONURL = "http://localhost:5001/api/send-sms"  # To ask Malcolm to change the port
-VIOLATIONLOGURL = "To be updated, port: 5002"  # To ask from Yun Wen/Malcolm
-GENERATEPRESIGNEDURL = "http://localhost:5003/api/generate-presigned-url"
-REKOGNITIONURL = "http://localhost:5003/api/rekognition"
-BOOKINGLOGURL = "http://localhost:5004/api/booking-log/{booking_id}"
-ERRORHANDLINGURL = "http://localhost:5005/api/error-handling/"  # To ask Jing Kai to standardize
 
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
