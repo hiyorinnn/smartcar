@@ -73,7 +73,7 @@ def get_gps():
     gps_result = invoke_http(
         order_URL, method="GET"
     )
-    print(f"  gps_result:{gps_result['latitude'], gps_result['longitude']}\n")
+    # print(f"  gps_result:{gps_result['latitude'], gps_result['longitude']}\n")
     return gps_result["latitude"], gps_result["longitude"]
 
 
