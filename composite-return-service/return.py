@@ -59,19 +59,34 @@ ERRORHANDLINGURL = "http://localhost:5005/api/error-handling/" #To ask Jing Kai 
 # REKOGNITIONURL will return the number of defect_count, 200.
 # If received 404, invoke ERRORHANDLINGURL microservice.
 
-# 3. If received 200, invoke VIOLATIONLOGURL.
+# 3. If received 200 and defect count in "return jsonify({"defect_count": defect_count}), 200" > 1 , invoke VIOLATIONLOGURL.
+# If received 200 and defect count in "return jsonify({"defect_count": defect_count}), 200" == 0 then jump to point 4.
 # VIOLATIONLOGURL will either returns 200 or 404.
 # If 404, invoke ERRORHANDLINGURL microservice.
 
 # 4. If 200, invoke NOTIFICATIONURL microservice.
 # SMS will be sent to the customers
 
-# Payment scenario abit weird. To be implemented later. Because IDK where payment is invoke from? Link in the SMS to pay? 
+# 5. Payment scenario abit weird. To be implemented later. Because IDK where payment is invoke from? Link in the SMS to pay? 
+
+from flask import Flask, jsonify, request
+from invokes import invoke_http  # Import the invoke_http function
+
+app = Flask(__name__)
+
+# Declare all the URLs to the microservices
+PAYMENTURL = "To be updated, port: 5000"  # To ask from Joyce
+NOTIFICATIONURL = "http://localhost:5001/api/send-sms"  # To ask Malcolm to change the port
+VIOLATIONLOGURL = "To be updated, port: 5002"  # To ask from Yun Wen/Malcolm
+GENERATEPRESIGNEDURL = "http://localhost:5003/api/generate-presigned-url"
+REKOGNITIONURL = "http://localhost:5003/api/rekognition"
+BOOKINGLOGURL = "http://localhost:5004/api/booking-log/{booking_id}"
+ERRORHANDLINGURL = "http://localhost:5005/api/error-handling/"  # To ask Jing Kai to standardize
 
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
     try:
-        # 1. Receive data in JSON format from the car return form frontend page
+        # Receive data in JSON format from the frontend
         data = request.get_json()
         booking_id = data.get('booking_id')
         images = data.get('images')
@@ -79,57 +94,54 @@ def return_vehicle():
         if not booking_id or not images:
             return jsonify({'error': 'Missing booking_id or images'}), 400
 
-        # 2. Retrieve data from the booking-log database using booking_id
-        response = requests.get(BOOKINGLOGURL.format(booking_id))
+        # Retrieve booking details
+        response = invoke_http(BOOKINGLOGURL.format(booking_id), method='GET')
         
-        if response.status_code == 404:
-            requests.post(ERRORHANDLINGURL, json={'booking_id': booking_id, 'error': 'Booking not found'})
+        if response.get('code') == 404:
+            invoke_http(ERRORHANDLINGURL, method='POST', json={'booking_id': booking_id, 'error': 'Booking not found'})
             return jsonify({'error': 'Booking not found'}), 404
-        elif response.status_code != 200:
+        elif response.get('code') != 200:
             return jsonify({'error': 'Error retrieving booking logs'}), 500
 
-        # 3. Invoke GENERATEPRESIGNEDURL to get pre-signed URLs
-        presigned_response = requests.post(GENERATEPRESIGNEDURL, json={'bookingID': booking_id, 'images': images})
+        # Generate pre-signed URLs
+        presigned_response = invoke_http(GENERATEPRESIGNEDURL, method='POST', json={'bookingID': booking_id, 'images': images})
         
-        if presigned_response.status_code != 200:
+        if presigned_response.get('code') != 200:
             return jsonify({'error': 'Failed to generate pre-signed URLs'}), 500
 
-        presigned_data = presigned_response.json()
+        # Analyze images with Rekognition
+        rekognition_response = invoke_http(REKOGNITIONURL, method='POST', json=presigned_response)
         
-        # 4. Invoke REKOGNITIONURL to analyze the images
-        rekognition_response = requests.post(REKOGNITIONURL, json=presigned_data)
-        
-        if rekognition_response.status_code == 404:
-            requests.post(ERRORHANDLINGURL, json={'booking_id': booking_id, 'error': 'Rekognition service failed'})
+        if rekognition_response.get('code') == 404:
+            invoke_http(ERRORHANDLINGURL, method='POST', json={'booking_id': booking_id, 'error': 'Rekognition service failed'})
             return jsonify({'error': 'Rekognition service failed'}), 404
-        elif rekognition_response.status_code != 200:
+        elif rekognition_response.get('code') != 200:
             return jsonify({'error': 'Error processing images'}), 500
 
-        rekognition_data = rekognition_response.json()
-        defect_count = rekognition_data.get('defect_count', 0)
+        defect_count = rekognition_response.get('defect_count', 0)
 
-        # 5. Invoke VIOLATIONLOGURL if necessary
-        violation_response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
+        # Log violations if needed
+        violation_response = invoke_http(VIOLATIONLOGURL, method='POST', json={'booking_id': booking_id, 'defect_count': defect_count})
         
-        if violation_response.status_code == 404:
-            requests.post(ERRORHANDLINGURL, json={'booking_id': booking_id, 'error': 'Violation log service failed'})
+        if violation_response.get('code') == 404:
+            invoke_http(ERRORHANDLINGURL, method='POST', json={'booking_id': booking_id, 'error': 'Violation log service failed'})
             return jsonify({'error': 'Violation log service failed'}), 404
-        elif violation_response.status_code != 200:
+        elif violation_response.get('code') != 200:
             return jsonify({'error': 'Error logging violations'}), 500
 
-        # 6. Invoke NOTIFICATIONURL to send an SMS notification
-        notification_response = requests.post(NOTIFICATIONURL, json={'booking_id': booking_id, 'message': 'Your vehicle return process is complete.'})
+        # Send notification
+        notification_response = invoke_http(NOTIFICATIONURL, method='POST', json={'booking_id': booking_id, 'message': 'Your vehicle return process is complete.'})
         
-        if notification_response.status_code != 200:
+        if notification_response.get('code') != 200:
             return jsonify({'error': 'Failed to send notification'}), 500
 
         return jsonify({'message': 'Vehicle return process completed successfully'}), 200
 
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': 'Microservice request failed', 'details': str(e)}), 500
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5006)
+
+
 
