@@ -69,12 +69,18 @@ async function bookCar() {
         return;
     }
 
+    // Ensure dates are in ISO format
+    const formatISODate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toISOString();
+    };
+
     // Prepare booking log data
     const bookingData = {
         user_id: email, // Using email as user ID
         user_name: `${firstName} ${lastName}`,
-        start_time: pickupDate,
-        end_time: returnDate,
+        start_time: formatISODate(pickupDate),
+        end_time: formatISODate(returnDate),
         contact_number: phone,
         email_address: email,
         car_id: selectedCar.id,
@@ -84,20 +90,23 @@ async function bookCar() {
         total_amount: calculateTotalAmount(selectedCar, pickupDate, returnDate),
         details: {
             car_details: selectedCar
-        }
+        },
+        timestamp: new Date().toISOString() // Add current timestamp
     };
 
     try {
-        // Log booking to booking log microservice
-        const response = await axios.post('/api/booking-log', bookingData);
+        // Log booking to booking log microservice with full URL
+        const response = await axios.post('http://127.0.0.1:5004/api/booking-log', bookingData);
+        
+        console.log('Booking response:', response.data);
         
         // Update car availability 
         await axios.put(`/car/${selectedCar.id}/availability`, { available: false });
 
         alert('Booking successful! Your booking has been logged.');
     } catch (error) {
-        console.error('Booking error:', error);
-        alert('Booking failed. Please try again.');
+        console.error('Booking error:', error.response ? error.response.data : error);
+        alert('Booking failed. Please check the console for details.');
     }
 }
 

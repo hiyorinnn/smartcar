@@ -217,7 +217,7 @@ def record_booking_log():
             "message": "Database connection failed, log recorded to console only"
         }), 500
 
-@app.route("/api/booking-logs/<user_id>", methods=['GET'])
+@app.route("/api/booking-logs/<id>", methods=['GET'])
 def get_user_booking_logs(user_id):
     """Retrieve booking logs for a specific user"""
     connection = get_db_connection()
