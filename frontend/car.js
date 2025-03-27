@@ -27,7 +27,7 @@ window.initMap = function() {
 
 // Fetch car data from the microservice
 function fetchCarData() {
-  fetch("http://localhost:5000/car/available")
+  fetch("http://127.0.0.1:5001/get_cars_in_geofence")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -35,7 +35,8 @@ function fetchCarData() {
       return response.json();
     })
     .then((carData) => {
-      displayCarsOnMap(carData.data.cars);
+      console.log(carData)
+      displayCarsOnMap(carData.cars);
     })
     .catch((error) => {
       console.error("Error fetching car data:", error);

@@ -92,28 +92,20 @@
         color: #333;
         border: 1px solid #ccc;
       }
-
-      /* Hero Section */
       .hero {
         display: flex;
-        padding: 40px 5%;
-        justify-content: space-between;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        padding: 40px 5%;
         min-height: 80vh;
+        text-align: center;
       }
 
       .hero-content {
-        width: 45%;
-      }
-
-      .hero-image {
-        width: 50%;
-        text-align: right;
-      }
-
-      .hero-image img {
-        max-width: 100%;
-        height: auto;
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 30px;
       }
 
       h1 {
@@ -145,52 +137,56 @@
         color: #555;
       }
 
-      /* Search Form */
+      /* Search Form - Updated to be Bigger and Centered */
       .search-form {
         background-color: white;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 30px;
-      }
-
-      .search-form div {
-        flex: 1 1 200px;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
       }
 
       .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
       }
 
       .form-group label {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         font-weight: bold;
         color: #555;
+        font-size: 1.1rem;
+        text-align: left;
       }
 
       .form-group input {
         width: 100%;
-        padding: 10px;
+        padding: 15px;
         border: 1px solid #ddd;
-        border-radius: 5px;
+        border-radius: 8px;
+        font-size: 1.1rem;
       }
 
       .search-button {
         background-color: #2563eb;
         color: white;
-        padding: 10px 30px;
+        padding: 15px 40px;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
+        font-size: 1.1rem;
+        width: 100%;
         margin-top: 10px;
-        align-self: flex-end;
-        height: 45px;
+        transition: background-color 0.3s;
       }
+
+      .search-button:hover {
+        background-color: #1d4ed8;
+      }
+
       .location-input-wrapper {
         position: relative;
         display: flex;
@@ -199,52 +195,22 @@
       }
 
       .location-btn {
-        margin-top: 5px;
-        padding: 8px 12px;
+        margin-top: 10px;
+        padding: 10px 15px;
         background-color: #f0f0f0;
         border: 1px solid #ccc;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 0.9rem;
+        display: inline-block;
       }
 
       .location-btn:hover {
         background-color: #e0e0e0;
       }
 
-      .directions-btn {
-        background-color: #4285f4;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        margin-top: 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-      }
-
-      .directions-btn:hover {
-        background-color: #3367d6;
-      }
-
       /* Responsive */
       @media (max-width: 768px) {
-        .hero {
-          flex-direction: column;
-          text-align: center;
-        }
-
-        .hero-content,
-        .hero-image {
-          width: 100%;
-        }
-
-        .hero-image {
-          width: 1048px;
-          height: 537px;
-          flex-shrink: 0;
-        }
-
         h1 {
           font-size: 2.5rem;
         }
@@ -258,7 +224,7 @@
         }
 
         .search-form {
-          flex-direction: column;
+          padding: 20px;
         }
       }
     </style>
@@ -271,11 +237,6 @@
         </div>
         SMARTCAR
       </div>
-      <nav>
-        <ul>
-          <li><a href="#" id="become-renter-link">Become a renter</a></li>
-        </ul>
-      </nav>
       <div class="auth-buttons">
         <a href="./login.html" class="btn btn-outline" id="signin-link"
           >Sign in</a
@@ -292,51 +253,28 @@
         <p class="hero-subtitle">
           Get a car wherever and whenever you need it with SmartCar!
         </p>
-
-        <div class="search-form">
-          <div class="form-group">
-            <label for="location-input">Location</label>
-            <input
-              type="text"
-              id="location-input"
-              placeholder="Search your location"
-            />
-            <button
-              type="button"
-              id="current-location-btn"
-              class="location-btn"
-            >
-              <i class="fa fa-map-marker"></i> Use my current location
-            </button>
-            <!-- Hidden fields for Google Maps data -->
-            <input type="hidden" id="location-lat" name="location-lat" />
-            <input type="hidden" id="location-lng" name="location-lng" />
-          </div>
-
-          <div class="form-group">
-            <label for="pickup-date">Pickup date</label>
-            <input
-              type="text"
-              id="pickup-date"
-              placeholder="Tue 15 Feb, 09:00"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="return-date">Return date</label>
-            <input
-              type="text"
-              id="return-date"
-              placeholder="Thu 16 Feb, 11:00"
-            />
-            <button class="btn search-button" id="search-button">Search</button>
-          </div>
-        </div>
       </div>
 
-      <div class="hero-image">
-        <!-- <img src="./src/car.png" alt="Blue sports car" /> -->
-        <div id="map" style="height: 600px; width: 700px"></div>
+      <div class="search-form">
+        <div class="form-group">
+          <label for="location-input">Location</label>
+          <input
+            type="text"
+            id="location-input"
+            placeholder="Search your location"
+          />
+          <button
+            type="button"
+            id="current-location-btn"
+            class="location-btn"
+          >
+            <i class="fa fa-map-marker"></i> Use my current location
+          </button>
+          <!-- Hidden fields for Google Maps data -->
+          <input type="hidden" id="location-lat" name="location-lat" />
+          <input type="hidden" id="location-lng" name="location-lng" />
+        </div>
+        <button class="btn search-button" id="search-button">Search</button>
       </div>
     </section>
 
