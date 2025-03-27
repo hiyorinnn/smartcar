@@ -20,6 +20,11 @@
     <div class="booking-container">
         <h1 class="booking-title">Book Your <span>Perfect Car</span></h1>
 
+        <!-- Cars Map -->
+        <div class="car-map">
+            <div id="map" style="height: 600px; width: 1000px; margin: 20px;"></div>
+        </div>
+
         <div class="booking-sections">
             <!-- Nearby Cars Section -->
             <div class="section">
@@ -86,5 +91,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="booking.js"></script>
+
+    <script
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w&libraries=marker,geometry&loading=async&callback=initMap"
+  ></script>
+
+  <script src="car.js"></script>
 </body>
 </html>
