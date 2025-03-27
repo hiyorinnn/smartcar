@@ -30,7 +30,7 @@ registerForm.addEventListener("submit", (event) => {
         .then(() => {
           console.log("User profile updated with name:", name);
           //registerMessage.innerText = `Welcome, ${name}! Your account has been created.`;
-          window.location.href = "../frontend/home.html";
+          window.location.href = "../index.html";
           // Store user's display name in localStorage
           localStorage.setItem("userName", name);
         })
