@@ -61,14 +61,8 @@ def processPlaceOrder(result):
         body=message,
     )
 
-result = {
-    'code': 200,
-    'data': {
-            'order_id': 1,
-            'phone_number': ""
-        },
-    'message': 'test'
-}
+result = '{"phone_number" : "+6590967606", "message" : "WAITWTFHOLDON"}'
+
 processPlaceOrder(result)
 
 # Execute this program if it is run as a main script (not by 'import')

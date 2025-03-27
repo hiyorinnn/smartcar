@@ -11,7 +11,7 @@ rabbit_host = "localhost"
 rabbit_port = 5672
 exchange_name = "order_topic"
 exchange_type = "topic"
-queue_name = "notif"
+queue_name = "Notification"
 
 # Load AWS credentials from config file
 with open("config.json") as config_file:
@@ -81,8 +81,9 @@ def callback(ch, method, properties, body):
             print("Invalid message format. Missing phone_number or message.")
             return
 
-        # Call the send_sms function
-        response = send_sms(phone_number, message)
+        # Ensure Flask app context is active
+        with app.app_context():
+            response = send_sms(phone_number, message)        
 
         print(f"SMS sent successfully: {response}")
         
