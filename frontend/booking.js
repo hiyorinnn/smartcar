@@ -1,14 +1,24 @@
 // Global variables to store selected car and user details
 let selectedCar = null;
 
-// Fetch nearby cars on page load
 async function fetchNearbyCars() {
     try {
-        const response = await axios.get('/car/available');
+        const response = await axios.get('http://127.0.0.1:5001/get_cars_in_geofence');
         const carsContainer = document.getElementById('cars-container');
         carsContainer.innerHTML = ''; // Clear loading text
 
-        response.data.data.cars.forEach(car => {
+        // Directly use the cars array from the response
+        const cars = response.data.cars;
+
+        // Filter only available cars
+        const availableCars = cars.filter(car => car.available);
+
+        if (availableCars.length === 0) {
+            carsContainer.innerHTML = '<p>No cars available at the moment.</p>';
+            return;
+        }
+
+        availableCars.forEach(car => {
             const carCard = document.createElement('div');
             carCard.className = 'car-card';
             carCard.innerHTML = `
@@ -16,10 +26,13 @@ async function fetchNearbyCars() {
                 <p>Year: ${car.year}</p>
                 <p>Color: ${car.color}</p>
                 <p>Price: $${car.price_per_hour}/hour</p>
+                <p>Location: (${car.latitude}, ${car.longitude})</p>
             `;
             carCard.addEventListener('click', () => selectCar(car, carCard));
             carsContainer.appendChild(carCard);
         });
+
+        console.log('Fetched cars:', availableCars);
     } catch (error) {
         console.error('Error fetching cars:', error);
         const carsContainer = document.getElementById('cars-container');
