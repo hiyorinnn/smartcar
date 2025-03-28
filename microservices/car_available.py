@@ -9,7 +9,7 @@ CORS(app)
 
 # Database Configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    environ.get("dbURL") or "mysql+mysqlconnector://root:Admin6548!@localhost:3306/esd"
+    environ.get("dbURL") or "mysql+mysqlconnector://root:root@localhost:3306/car_service"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -29,8 +29,9 @@ class Car(db.Model):
     available = db.Column(db.Boolean, default=True)
     latitude = db.Column(db.Numeric(10, 7), nullable=False) 
     longitude = db.Column(db.Numeric(10, 7), nullable=False)
+    town = db.Column(db.String(50), nullable = False)
 
-    def __init__(self, id, make, model, year, color, price_per_hour, latitude, longitude, available=True):
+    def __init__(self, id, make, model, year, color, price_per_hour, latitude, longitude,town,available=True):
         self.id = id
         self.make = make
         self.model = model
@@ -40,6 +41,7 @@ class Car(db.Model):
         self.available = available
         self.latitude = latitude
         self.longitude = longitude 
+        self.town = town
 
     def json(self):
         return {
@@ -52,6 +54,7 @@ class Car(db.Model):
             "available": self.available,
             "latitude": float(self.latitude),
             "longitude": float(self.longitude),  
+            "town": self.town
         }
 
 

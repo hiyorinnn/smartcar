@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartCar - Sign Up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="register.js"></script>
+    <style>
+      /* Basic Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        background-image: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.8) 50%,
+            transparent 50%
+          ),
+          linear-gradient(rgba(255, 255, 255, 0.8) 50%, transparent 50%);
+        background-size: 30px 30px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 5%;
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        color: #2563eb;
+        font-weight: bold;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .logo-icon {
+        margin-right: 10px;
+        font-size: 1.8rem;
+      }
+
+      /* Register Container */
+      .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+        padding: 40px 20px;
+      }
+
+      .register-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        padding: 40px;
+      }
+
+      .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .register-header h1 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .register-header p {
+        color: #666;
+        font-size: 0.95rem;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+        flex: 1;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus {
+        border-color: #2563eb;
+        outline: none;
+      }
+
+      .terms-check {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        gap: 10px;
+      }
+
+      .terms-check input {
+        margin-top: 3px;
+      }
+
+      .terms-check label {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.4;
+      }
+
+      .terms-check a {
+        color: #2563eb;
+        text-decoration: none;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .btn-primary {
+        background-color: #2563eb;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #1d4ed8;
+      }
+
+      .register-footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .register-footer a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      /* Responsive */
+      @media (max-width: 768px) {
+        .register-card {
+          padding: 30px 20px;
+        }
+
+        .form-row {
+          flex-direction: column;
+          gap: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="index.html" class="logo">
+        <div class="logo-icon">
+          <img src="./src/Frame.svg" />
+        </div>
+        SMARTCAR
+      </a>
+    </header>
+
+    <div class="register-container">
+      <div class="register-card">
+        <div class="register-header">
+          <h1>Create Account</h1>
+          <p>Join SmartCar to find and rent cars easily</p>
+        </div>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Create a password"
+              required
+            />
+            <div class="password-strength">
+              <div
+                id="password-strength-bar"
+                class="password-strength-bar"
+              ></div>
+            </div>
+            <div id="password-feedback" class="password-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
+
+          <div class="terms-check">
+            <input type="checkbox" id="terms" required />
+            <label for="terms">
+              I agree to SmartCar's <a href="#">Terms of Service</a> and
+              <a href="#">Privacy Policy</a>
+            </label>
+          </div>
+          <div
+            id="register-message"
+            style="color: #e74c3c; font-size: 14px; margin: 10px 0"
+          ></div>
+          <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+        <div class="register-footer">
+          <p>Already have an account? <a href="login.html">Sign in</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

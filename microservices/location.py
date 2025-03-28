@@ -1,6 +1,6 @@
 import sys
 import os
-
+from flask_cors import CORS
 from flask import Flask, jsonify, request
 import grpc
 
@@ -14,6 +14,7 @@ from geofence import geofence_pb2_grpc
 from invokes import invoke_http
 
 app = Flask(__name__)
+CORS(app)
 
 order_URL = "http://127.0.0.1:5002/api/ip_location"
 
@@ -72,7 +73,7 @@ def get_gps():
     gps_result = invoke_http(
         order_URL, method="GET"
     )
-    print(f"  gps_result:{gps_result['latitude'], gps_result['longitude']}\n")
+    # print(f"  gps_result:{gps_result['latitude'], gps_result['longitude']}\n")
     return gps_result["latitude"], gps_result["longitude"]
 
 
