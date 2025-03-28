@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            background-image: 
+                linear-gradient(90deg, rgba(255, 255, 255, 0.8) 50%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.8) 50%, transparent 50%);
+            background-size: 30px 30px;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .payment-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 5%;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .payment-title span {
+            color: #2563eb;
+            position: relative;
+        }
+
+        .payment-title span::after {
+            content: '';
+            position: absolute;
+            height: 10px;
+            background-color: #2563eb;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .payment-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        #payment-element {
+            margin-bottom: 24px;
+        }
+
+        .item-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .total-row {
+            border-top: 2px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1e40af;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #payment-message {
+            color: #555;
+            font-size: 16px;
+            line-height: 20px;
+            padding-top: 12px;
+            text-align: center;
+        }
+
+        #payment-message.hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .payment-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-car logo-icon"></i>
+            <span>SMARTCAR</span>
+        </div>
+    </header>
+
+    <div class="payment-container">
+        <h1 class="payment-title">Complete Your <span>Payment</span></h1>
+
+        <!-- Pass in values from booking -->
+        <div class="payment-sections">
+            <div class="section">
+                <h2 class="section-title">Order Summary</h2>
+                <div class="item-card">
+                    <span>{{ car_data.make_model }}</span> 
+                    <span>${{ car_data.price_per_hour }} / hour</span>
+                </div>
+                <div class="item-card">
+                    <span>{{ car_data.rental_date }} ({{ car_data.duration_hours }} hours)</span>
+                    <span>${{ car_data.total_price }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Total</span>
+                    <span>${{ car_data.total_price }}</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Payment Details</h2>
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="your@email.com" required>
+                    </div>
+                       
+                    <div id="payment-element">
+                        <!-- Stripe Elements will create form elements here -->
+                    </div>
+                    
+                    <button id="submit-button" class="btn">
+                        <div class="spinner hidden" id="spinner"></div>
+                        <span id="button-text">Pay ${{ car_data.total_price }}</span>
+                    </button>
+                    
+                    <div id="payment-message" class="hidden"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <script>
+        // Get the publishable key from the server (passed by Flask)
+        const stripePublishableKey = "{{ stripe_key }}";
+        
+        let stripe;
+        let elements;
+        let paymentIntentClientSecret;
+        
+        // Initialize Stripe
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Stripe.js
+            stripe = Stripe(stripePublishableKey);
+            
+            // Create PaymentIntent on the server
+            try {
+                const response = await fetch('/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        items: [
+                            { 
+                                id: 'car-rental',
+                                name: `{{ car_data.make_model }} ({{ car_data.duration_hours }} hours)`,
+                                price: `{{ car_data.total_price }}`,
+                                description: `{{ car_data.duration_hours }} hours on {{ car_data.rental_date }}`
+                            }
+                        ],
+                        order_id: generateOrderId()
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if(data.error) {
+                    showMessage(data.error);
+                    return;
+                }
+                
+                paymentIntentClientSecret = data.clientSecret;
+                
+                // Create and mount the Payment Element
+                elements = stripe.elements({
+                    clientSecret: paymentIntentClientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#2563eb',
+                            fontFamily: 'Poppins, sans-serif',
+                        },
+                    },
+                });
+                
+                const paymentElement = elements.create('payment');
+                paymentElement.mount('#payment-element');
+                
+            } catch(error) {
+                console.error('Error:', error);
+                showMessage("An error occurred. Please try again later.");
+            }
+        });
+        
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            setLoading(true);
+            
+            const emailInput = document.getElementById('email');
+            const email = emailInput.value;
+            
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/checkout-success',
+                        receipt_email: email,
+                    },
+                });
+                
+                if (error) {
+                    showMessage(error.message);
+                }
+                // If confirmPayment succeeds, the page will redirect to return_url
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage("An unexpected error occurred.");
+            }
+            
+            setLoading(false);
+        });
+        
+        // Helper functions
+        function setLoading(isLoading) {
+            const submitButton = document.getElementById('submit-button');
+            const spinner = document.getElementById('spinner');
+            const buttonText = document.getElementById('button-text');
+            
+            if (isLoading) {
+                submitButton.disabled = true;
+                spinner.classList.remove('hidden');
+                buttonText.classList.add('hidden');
+            } else {
+                submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.classList.remove('hidden');
+            }
+        }
+        
+        function showMessage(messageText) {
+            const messageContainer = document.getElementById('payment-message');
+            messageContainer.classList.remove('hidden');
+            messageContainer.textContent = messageText;
+            
+            setTimeout(function () {
+                messageContainer.classList.add('hidden');
+                messageContainer.textContent = "";
+            }, 6000);
+        }
+        
+        function generateOrderId() {
+            return 'order_' + Math.random().toString(36).substring(2, 15);
+        }
+    </script>
+</body>
+</html>
