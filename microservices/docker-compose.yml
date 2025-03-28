@@ -83,3 +83,18 @@ services:
       - smartcar-net
     depends_on:
       - car_available
+  
+  ###################################
+  # Error Handler microservice
+  ###################################
+  error_handler:
+    build:
+      context: ../error-handling-service/
+      dockerfile: error_handler.Dockerfile
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5005:5005"  # Changed from 5002 to avoid conflict with GPS service
+    networks:
+      - smartcar-net
