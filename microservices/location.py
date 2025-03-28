@@ -76,5 +76,34 @@ def get_gps():
     return gps_result["latitude"], gps_result["longitude"]
 
 
+@app.route('/get_cars_by_location/<location>', methods=['GET'])
+def get_cars_by_location(location):
+    try:
+        with grpc.insecure_channel('localhost:50051') as channel:
+            stub = geofence_pb2_grpc.GeofenceServiceStub(channel)
+            request_grpc = geofence_pb2.GeofenceRequest(location=location)
+            response_grpc = stub.GetCarsInLocation(request_grpc)
+
+            cars = []
+            for car in response_grpc.cars:
+                cars.append({
+                    'id': car.id,
+                    'make': car.make,
+                    'model': car.model,
+                    'year': car.year,
+                    'color': car.color,
+                    'price_per_hour': car.price_per_hour,
+                    'available': car.available,
+                    'latitude': car.latitude,
+                    'longitude': car.longitude,
+                    'town':car.town
+                })
+
+            return jsonify({'cars': cars})
+
+    except grpc.RpcError as e:
+        return jsonify({'error': str(e.details())}), 500
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5001, debug=True)

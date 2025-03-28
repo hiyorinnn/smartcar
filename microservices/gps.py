@@ -7,19 +7,22 @@ app = Flask(__name__)
 
 @app.route('/api/ip_location', methods=['GET'])
 def get_ip_location():
-    test_ip = "8.8.8.8" #google's public DNS.
-    # test_ip = request.remote_addr #use this in production to get client's IP
+    # test_ip = "8.8.8.8" #google's public DNS.
+    # # test_ip = request.remote_addr #use this in production to get client's IP
     try:
-        ip = requests.get('https://api.ipify.org').text
-        print('My public IP address is: {}'.format(ip))
+        # ip = requests.get('http://localhost:8000/api/ipify').text
+        # print('My public IP address is: {}'.format(ip))
 
-        response = requests.get(f'http://ip-api.com/json/{ip}')
+        response = requests.get(f'https://ipinfo.io/json')
+        
         response.raise_for_status() #check for errors.
         data = response.json()
         if data['status'] == 'success':
+            print(data)
+            latitude, longitude = map(float, data['loc'].split(','))
             return jsonify({
-                'latitude': data['lat'],
-                'longitude': data['lon'],
+                'latitude': latitude,
+                'longitude': longitude,
                 'city': data['city'],
                 'country': data['country'],
             })
