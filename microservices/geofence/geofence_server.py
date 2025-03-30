@@ -6,7 +6,7 @@ from concurrent import futures
 
 from invokes import invoke_http
 
-def is_within_geofence(user_lat, user_lon, car_lat, car_lon, radius=10): #Change radius to define the geofence
+def is_within_geofence(user_lat, user_lon, car_lat, car_lon, radius=0.023): #Change radius to define the geofence
     # Simple distance calculation 
     return (user_lat - car_lat)**2 + (user_lon - car_lon)**2 <= radius**2
 
@@ -29,7 +29,7 @@ class GeofenceServicer(geofence_pb2_grpc.GeofenceServiceServicer):
             for car in cars:
                 if is_within_geofence(user_lat, user_lon, car['latitude'], car['longitude']):
                     cars_in_geofence.append(geofence_pb2.Car(
-                        id=car['id'], make=car['make'], model=car['model'], year=car['year'], color=car['color'], price_per_hour=car['price_per_hour'], available=car['available'], latitude=car['latitude'], longitude=car['longitude']
+                        id=car['id'], make=car['make'], model=car['model'], year=car['year'], color=car['color'], price_per_hour=car['price_per_hour'], available=car['available'], latitude=car['latitude'], longitude=car['longitude'], town=car['town']
                     ))
 
             return geofence_pb2.CarList(cars=cars_in_geofence)

@@ -14,11 +14,11 @@ def get_ip_location():
         # print('My public IP address is: {}'.format(ip))
 
         response = requests.get(f'https://ipinfo.io/json')
-        
         response.raise_for_status() #check for errors.
+        
         data = response.json()
-        if data['status'] == 'success':
-            print(data)
+        
+        if data:
             latitude, longitude = map(float, data['loc'].split(','))
             return jsonify({
                 'latitude': latitude,

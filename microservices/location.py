@@ -18,7 +18,7 @@ CORS(app)
 
 order_URL = "http://127.0.0.1:5002/api/ip_location"
 
-@app.route('/get_cars_in_geofence', methods=['GET'])
+@app.route('/get_cars_by_location', methods=['GET'])
 def get_cars_in_geofence():
     """
     Flask route that acts as a gRPC client.
@@ -60,7 +60,9 @@ def get_cars_in_geofence():
                     'available': car.available,
                     'latitude': car.latitude,
                     'longitude': car.longitude,
+                    'location' : car.town
                 })
+            print(f"return total of: {len(cars)} cars")
 
             return jsonify({'cars': cars})
 
@@ -99,7 +101,7 @@ def get_cars_by_location(location):
                     'longitude': car.longitude,
                     'town':car.town
                 })
-
+            print(f"return total of: {len(cars)} cars")
             return jsonify({'cars': cars})
 
     except grpc.RpcError as e:
