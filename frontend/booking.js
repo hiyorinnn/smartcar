@@ -3,15 +3,14 @@ let selectedCar = null;
 
 async function fetchNearbyCars() {
     try {
-        const response = await axios.get('http://127.0.0.1:5001/get_cars_in_geofence');
+        const response = await axios.get('http://127.0.0.1:5000/car/available');
+        console.log('Fetched cars:', response.data);
         const carsContainer = document.getElementById('cars-container');
         carsContainer.innerHTML = ''; // Clear loading text
 
         // Directly use the cars array from the response
-        const cars = response.data.cars;
-
-        // Filter only available cars
-        const availableCars = cars.filter(car => car.available);
+        const availableCars = response.data.data.cars;
+        console.log('Available cars:', availableCars);
 
         if (availableCars.length === 0) {
             carsContainer.innerHTML = '<p>No cars available at the moment.</p>';
