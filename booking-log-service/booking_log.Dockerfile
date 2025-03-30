@@ -3,7 +3,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Install dependencies
-RUN pip install --no-cache-dir flask flask-cors
+RUN pip install --no-cache-dir flask flask-cors flask-sqlalchemy mysql-connector-python
 
 # Copy application code
 COPY booking_log.py .
