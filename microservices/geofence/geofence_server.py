@@ -52,7 +52,7 @@ class GeofenceServicer(geofence_pb2_grpc.GeofenceServiceServicer):
 
             cars_in_location = []
             for car in cars:
-                if car['town'] == location:
+                if car['town'].lower() == location.lower():
                     cars_in_location.append(geofence_pb2.Car(
                         id=car['id'], make=car['make'], model=car['model'], year=car['year'], color=car['color'], price_per_hour=car['price_per_hour'], available=car['available'], latitude=car['latitude'], longitude=car['longitude'], town=car['town']
                     ))
