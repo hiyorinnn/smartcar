@@ -55,6 +55,7 @@ class BookingLog(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     booking_id = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.String(13), nullable=True)  # Added user_id field
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
     contact_number = db.Column(db.String(20), nullable=False)
@@ -70,9 +71,10 @@ class BookingLog(db.Model):
     
     def __init__(self, booking_id, email, start_time, end_time, contact_number, car_id, 
                  booking_status='not_started', payment_status='pending', payment_method=None, 
-                 total_amount=None, transaction_id=None, payment_timestamp=None, details=None):
+                 total_amount=None, transaction_id=None, payment_timestamp=None, details=None, user_id=None):
         self.booking_id = booking_id
         self.email = email
+        self.user_id = user_id  # Added user_id parameter
         self.start_time = start_time
         self.end_time = end_time
         self.contact_number = contact_number
@@ -91,6 +93,7 @@ class BookingLog(db.Model):
             "id": self.id,
             "booking_id": self.booking_id,
             "email": self.email,
+            "user_id": self.user_id,  # Added user_id to JSON response
             "start_time": self.start_time.isoformat(),
             "end_time": self.end_time.isoformat(),
             "contact_number": self.contact_number,
@@ -164,8 +167,20 @@ def record_booking_log():
                 "message": "Invalid payment_timestamp format. Use ISO format."
             }), 400
     
-    # Check if user exists by email
-    user = db.session.scalar(db.select(User).filter_by(email=log_data['email']))
+    # Check if user_id is provided in the request
+    user_id = log_data.get('user_id')
+    
+    # If user_id is not provided, try to find it by email
+    if not user_id:
+        user = db.session.scalar(db.select(User).filter_by(email=log_data['email']))
+        user_id = user.user_id if user else None
+    else:
+        # Verify that the user_id exists in the database
+        user = db.session.scalar(db.select(User).filter_by(user_id=user_id))
+        if not user:
+            # If user_id doesn't exist, try to find user by email
+            user = db.session.scalar(db.select(User).filter_by(email=log_data['email']))
+            user_id = user.user_id if user else None
     
     # Extract fields for booking log
     booking_id = log_data['booking_id']
@@ -188,10 +203,11 @@ def record_booking_log():
                       'transaction_id', 'payment_timestamp']:
             details[key] = value
     
-    # Create new booking log
+    # Create new booking log with user_id
     new_booking_log = BookingLog(
         booking_id=booking_id,
         email=email,
+        user_id=user_id,  # Added user_id
         start_time=start_time,
         end_time=end_time,
         contact_number=contact_number,
@@ -268,6 +284,52 @@ def get_user_booking_logs(email):
             "message": f"Failed to retrieve booking logs: {str(e)}"
         }), 500
 
+@app.route("/api/booking-logs/user/<string:user_id>", methods=['GET'])
+def get_booking_logs_by_user_id(user_id):
+    """Retrieve booking logs for a specific user by user_id"""
+    
+    try:
+        # Find user by user_id
+        user = db.session.scalar(db.select(User).filter_by(user_id=user_id))
+        
+        if not user:
+            return jsonify({
+                "code": 404,
+                "message": f"No user found with user_id: {user_id}"
+            }), 404
+        
+        # Get all booking logs for the user_id
+        booking_logs = db.session.scalars(
+            db.select(BookingLog).filter_by(user_id=user_id).order_by(BookingLog.timestamp.desc())
+        ).all()
+        
+        if booking_logs:
+            logs_json = [log.json() for log in booking_logs]
+            
+            # Include user data
+            response_data = {
+                "booking_logs": logs_json,
+                "user": user.json()
+            }
+            
+            return jsonify({
+                "code": 200,
+                "message": "Booking logs retrieved successfully",
+                "data": response_data
+            }), 200
+        else:
+            return jsonify({
+                "code": 404, 
+                "message": f"No booking logs found for user_id: {user_id}"
+            }), 404
+    
+    except Exception as e:
+        print(f"Error retrieving booking logs: {str(e)}")
+        return jsonify({
+            "code": 500,
+            "message": f"Failed to retrieve booking logs: {str(e)}"
+        }), 500
+
 @app.route("/api/booking-logs/booking/<string:booking_id>", methods=['GET'])
 def get_booking_by_id(booking_id):
     """Retrieve a specific booking log by booking_id"""
@@ -276,8 +338,14 @@ def get_booking_by_id(booking_id):
         booking = db.session.scalar(db.select(BookingLog).filter_by(booking_id=booking_id))
         
         if booking:
-            # Get user info if available
-            user = db.session.scalar(db.select(User).filter_by(email=booking.email))
+            # Get user info if available - first try by user_id if available, then by email
+            user = None
+            if booking.user_id:
+                user = db.session.scalar(db.select(User).filter_by(user_id=booking.user_id))
+            
+            # If user not found by user_id or user_id not available, try by email
+            if not user:
+                user = db.session.scalar(db.select(User).filter_by(email=booking.email))
             
             response_data = booking.json()
             if user:
