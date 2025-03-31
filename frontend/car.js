@@ -35,11 +35,39 @@ function fetchCarData() {
       return response.json();
     })
     .then((carData) => {
-      console.log(carData)
+      console.log("Car data received:", carData);
+      
+      // Add defensive checks for the data structure
+      if (!carData) {
+        throw new Error("Car data is undefined");
+      }
+      if (!carData.data) {
+        throw new Error("Car data.data is undefined");
+      }
+      if (!carData.data.cars) {
+        throw new Error("Car data.data.cars is undefined");
+      }
+      
       displayCarsOnMap(carData.data.cars);
     })
     .catch((error) => {
       console.error("Error fetching car data:", error);
+      // Display error message on the map
+      const mapElement = document.getElementById("map");
+      if (mapElement) {
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "error-message";
+        errorDiv.textContent = "Failed to load car data. Please try again later.";
+        errorDiv.style.position = "absolute";
+        errorDiv.style.top = "50%";
+        errorDiv.style.left = "50%";
+        errorDiv.style.transform = "translate(-50%, -50%)";
+        errorDiv.style.backgroundColor = "rgba(255, 0, 0, 0.7)";
+        errorDiv.style.color = "white";
+        errorDiv.style.padding = "10px";
+        errorDiv.style.borderRadius = "5px";
+        mapElement.appendChild(errorDiv);
+      }
     });
 }
 

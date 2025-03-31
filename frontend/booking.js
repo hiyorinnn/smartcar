@@ -68,15 +68,20 @@ async function bookCar() {
         return;
     }
 
-    // Ensure dates are in ISO format
+    // Ensure dates are in ISO format compatible with Python's fromisoformat()
     const formatISODate = (dateString) => {
         const date = new Date(dateString);
-        return date.toISOString();
+        // Remove the 'Z' from the ISO string to make it compatible with Python's fromisoformat()
+        return date.toISOString().replace('Z', '');
     };
 
+    // Get user_id from localStorage if available
+    const user_id = localStorage.getItem('userUID');
+    
     const bookingData = {
         booking_id: generateUniqueId(),
-        email: email,  // Change from email_address to email
+        email: email,
+        user_id: user_id, // Include user_id from localStorage if available
         start_time: formatISODate(pickupDate),
         end_time: formatISODate(returnDate),
         contact_number: phone,
@@ -86,7 +91,14 @@ async function bookCar() {
         total_amount: calculateTotalAmount(selectedCar, pickupDate, returnDate),
         details: {
           user_name: `${firstName} ${lastName}`,
-          car_details: selectedCar
+          car_details: {
+            id: selectedCar.id,
+            make: selectedCar.make,
+            model: selectedCar.model,
+            year: selectedCar.year,
+            color: selectedCar.color,
+            price_per_hour: selectedCar.price_per_hour
+          }
         }
       };
 
@@ -97,7 +109,7 @@ async function bookCar() {
         console.log('Booking response:', response.data);
         
         // Update car availability 
-        await axios.put(`/car/${selectedCar.id}/availability`, { available: false });
+        await axios.put(`http://localhost:5000/car/${selectedCar.id}/availability`, { available: false });
 
         alert('Booking successful! Your booking has been logged.');
     } catch (error) {
