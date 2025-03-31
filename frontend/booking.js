@@ -74,28 +74,25 @@ async function bookCar() {
         return date.toISOString();
     };
 
-    // Prepare booking log data
     const bookingData = {
-        user_id: email, // Using email as user ID
-        user_name: `${firstName} ${lastName}`,
+        booking_id: generateUniqueId(),
+        email: email,  // Change from email_address to email
         start_time: formatISODate(pickupDate),
         end_time: formatISODate(returnDate),
         contact_number: phone,
-        email_address: email,
         car_id: selectedCar.id,
-        action: 'created',
         payment_status: 'pending',
         payment_method: paymentMethod,
         total_amount: calculateTotalAmount(selectedCar, pickupDate, returnDate),
         details: {
-            car_details: selectedCar
-        },
-        timestamp: new Date().toISOString() // Add current timestamp
-    };
+          user_name: `${firstName} ${lastName}`,
+          car_details: selectedCar
+        }
+      };
 
     try {
         // Log booking to booking log microservice with full URL
-        const response = await axios.post('http://127.0.0.1:5004/api/booking-log', bookingData);
+        const response = await axios.post('http://127.0.0.1:5006/api/booking-log', bookingData);
         
         console.log('Booking response:', response.data);
         
@@ -114,6 +111,10 @@ function calculateTotalAmount(car, startTime, endTime) {
     const end = new Date(endTime);
     const hours = (end - start) / (1000 * 60 * 60);
     return (hours * car.price_per_hour).toFixed(2);
+}
+
+function generateUniqueId() {
+    return 'booking-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 }
 
 // Event Listeners
