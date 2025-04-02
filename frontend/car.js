@@ -96,7 +96,7 @@ function displayCarsOnMap(cars) {
     });
 
     // Add click event
-    marker.addEventListener("click", () => {
+    marker.addEventListener("gmp-click", () => {
       console.log("Marker clicked:", car.make, car.model);
       infoWindow.open({
         map: map,
