@@ -65,7 +65,9 @@ class GeofenceServicer(geofence_pb2_grpc.GeofenceServiceServicer):
 
     def get_all_available_car(self):
         # Make an API call to car_avaliability microservice
-        car_avaliable_URL = 'http://127.0.0.1:5000/car/available'
+        #car_avaliable_URL = 'http://127.0.0.1:5000/car/available' #Change to URL to use with docker
+        car_avaliable_URL = 'http://car_available:5000/car/available'
+
         print("  Invoking car_available microservice...")
         car_available_result = invoke_http(
             car_avaliable_URL, method="GET"

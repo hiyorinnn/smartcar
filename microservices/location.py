@@ -16,7 +16,8 @@ from invokes import invoke_http
 app = Flask(__name__)
 CORS(app)
 
-order_URL = "http://127.0.0.1:5002/api/ip_location"
+#order_URL = "http://127.0.0.1:5002/api/ip_location" # Change to URL to use with docker
+order_URL = "http://gps:5002/api/ip_location"
 
 @app.route('/get_cars_by_location', methods=['GET'])
 def get_cars_in_geofence():
@@ -43,7 +44,7 @@ def get_cars_in_geofence():
         # Invoke the gps microservice
         user_latitude, user_longitude = get_gps()
 
-        with grpc.insecure_channel('localhost:50051') as channel:
+        with grpc.insecure_channel('geofence:50051') as channel: #update to work with docker
             stub = geofence_pb2_grpc.GeofenceServiceStub(channel)
             request_grpc = geofence_pb2.GeofenceRequest(user_latitude=user_latitude, user_longitude=user_longitude)
             response_grpc = stub.GetCarsInGeofence(request_grpc)
@@ -82,7 +83,7 @@ def get_gps():
 @app.route('/get_cars_by_location/<location>', methods=['GET'])
 def get_cars_by_location(location):
     try:
-        with grpc.insecure_channel('localhost:50051') as channel:
+        with grpc.insecure_channel('geofence:50051') as channel:
             stub = geofence_pb2_grpc.GeofenceServiceStub(channel)
             request_grpc = geofence_pb2.GeofenceRequest(location=location)
             response_grpc = stub.GetCarsInLocation(request_grpc)
