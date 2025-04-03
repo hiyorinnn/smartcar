@@ -6,16 +6,30 @@ import json
 from os import environ
 
 app = Flask(__name__)
-CORS(app)
+# Enable CORS for all origins with more permissive settings
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "allow_headers": "*"}})
 
 # Database Configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    environ.get("dbURL") or "mysql+mysqlconnector://root@localhost:3306/car_service"
-)
+db_url = environ.get("dbURL") or "mysql+mysqlconnector://root@localhost:3306/car_service"
+print(f"Connecting to database with URL: {db_url}")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_recycle': 299,
+    'pool_timeout': 20,
+    'pool_pre_ping': True  # This helps detect and recover from stale connections
+}
 
 db = SQLAlchemy(app)
+
+# Test database connection
+try:
+    with app.app_context():
+        db.engine.connect()
+    print("Database connection successful!")
+except Exception as e:
+    print(f"Database connection failed: {str(e)}")
 
 # Models
 class User(db.Model):
@@ -109,16 +123,33 @@ class BookingLog(db.Model):
         }
 
 # API Routes
-@app.route("/api/booking-log", methods=['POST'])
+@app.route("/api/booking-log", methods=['POST', 'OPTIONS'])
 def record_booking_log():
+    # Handle preflight OPTIONS request
+    if request.method == 'OPTIONS':
+        return '', 200
+        
+    # Log request details for debugging
+    print(f"Received booking request from: {request.remote_addr}")
+    print(f"Request headers: {request.headers}")
+    
     # Check if the request contains valid JSON
     if not request.is_json:
+        print(f"Invalid request format: {request.data}")
         return jsonify({
             "code": 400, 
             "message": "Booking log input should be in JSON."
         }), 400
     
-    log_data = request.get_json()
+    try:
+        log_data = request.get_json()
+        print(f"Received booking data: {json.dumps(log_data, indent=2)}")
+    except Exception as e:
+        print(f"Error parsing JSON: {str(e)}")
+        return jsonify({
+            "code": 400,
+            "message": f"Invalid JSON format: {str(e)}"
+        }), 400
     
     # Validate required fields
     required_fields = ['email', 'start_time', 'end_time', 'contact_number', 'car_id', 'booking_id']

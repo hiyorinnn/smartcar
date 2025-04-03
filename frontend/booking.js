@@ -3,7 +3,9 @@ let selectedCar = null;
 
 async function fetchNearbyCars() {
     try {
-        const response = await axios.get('http://127.0.0.1:5000/car/available');
+        // Use window.location.hostname to make it work in different environments
+        const hostname = window.location.hostname === 'localhost' ? '127.0.0.1' : window.location.hostname;
+        const response = await axios.get(`http://${hostname}:5000/car/available`);
         console.log('Fetched cars:', response.data);
         const carsContainer = document.getElementById('cars-container');
         carsContainer.innerHTML = ''; // Clear loading text
@@ -104,16 +106,26 @@ async function bookCar() {
 
     try {
         // Log booking to booking log microservice with full URL
-        const response = await axios.post('http://127.0.0.1:5006/api/booking-log', bookingData);
+        console.log('Sending booking data:', bookingData);
+        
+        // Use window.location.hostname to make it work in different environments
+        const hostname = window.location.hostname === 'localhost' ? '127.0.0.1' : window.location.hostname;
+        const response = await axios.post(`http://${hostname}:5006/api/booking-log`, bookingData);
         
         console.log('Booking response:', response.data);
         
-        // Update car availability 
-        await axios.put(`http://localhost:5000/car/${selectedCar.id}/availability`, { available: false });
+        // Update car availability - also use the dynamic hostname
+        await axios.put(`http://${hostname}:5000/car/${selectedCar.id}/availability`, { available: false });
 
         alert('Booking successful! Your booking has been logged.');
     } catch (error) {
-        console.error('Booking error:', error.response ? error.response.data : error);
+        console.error('Booking error:', error);
+        if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error response status:', error.response.status);
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        }
         alert('Booking failed. Please check the console for details.');
     }
 }
