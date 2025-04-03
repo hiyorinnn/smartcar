@@ -27,7 +27,7 @@ window.initMap = function() {
 
 // Fetch car data from the microservice
 function fetchCarData() {
-  fetch("http://localhost:5000/car/available")
+  fetch("http://127.0.0.1:5001/get_cars_by_location")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -41,14 +41,11 @@ function fetchCarData() {
       if (!carData) {
         throw new Error("Car data is undefined");
       }
-      if (!carData.data) {
-        throw new Error("Car data.data is undefined");
-      }
-      if (!carData.data.cars) {
-        throw new Error("Car data.data.cars is undefined");
+      if (!carData.cars) {
+        throw new Error("Car data.cars is undefined");
       }
       
-      displayCarsOnMap(carData.data.cars);
+      displayCarsOnMap(carData.cars);
     })
     .catch((error) => {
       console.error("Error fetching car data:", error);
