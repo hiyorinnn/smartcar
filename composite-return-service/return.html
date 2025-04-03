@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Return Form</title>
+    <script>
+        function submitForm() {
+            const bookingId = document.getElementById('bookingId').value;
+            const imagesInput = document.getElementById('images');
+            const files = imagesInput.files;
+
+            if (!bookingId || files.length === 0) {
+                alert('Please provide booking ID and upload at least one image.');
+                return;
+            }
+
+            // Prepare the image data
+            let images = {};
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i];
+                images[`image${i + 1}`] = {
+                    file_name: file.name,
+                    file_type: file.type
+                };
+            }
+
+            // Create the JSON data for the request
+            const formData = {
+                booking_id: bookingId,
+                images: images
+            };
+
+            // Convert data to JSON and send POST request to backend
+            fetch('http://localhost:5006/api/return-vehicle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('Vehicle return process completed successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error with the vehicle return process.');
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Return Your Vehicle</h1>
+
+    <label for="bookingId">Booking ID:</label>
+    <input type="text" id="bookingId" name="booking_id" required><br><br>
+
+    <label for="images">Select Images (Multiple):</label>
+    <input type="file" id="images" name="images" accept="image/*" multiple required><br><br>
+
+    <button type="button" onclick="submitForm()">Submit</button>
+</body>
+</html>

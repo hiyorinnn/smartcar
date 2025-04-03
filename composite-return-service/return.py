@@ -1,5 +1,5 @@
 # All the dependencies
-from invokes import invoke_http
+import requests
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -78,44 +78,44 @@ def return_vehicle():
             return jsonify({'error': 'Missing booking_id or images'}), 400
 
         # Retrieve booking details
-        response = invoke_http(BOOKINGLOGURL.format(booking_id), method='GET')
+        response = requests.get(BOOKINGLOGURL.format(booking_id))
         
-        if response.get('code') == 404:
-            invoke_http(ERRORHANDLINGURL, method='POST', json={'booking_id': booking_id, 'error': 'Booking not found'})
+        if response.status_code == 404:
+            requests.post(ERRORHANDLINGURL, json={'booking_id': booking_id, 'error': 'Booking not found'})
             return jsonify({'error': 'Booking not found'}), 404
-        elif response.get('code') != 200:
+        elif response.status_code != 200:
             return jsonify({'error': 'Error retrieving booking logs'}), 500
 
         # Generate pre-signed URLs
-        presigned_response = invoke_http(GENERATEPRESIGNEDURL, method='POST', json={'bookingID': booking_id, 'images': images})
+        presigned_response = requests.post(GENERATEPRESIGNEDURL, json={'bookingID': booking_id, 'images': images})
         
-        if presigned_response.get('code') != 200:
+        if presigned_response.status_code != 200:
             return jsonify({'error': 'Failed to generate pre-signed URLs'}), 500
 
         # Analyze images with Rekognition
-        rekognition_response = invoke_http(REKOGNITIONURL, method='POST', json=presigned_response)
+        rekognition_response = requests.post(REKOGNITIONURL, json=presigned_response.json())
         
-        if rekognition_response.get('code') == 404:
-            invoke_http(ERRORHANDLINGURL, method='POST', json={'booking_id': booking_id, 'error': 'Rekognition service failed'})
+        if rekognition_response.status_code == 404:
+            requests.post(ERRORHANDLINGURL, json={'booking_id': booking_id, 'error': 'Rekognition service failed'})
             return jsonify({'error': 'Rekognition service failed'}), 404
-        elif rekognition_response.get('code') != 200:
+        elif rekognition_response.status_code != 200:
             return jsonify({'error': 'Error processing images'}), 500
 
-        defect_count = rekognition_response.get('defect_count', 0)
+        defect_count = rekognition_response.json().get('defect_count', 0)
 
         # Log violations if needed
-        violation_response = invoke_http(VIOLATIONLOGURL, method='POST', json={'booking_id': booking_id, 'defect_count': defect_count})
+        violation_response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
         
-        if violation_response.get('code') == 404:
-            invoke_http(ERRORHANDLINGURL, method='POST', json={'booking_id': booking_id, 'error': 'Violation log service failed'})
+        if violation_response.status_code == 404:
+            requests.post(ERRORHANDLINGURL, json={'booking_id': booking_id, 'error': 'Violation log service failed'})
             return jsonify({'error': 'Violation log service failed'}), 404
-        elif violation_response.get('code') != 200:
+        elif violation_response.status_code != 200:
             return jsonify({'error': 'Error logging violations'}), 500
 
         # Send notification
-        notification_response = invoke_http(NOTIFICATIONURL, method='POST', json={'booking_id': booking_id, 'message': 'Your vehicle return process is complete.'})
+        notification_response = requests.post(NOTIFICATIONURL, json={'booking_id': booking_id, 'message': 'Your vehicle return process is complete.'})
         
-        if notification_response.get('code') != 200:
+        if notification_response.status_code != 200:
             return jsonify({'error': 'Failed to send notification'}), 500
 
         return jsonify({'message': 'Vehicle return process completed successfully'}), 200
