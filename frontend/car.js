@@ -35,7 +35,7 @@ function fetchCarData() {
       return response.json();
     })
     .then((carData) => {
-      console.log("Car data received:", carData);
+      console.log("Car data received for google map markers:", carData);
       
       // Add defensive checks for the data structure
       if (!carData) {

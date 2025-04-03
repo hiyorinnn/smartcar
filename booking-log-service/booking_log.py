@@ -8,6 +8,7 @@ from os import environ
 app = Flask(__name__)
 CORS(app)
 
+
 # Database Configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     environ.get("dbURL") or "mysql+mysqlconnector://root@localhost:3306/car_service"
@@ -23,7 +24,6 @@ class User(db.Model):
     
     user_id = db.Column(db.String(13), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    username = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(256), nullable=False)
     
@@ -31,7 +31,6 @@ class User(db.Model):
         return {
             "user_id": self.user_id,
             "name": self.name,
-            "username": self.username,
             "email": self.email
         }
 
@@ -490,6 +489,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     
-    port = int(environ.get("PORT", 5004))
+    port = int(environ.get("PORT", 5006))
     print(f"Booking Log Service running on port {port}...")
     app.run(host='0.0.0.0', port=port, debug=True)
