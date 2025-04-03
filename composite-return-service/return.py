@@ -13,6 +13,9 @@ REKOGNITIONURL = "http://localhost:5003/api/rekognition"
 BOOKINGLOGURL = "http://localhost:5004/api/booking-log/{booking_id}"
 ERRORHANDLINGURL = "http://localhost:5005/api/error-handling/" #To ask Jing Kai to change the port and the route to standardise
 
+# updates: dont need invoke errorhandling anymore, but if want to display error message to front page, need to return on your own
+# copy and paste return_vehicle.py to this file
+
 # 1. Receive data in JSON format from the car return form frontend page (an example)
     # {
     #   booking_id : 1234,
