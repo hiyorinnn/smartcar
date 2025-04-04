@@ -24,11 +24,13 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 
 db = SQLAlchemy(app)
 
-# Test database connection
+# Test database connection and create tables if they don't exist
 try:
     with app.app_context():
         db.engine.connect()
-    print("Database connection successful!")
+        # Create all tables defined in models if they don't exist
+        db.create_all()
+    print("Database connection successful and tables created!")
 except Exception as e:
     print(f"Database connection failed: {str(e)}")
 
@@ -68,7 +70,7 @@ class BookingLog(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     booking_id = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    user_id = db.Column(db.String(13), nullable=True)  # Added user_id field
+    user_id = db.Column(db.String(13), db.ForeignKey('user.user_id'), nullable=True) 
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
     contact_number = db.Column(db.String(20), nullable=False)
@@ -440,10 +442,6 @@ def update_payment_info(booking_id):
         }), 500
 
 if __name__ == "__main__":
-    # Create tables if they don't exist
-    with app.app_context():
-        db.create_all()
-    
     port = int(environ.get("PORT", 5006))
     print(f"Booking Log Service running on port {port}...")
     app.run(host='0.0.0.0', port=port, debug=True)
