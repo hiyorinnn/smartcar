@@ -27,7 +27,7 @@ window.initMap = function() {
 
 // Fetch car data from the microservice
 function fetchCarData() {
-  fetch("http://localhost:5000/car/available")
+  fetch("http://127.0.0.1:5001/get_cars_by_location")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -35,10 +35,36 @@ function fetchCarData() {
       return response.json();
     })
     .then((carData) => {
-      displayCarsOnMap(carData.data.cars);
+      console.log("Car data received for google map markers:", carData);
+      
+      // Add defensive checks for the data structure
+      if (!carData) {
+        throw new Error("Car data is undefined");
+      }
+      if (!carData.cars) {
+        throw new Error("Car data.cars is undefined");
+      }
+      
+      displayCarsOnMap(carData.cars);
     })
     .catch((error) => {
       console.error("Error fetching car data:", error);
+      // Display error message on the map
+      const mapElement = document.getElementById("map");
+      if (mapElement) {
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "error-message";
+        errorDiv.textContent = "Failed to load car data. Please try again later.";
+        errorDiv.style.position = "absolute";
+        errorDiv.style.top = "50%";
+        errorDiv.style.left = "50%";
+        errorDiv.style.transform = "translate(-50%, -50%)";
+        errorDiv.style.backgroundColor = "rgba(255, 0, 0, 0.7)";
+        errorDiv.style.color = "white";
+        errorDiv.style.padding = "10px";
+        errorDiv.style.borderRadius = "5px";
+        mapElement.appendChild(errorDiv);
+      }
     });
 }
 
@@ -67,7 +93,7 @@ function displayCarsOnMap(cars) {
     });
 
     // Add click event
-    marker.addEventListener("click", () => {
+    marker.addEventListener("gmp-click", () => {
       console.log("Marker clicked:", car.make, car.model);
       infoWindow.open({
         map: map,

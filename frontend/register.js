@@ -1,57 +1,49 @@
-// Import Firebase functions
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-const auth = getAuth();
 
-// Select form elements
-const firstName = document.getElementById("first-name");
-const lastName = document.getElementById("last-name");
+const registerForm = document.getElementById('register-form');
+const fullName = document.getElementById("name");
 const registerEmail = document.getElementById("email");
 const registerPassword = document.getElementById("password");
 const registerMessage = document.getElementById("register-message");
 
 // Handle user registration
-registerForm.addEventListener("submit", (event) => {
+registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const name = `${firstName.value} ${lastName.value}`;
-  const email = registerEmail.value;
-  const password = registerPassword.value;
+  
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-
-      updateProfile(user, {
-        displayName: name,
+  try {
+    const response = await fetch('http://127.0.0.1:5004/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: fullName.value,
+        email: registerEmail.value,
+        password: registerPassword.value
       })
-        .then(() => {
-          console.log("User profile updated with name:", name);
-          //registerMessage.innerText = `Welcome, ${name}! Your account has been created.`;
-          window.location.href = "../frontend/home.html";
-          // Store user's display name in localStorage
-          localStorage.setItem("userName", name);
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-    })
-    .catch((error) => {
-      console.error("Error creating user:", error.message);
-      if (error.message.includes("password")) {
-        registerMessage.innerText =
-          "Password needs to have at least 8 characters";
-      } else if (error.message.includes("email")) {
-        registerMessage.innerText = "Please enter a valid email";
-      } else {
-        registerMessage.innerText = error.message;
-      }
     });
-  const confirmPassword = document.getElementById("confirm-password");
-  if (password !== confirmPassword.value) {
-    registerMessage.innerText = "Passwords do not match";
-    return;
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Registration success:", data);
+      
+      // Store user details in localStorage
+      localStorage.setItem('Name', data.name || 'User');
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userUID', data.user_id);
+      
+      // Redirect to home page
+      window.location.href = "./index.html";
+    } else {
+      console.error("Error during registration:", data.error);
+      registerMessage.innerText = data.error || "Registration failed. Please try again.";
+    }
+  } catch (error) {
+    console.error("Error during registration:", error.message);
+    registerMessage.innerText = "Registration failed. Please try again.";
   }
 });
+
+  
+ 

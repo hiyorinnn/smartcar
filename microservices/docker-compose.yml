@@ -1,0 +1,116 @@
+## Add your respective docker files names here
+networks:
+  smartcar-net:
+    driver: bridge
+    name: smartcar-net
+
+services:
+  ###################################
+  # Car Available microservice
+  ###################################
+  car_available:
+    build:
+      context: ./
+      dockerfile: car_available.Dockerfile
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5000:5000"
+    networks:
+      - smartcar-net
+
+  ###################################
+  # Location microservice
+  ###################################
+  location:
+    build:
+      context: ./
+      dockerfile: location.Dockerfile
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5001:5001"
+    networks:
+      - smartcar-net
+
+  ###################################
+  # GPS microservice
+  ###################################
+  gps:
+    build:
+      context: ./
+      dockerfile: gps.Dockerfile
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5002:5002"
+    networks:
+      - smartcar-net
+
+  ###################################
+  # User microservice
+  ###################################
+  user:
+    build:
+      context: ./
+      dockerfile: user.Dockerfile
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5004:5004"
+    networks:
+      - smartcar-net
+
+  ###################################
+  # Geofence microservice
+  ###################################
+  geofence:
+    build:
+      context: ./geofence
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "50051:50051"
+    networks:
+      - smartcar-net
+    depends_on:
+      - car_available
+  
+  ###################################
+  # Error Handler microservice
+  ###################################
+  error_handler:
+    build:
+      context: ./error-handling-service/
+      dockerfile: error_handler.Dockerfile
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5005:5005"  # Changed from 5002 to avoid conflict with GPS service
+    networks:
+      - smartcar-net
+
+  ###################################
+  # Booking Log microservice
+  ###################################
+  booking_log:
+    build:
+      context: ../booking-log-service/
+      dockerfile: booking_log.Dockerfile
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5006:5006"  # Update to 5006 to avoid conflict with other services
+    networks:
+      - smartcar-net

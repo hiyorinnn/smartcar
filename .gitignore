@@ -1,1 +1,8 @@
 node_modules
+microservices/geofence/__pycache__/geofence_pb2_grpc.cpython-311.pyc
+microservices/geofence/__pycache__/geofence_pb2_grpc.cpython-312.pyc
+microservices/geofence/__pycache__/geofence_pb2.cpython-311.pyc
+microservices/geofence/__pycache__/geofence_pb2.cpython-312.pyc
+microservices/geofence/__pycache__/invokes.cpython-311.pyc
+microservices/geofence/__pycache__/invokes.cpython-312.pyc
+.DS_Store

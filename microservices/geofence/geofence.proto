@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package geofence;
+
+message Car {
+    string id = 1;
+    string make = 2;
+    string model = 3;
+    int32 year = 4;
+    string color = 5;
+    double price_per_hour = 6;
+    bool available = 7;
+    double latitude = 8;
+    double longitude = 9;
+    string town = 10;
+}
+
+message GeofenceRequest {
+    double user_latitude = 1;
+    double user_longitude = 2;
+    string location = 3;
+}
+
+message CarList {
+    repeated Car cars = 1;
+}
+
+service GeofenceService {
+    rpc GetCarsInGeofence(GeofenceRequest) returns (CarList);
+    rpc GetCarsInLocation(GeofenceRequest) returns (CarList);
+}
