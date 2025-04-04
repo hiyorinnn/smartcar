@@ -6,7 +6,7 @@ from concurrent import futures
 
 from invokes import invoke_http
 
-def is_within_geofence(user_lat, user_lon, car_lat, car_lon, radius=0.01): #Change radius to define the geofence
+def is_within_geofence(user_lat, user_lon, car_lat, car_lon, radius=0.023): #Change radius to define the geofence
     # Simple distance calculation 
     return (user_lat - car_lat)**2 + (user_lon - car_lon)**2 <= radius**2
 
@@ -29,7 +29,7 @@ class GeofenceServicer(geofence_pb2_grpc.GeofenceServiceServicer):
             for car in cars:
                 if is_within_geofence(user_lat, user_lon, car['latitude'], car['longitude']):
                     cars_in_geofence.append(geofence_pb2.Car(
-                        id=car['id'], make=car['make'], model=car['model'], year=car['year'], color=car['color'], price_per_hour=car['price_per_hour'], available=car['available'], latitude=car['latitude'], longitude=car['longitude']
+                        id=car['id'], make=car['make'], model=car['model'], year=car['year'], color=car['color'], price_per_hour=car['price_per_hour'], available=car['available'], latitude=car['latitude'], longitude=car['longitude'], town=car['town']
                     ))
 
             return geofence_pb2.CarList(cars=cars_in_geofence)
@@ -38,9 +38,36 @@ class GeofenceServicer(geofence_pb2_grpc.GeofenceServiceServicer):
             context.abort(grpc.StatusCode.INTERNAL, f"Error calling Flask API: {e}")
             return
         
+    def GetCarsInLocation(self, request, context):
+        location = request.location
+        try:
+            # Make an API call to car_avaliability microservice
+            car_data = self.get_all_available_car()
+
+            if car_data['code'] != 200:
+                context.abort(grpc.StatusCode.INTERNAL, car_data['message']) #Return error if Flask returns an error.
+                return
+
+            cars = car_data['data']['cars']
+
+            cars_in_location = []
+            for car in cars:
+                if car['town'].lower() == location.lower():
+                    cars_in_location.append(geofence_pb2.Car(
+                        id=car['id'], make=car['make'], model=car['model'], year=car['year'], color=car['color'], price_per_hour=car['price_per_hour'], available=car['available'], latitude=car['latitude'], longitude=car['longitude'], town=car['town']
+                    ))
+
+            return geofence_pb2.CarList(cars=cars_in_location)
+
+        except requests.exceptions.RequestException as e:
+            context.abort(grpc.StatusCode.INTERNAL, f"Error calling Flask API: {e}")
+            return
+
     def get_all_available_car(self):
         # Make an API call to car_avaliability microservice
-        car_avaliable_URL = 'http://127.0.0.1:5000/car/available'
+        #car_avaliable_URL = 'http://127.0.0.1:5000/car/available' #Change to URL to use with docker
+        car_avaliable_URL = 'http://car_available:5000/car/available'
+
         print("  Invoking car_available microservice...")
         car_available_result = invoke_http(
             car_avaliable_URL, method="GET"

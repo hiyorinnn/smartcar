@@ -16,9 +16,10 @@ from invokes import invoke_http
 app = Flask(__name__)
 CORS(app)
 
-order_URL = "http://127.0.0.1:5002/api/ip_location"
+#order_URL = "http://127.0.0.1:5002/api/ip_location" # Change to URL to use with docker
+order_URL = "http://gps:5002/api/ip_location"
 
-@app.route('/get_cars_in_geofence', methods=['GET'])
+@app.route('/get_cars_by_location', methods=['GET'])
 def get_cars_in_geofence():
     """
     Flask route that acts as a gRPC client.
@@ -43,7 +44,7 @@ def get_cars_in_geofence():
         # Invoke the gps microservice
         user_latitude, user_longitude = get_gps()
 
-        with grpc.insecure_channel('localhost:50051') as channel:
+        with grpc.insecure_channel('geofence:50051') as channel: #update to work with docker
             stub = geofence_pb2_grpc.GeofenceServiceStub(channel)
             request_grpc = geofence_pb2.GeofenceRequest(user_latitude=user_latitude, user_longitude=user_longitude)
             response_grpc = stub.GetCarsInGeofence(request_grpc)
@@ -60,7 +61,9 @@ def get_cars_in_geofence():
                     'available': car.available,
                     'latitude': car.latitude,
                     'longitude': car.longitude,
+                    'location' : car.town
                 })
+            print(f"return total of: {len(cars)} cars")
 
             return jsonify({'cars': cars})
 
@@ -75,6 +78,35 @@ def get_gps():
     )
     # print(f"  gps_result:{gps_result['latitude'], gps_result['longitude']}\n")
     return gps_result["latitude"], gps_result["longitude"]
+
+
+@app.route('/get_cars_by_location/<location>', methods=['GET'])
+def get_cars_by_location(location):
+    try:
+        with grpc.insecure_channel('geofence:50051') as channel:
+            stub = geofence_pb2_grpc.GeofenceServiceStub(channel)
+            request_grpc = geofence_pb2.GeofenceRequest(location=location)
+            response_grpc = stub.GetCarsInLocation(request_grpc)
+
+            cars = []
+            for car in response_grpc.cars:
+                cars.append({
+                    'id': car.id,
+                    'make': car.make,
+                    'model': car.model,
+                    'year': car.year,
+                    'color': car.color,
+                    'price_per_hour': car.price_per_hour,
+                    'available': car.available,
+                    'latitude': car.latitude,
+                    'longitude': car.longitude,
+                    'town':car.town
+                })
+            print(f"return total of: {len(cars)} cars")
+            return jsonify({'cars': cars})
+
+    except grpc.RpcError as e:
+        return jsonify({'error': str(e.details())}), 500
 
 
 if __name__ == '__main__':

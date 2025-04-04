@@ -9,6 +9,7 @@ app = Flask(__name__)
 # Enable CORS for all origins with more permissive settings
 CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "allow_headers": "*"}})
 
+
 # Database Configuration
 db_url = environ.get("dbURL") or "mysql+mysqlconnector://root@localhost:3306/car_service"
 print(f"Connecting to database with URL: {db_url}")
@@ -37,7 +38,6 @@ class User(db.Model):
     
     user_id = db.Column(db.String(13), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    username = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(256), nullable=False)
     
@@ -45,7 +45,6 @@ class User(db.Model):
         return {
             "user_id": self.user_id,
             "name": self.name,
-            "username": self.username,
             "email": self.email
         }
 
@@ -277,9 +276,9 @@ def record_booking_log():
         }), 500
 
 @app.route("/api/booking-logs/<string:email>", methods=['GET'])
+
+# Get all booking logs of user by email
 def get_user_booking_logs(email):
-    """Retrieve booking logs for a specific user by email"""
-    
     try:
         # Find user by email
         user = db.session.scalar(db.select(User).filter_by(email=email))
@@ -315,90 +314,14 @@ def get_user_booking_logs(email):
             "message": f"Failed to retrieve booking logs: {str(e)}"
         }), 500
 
-@app.route("/api/booking-logs/user/<string:user_id>", methods=['GET'])
-def get_booking_logs_by_user_id(user_id):
-    """Retrieve booking logs for a specific user by user_id"""
-    
-    try:
-        # Find user by user_id
-        user = db.session.scalar(db.select(User).filter_by(user_id=user_id))
-        
-        if not user:
-            return jsonify({
-                "code": 404,
-                "message": f"No user found with user_id: {user_id}"
-            }), 404
-        
-        # Get all booking logs for the user_id
-        booking_logs = db.session.scalars(
-            db.select(BookingLog).filter_by(user_id=user_id).order_by(BookingLog.timestamp.desc())
-        ).all()
-        
-        if booking_logs:
-            logs_json = [log.json() for log in booking_logs]
-            
-            # Include user data
-            response_data = {
-                "booking_logs": logs_json,
-                "user": user.json()
-            }
-            
-            return jsonify({
-                "code": 200,
-                "message": "Booking logs retrieved successfully",
-                "data": response_data
-            }), 200
-        else:
-            return jsonify({
-                "code": 404, 
-                "message": f"No booking logs found for user_id: {user_id}"
-            }), 404
-    
-    except Exception as e:
-        print(f"Error retrieving booking logs: {str(e)}")
-        return jsonify({
-            "code": 500,
-            "message": f"Failed to retrieve booking logs: {str(e)}"
-        }), 500
-
-@app.route("/api/booking-logs/booking/<string:booking_id>", methods=['GET'])
-def get_booking_by_id(booking_id):
-    """Retrieve a specific booking log by booking_id"""
-    
-    try:
-        booking = db.session.scalar(db.select(BookingLog).filter_by(booking_id=booking_id))
-        
-        if booking:
-            # Get user info if available - first try by user_id if available, then by email
-            user = None
-            if booking.user_id:
-                user = db.session.scalar(db.select(User).filter_by(user_id=booking.user_id))
-            
-            # If user not found by user_id or user_id not available, try by email
-            if not user:
-                user = db.session.scalar(db.select(User).filter_by(email=booking.email))
-            
-            response_data = booking.json()
-            if user:
-                response_data["user"] = user.json()
-            
-            return jsonify({
-                "code": 200,
-                "message": "Booking retrieved successfully",
-                "data": response_data
-            }), 200
-        else:
-            return jsonify({
-                "code": 404,
-                "message": f"No booking found with booking_id: {booking_id}"
-            }), 404
-    
-    except Exception as e:
-        print(f"Error retrieving booking: {str(e)}")
-        return jsonify({
-            "code": 500, 
-            "message": f"Failed to retrieve booking: {str(e)}"
-        }), 500
+#Get booking details based on booking_id
+@app.route('/api/booking/<string:booking_id>', methods=['GET'])
+def get_booking(booking_id):
+    booking = BookingLog.query.filter_by(booking_id=booking_id).first()
+    if booking:
+        return jsonify({"code": 200, "data": booking.json()})
+    else:
+        return jsonify({'message': 'Booking not found'}), 404
 
 @app.route("/api/booking-logs/<string:booking_id>/status", methods=['PUT'])
 def update_booking_status(booking_id):
@@ -521,6 +444,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     
-    port = int(environ.get("PORT", 5004))
+    port = int(environ.get("PORT", 5006))
     print(f"Booking Log Service running on port {port}...")
     app.run(host='0.0.0.0', port=port, debug=True)

@@ -3,15 +3,13 @@ let selectedCar = null;
 
 async function fetchNearbyCars() {
     try {
-        // Use window.location.hostname to make it work in different environments
-        const hostname = window.location.hostname === 'localhost' ? '127.0.0.1' : window.location.hostname;
-        const response = await axios.get(`http://${hostname}:5000/car/available`);
+        const response = await axios.get('http://127.0.0.1:5001/get_cars_by_location');
         console.log('Fetched cars:', response.data);
         const carsContainer = document.getElementById('cars-container');
         carsContainer.innerHTML = ''; // Clear loading text
 
         // Directly use the cars array from the response
-        const availableCars = response.data.data.cars;
+        const availableCars = response.data.cars;
         console.log('Available cars:', availableCars);
 
         if (availableCars.length === 0) {

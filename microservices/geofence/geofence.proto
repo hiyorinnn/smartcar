@@ -12,11 +12,13 @@ message Car {
     bool available = 7;
     double latitude = 8;
     double longitude = 9;
+    string town = 10;
 }
 
 message GeofenceRequest {
     double user_latitude = 1;
     double user_longitude = 2;
+    string location = 3;
 }
 
 message CarList {
@@ -25,4 +27,5 @@ message CarList {
 
 service GeofenceService {
     rpc GetCarsInGeofence(GeofenceRequest) returns (CarList);
+    rpc GetCarsInLocation(GeofenceRequest) returns (CarList);
 }
