@@ -64,18 +64,29 @@ function createUserLocationMarker() {
   return markerElement;
 }
 
-// Fetch cars based on user's saved location
 async function fetchNearbyCars() {
   try {
     const carsContainer = document.getElementById('cars-container');
     carsContainer.innerHTML = '<p>Loading available cars...</p>';
     
-    // Retrieve saved location from session storage
+    // Check if there's a saved location in sessionStorage
     const savedLocation = sessionStorage.getItem('selectedLocation');
+    
+    // Use hostname to make it work in different environments
+    const hostname = window.location.hostname === 'localhost' ? '127.0.0.1' : window.location.hostname;
+    let apiUrl;
+    
+    // Define the valid locations here to avoid dependency on the other file
+    const validLocations = [
+      'Ang Mo Kio', 'Bedok', 'Bishan', 'Bukit Batok', 'Bukit Merah',
+      'Bukit Panjang', 'Bukit Timah', 'Central Area', 'Choa Chu Kang',
+      'Clementi', 'Hougang', 'Geylang', 'Jurong East', 'Jurong West',
+      'Kallang', 'Marine Parade', 'Pasir Ris', 'Punggol', 'Queenstown',
+      'Sembawang', 'Serangoon', 'Tampines', 'Toa Payoh', 'Woodlands', 'Yishun'
+    ];
     
     // Display the location that was searched
     if (savedLocation) {
-      // Create location display if it doesn't exist
       if (!document.getElementById('selected-location')) {
         const locationDisplay = document.createElement('div');
         locationDisplay.id = 'selected-location';
@@ -85,14 +96,27 @@ async function fetchNearbyCars() {
       
       const locationDisplay = document.getElementById('selected-location');
       locationDisplay.textContent = `Cars available near: ${savedLocation}`;
+      
+      // Important: Only use location-specific endpoint when location is in the dropdown
+      console.log(`Checking location: ${savedLocation}`);
+      
+      // Check if the saved location is in our predefined valid locations array
+      if (validLocations.includes(savedLocation)) {
+        // Use location-specific endpoint
+        apiUrl = `http://${hostname}:5001/get_cars_by_location/${encodeURIComponent(savedLocation)}`;
+        console.log(`Using location-specific endpoint for: ${savedLocation}`);
+      } else {
+        // Use default endpoint if location is not in the valid locations list
+        apiUrl = `http://${hostname}:5001/get_cars_by_location`;
+        console.log(`Location not in dropdown, using default endpoint`);
+      }
+    } else {
+      // If no location specified, use the default endpoint that uses IP location
+      apiUrl = `http://${hostname}:5001/get_cars_by_location`;
+      console.log('No location set, using default endpoint');
     }
     
-    // Determine which API endpoint to use
-    let apiUrl = 'http://127.0.0.1:5001/get_cars_by_location';
-    if (savedLocation) {
-      apiUrl = `http://127.0.0.1:5001/get_cars_by_location/${encodeURIComponent(savedLocation)}`;
-    }
-    
+    // Make the API request
     const response = await axios.get(apiUrl);
     console.log('Fetched cars:', response.data);
     
@@ -110,7 +134,6 @@ async function fetchNearbyCars() {
     // Add cars to the list and map
     displayCarsOnMap(availableCars);
     displayCarsList(availableCars, carsContainer);
-    
   } catch (error) {
     console.error('Error fetching cars:', error);
     const carsContainer = document.getElementById('cars-container');
@@ -128,7 +151,6 @@ function displayCarsList(cars, container) {
       <p>Year: ${car.year}</p>
       <p>Color: ${car.color}</p>
       <p>Price: $${car.price_per_hour}/hour</p>
-      <p>Distance: ${car.distance ? car.distance.toFixed(2) + ' km' : 'Unknown'}</p>
     `;
     carCard.addEventListener('click', () => selectCar(car, carCard));
     container.appendChild(carCard);
@@ -407,27 +429,137 @@ function requestDirections(origin, destination) {
   );
 }
 
+// Validate email format
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Calculate hours between two datetime inputs
+function calculateHoursBetween(startTime, endTime) {
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const diffMs = end - start;
+  const diffHours = diffMs / (1000 * 60 * 60);
+  return diffHours;
+}
+
+// Round time to nearest hour (for booking slots)
+function roundToNextHour(date) {
+  const roundedDate = new Date(date);
+  roundedDate.setMinutes(0);
+  roundedDate.setSeconds(0);
+  roundedDate.setMilliseconds(0);
+  // Always move to the next hour to ensure we don't book in the past
+  roundedDate.setHours(roundedDate.getHours() + 1);
+  return roundedDate;
+}
+
+// Show validation error message
+function showValidationError(inputElement, message) {
+  // Find the corresponding error element
+  const errorId = inputElement.id + '-error';
+  const errorElement = document.getElementById(errorId);
+  
+  if (errorElement) {
+    // Update the message and display the error
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+    inputElement.classList.add('error');
+  }
+}
+
+// Remove validation error message
+function clearValidationError(inputElement) {
+  const errorId = inputElement.id + '-error';
+  const errorElement = document.getElementById(errorId);
+  
+  if (errorElement) {
+    errorElement.style.display = 'none';
+    inputElement.classList.remove('error');
+  }
+}
+
 // Book the car
 async function bookCar() {
-  // Validate inputs
+  // Get form values
   const firstName = document.getElementById('first-name').value;
   const lastName = document.getElementById('last-name').value;
   const email = document.getElementById('email').value;
   const phone = document.getElementById('phone').value;
-  const pickupDate = document.getElementById('pickup-date').value;
-  const returnDate = document.getElementById('return-date').value;
+  
+  // Get date and time from separate inputs
+  const pickupDateDay = document.getElementById('pickup-date-day').value;
+  const pickupDateHour = document.getElementById('pickup-date-hour').value;
+  const returnDateDay = document.getElementById('return-date-day').value;
+  const returnDateHour = document.getElementById('return-date-hour').value;
+  
+  // Combine date and hour into datetime strings
+  const pickupDate = `${pickupDateDay}T${pickupDateHour}:00`;
+  const returnDate = `${returnDateDay}T${returnDateHour}:00`;
+  
   const paymentMethod = document.getElementById('payment-method').value;
   
+  let isValid = true;
+  
+  // Validation checks
+  
+  // 1. Check if car is selected
   if (!selectedCar) {
-    alert('Please select a car first');
+    showValidationError(document.getElementById('selected-car'), 'Please select a car first');
+    isValid = false;
+  }
+  
+  // 2. Validate email format
+  if (!isValidEmail(email)) {
+    showValidationError(document.getElementById('email'), 'Please enter a valid email address');
+    isValid = false;
+  }
+  
+  // 3. Check if return time is after pickup time
+  const startTime = new Date(pickupDate);
+  const endTime = new Date(returnDate);
+  
+  if (endTime <= startTime) {
+    showValidationError(document.getElementById('return-date-day'), 'End time must be after start time');
+    isValid = false;
+  }
+  
+  // 4. Calculate hours between pickup and return
+  const hours = calculateHoursBetween(startTime, endTime);
+  
+  // 5. Check if booking duration exceeds the maximum of 6 hours
+  if (hours > 6) {
+    showValidationError(document.getElementById('return-date-day'), 'Maximum booking duration is 6 hours');
+    isValid = false;
+  }
+  
+  // 6. Check if booking is made on hourly basis (no partial hours)
+  if (Math.floor(hours) !== hours) {
+    showValidationError(document.getElementById('return-date-day'), 'Bookings must be made on an hourly basis');
+    isValid = false;
+  }
+  
+  // Check if validation passed
+  if (!isValid) {
     return;
   }
   
   // Ensure dates are in ISO format compatible with Python's fromisoformat()
+  // This preserves the local time selected by the user
   const formatISODate = (dateString) => {
     const date = new Date(dateString);
-    // Remove the 'Z' from the ISO string to make it compatible with Python's fromisoformat()
-    return date.toISOString().replace('Z', '');
+    
+    // Format the date manually to preserve local time
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    // Return in ISO format without timezone conversion
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
   
   // Get user_id from localStorage if available
@@ -470,32 +602,49 @@ async function bookCar() {
     // Update car availability - also use the dynamic hostname
     await axios.put(`http://${hostname}:5000/car/${selectedCar.id}/availability`, { available: false });
     
-    // Show success message
-    showBookingConfirmation(bookingData);
+    // Show booking summary
+    showBookingSummary(bookingData);
   } catch (error) {
     console.error('Booking error:', error);
     if (error.response) {
       console.error('Error response data:', error.response.data);
       console.error('Error response status:', error.response.status);
+      
+      // Display backend validation errors if available
+      if (error.response.data && error.response.data.errors) {
+        Object.entries(error.response.data.errors).forEach(([field, message]) => {
+          const inputElement = document.getElementById(field);
+          if (inputElement) {
+            showValidationError(inputElement, message);
+          }
+        });
+      } else {
+        alert('Booking failed: ' + (error.response.data.message || 'Unknown error'));
+      }
     } else if (error.request) {
       console.error('No response received:', error.request);
+      alert('Booking failed: No response from server');
+    } else {
+      alert('Booking failed. Please check the console for details.');
     }
-    alert('Booking failed. Please check the console for details.');
   }
 }
 
-// Display booking confirmation
-function showBookingConfirmation(bookingData) {
-  // Create modal for booking confirmation
+// Display booking summary with proceed to payment button
+function showBookingSummary(bookingData) {
+  // Create modal for booking summary
   const modal = document.createElement('div');
-  modal.className = 'booking-confirmation-modal';
+  modal.className = 'booking-summary-modal';
   
   const startDate = new Date(bookingData.start_time);
   const endDate = new Date(bookingData.end_time);
   
+  // Store booking data in sessionStorage for the checkout page
+  sessionStorage.setItem('currentBooking', JSON.stringify(bookingData));
+  
   modal.innerHTML = `
     <div class="modal-content">
-      <h2>Booking Confirmed!</h2>
+      <h2>Booking Summary</h2>
       <p>Thank you ${bookingData.details.user_name} for your booking.</p>
       <div class="confirmation-details">
         <p><strong>Booking ID:</strong> ${bookingData.booking_id}</p>
@@ -504,15 +653,14 @@ function showBookingConfirmation(bookingData) {
         <p><strong>Return:</strong> ${endDate.toLocaleString()}</p>
         <p><strong>Total Amount:</strong> $${bookingData.total_amount}</p>
       </div>
-      <p>A confirmation email has been sent to ${bookingData.email}</p>
-      <button class="close-modal-btn">Close</button>
+      <button class="proceed-payment-btn">Proceed to Payment</button>
     </div>
   `;
   
   // Add style for the modal
   const style = document.createElement('style');
   style.textContent = `
-    .booking-confirmation-modal {
+    .booking-summary-modal {
       position: fixed;
       top: 0;
       left: 0;
@@ -540,7 +688,7 @@ function showBookingConfirmation(bookingData) {
       background-color: #f9f9f9;
       border-radius: 5px;
     }
-    .close-modal-btn {
+    .proceed-payment-btn {
       background-color: #2196F3;
       color: white;
       border: none;
@@ -549,17 +697,19 @@ function showBookingConfirmation(bookingData) {
       cursor: pointer;
       font-weight: bold;
       margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+    .proceed-payment-btn:hover {
+      background-color: #0d8bf2;
     }
   `;
   document.head.appendChild(style);
   
   document.body.appendChild(modal);
   
-  // Add close button functionality
-  modal.querySelector('.close-modal-btn').addEventListener('click', () => {
-    document.body.removeChild(modal);
-    // Redirect to home page or refresh the current page
-    window.location.href = 'index.html';
+  // Add proceed to payment button functionality
+  modal.querySelector('.proceed-payment-btn').addEventListener('click', () => {
+    window.location.href = 'checkout.html';
   });
 }
 
@@ -576,26 +726,243 @@ function generateUniqueId() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+  // Parse URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const locationFromUrl = urlParams.get('location');
+  const latFromUrl = urlParams.get('lat');
+  const lngFromUrl = urlParams.get('lng');
+  
+  // Store in sessionStorage if they exist in URL
+  if (locationFromUrl) {
+    sessionStorage.setItem('selectedLocation', locationFromUrl);
+  }
+  if (latFromUrl) {
+    sessionStorage.setItem('selectedLocationLat', latFromUrl);
+  }
+  if (lngFromUrl) {
+    sessionStorage.setItem('selectedLocationLng', lngFromUrl);
+  }
+  
   // Add book now button event listener
   const bookNowButton = document.getElementById('book-now');
   if (bookNowButton) {
     bookNowButton.addEventListener('click', bookCar);
   }
   
-  // Set min date for pickup and return date inputs
-  const pickupDateInput = document.getElementById('pickup-date');
-  const returnDateInput = document.getElementById('return-date');
+    // Set min date for pickup and return date inputs
+  const pickupDateDay = document.getElementById('pickup-date-day');
+  const pickupDateHour = document.getElementById('pickup-date-hour');
+  const returnDateDay = document.getElementById('return-date-day');
+  const returnDateHour = document.getElementById('return-date-hour');
   
-  if (pickupDateInput && returnDateInput) {
+  if (pickupDateDay && pickupDateHour && returnDateDay && returnDateHour) {
+    // Get current date and time
     const now = new Date();
-    const formattedDate = now.toISOString().slice(0, 16);
-    pickupDateInput.min = formattedDate;
     
-    pickupDateInput.addEventListener('change', () => {
-      returnDateInput.min = pickupDateInput.value;
+    // Round current time to next hour for hourly bookings
+    const nextHour = roundToNextHour(now);
+    
+    // Format date for date input (YYYY-MM-DD)
+    const formatDateInput = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    
+    // Function to check if a selected date and hour is in the past
+    const isTimeInPast = (dateStr, hour) => {
+      const selectedDate = new Date(dateStr);
+      selectedDate.setHours(parseInt(hour), 0, 0, 0);
+      const currentTime = new Date();
+      return selectedDate < currentTime;
+    };
+    
+    // Function to get combined datetime from separate inputs
+    const getCombinedDateTime = (dateInput, hourInput) => {
+      const dateValue = dateInput.value;
+      const hourValue = hourInput.value;
+      if (!dateValue || !hourValue) return null;
+      
+      const date = new Date(dateValue);
+      date.setHours(parseInt(hourValue), 0, 0, 0);
+      return date;
+    };
+    
+    // Populate hour options for both dropdowns
+    const populateHourOptions = (selectElement, selectedHour = null, minHour = 0, maxHour = 23) => {
+      // Clear existing options
+      selectElement.innerHTML = '';
+      
+      // Add hour options (00-23)
+      for (let i = minHour; i <= maxHour; i++) {
+        const option = document.createElement('option');
+        const hourFormatted = String(i).padStart(2, '0');
+        option.value = hourFormatted;
+        option.textContent = `${hourFormatted}:00`;
+        
+        if (selectedHour !== null && parseInt(selectedHour) === i) {
+          option.selected = true;
+        }
+        
+        selectElement.appendChild(option);
+      }
+    };
+    
+    // Set min values and default values for date inputs
+    pickupDateDay.min = formatDateInput(now);
+    pickupDateDay.value = formatDateInput(nextHour);
+    
+    returnDateDay.min = formatDateInput(now);
+    returnDateDay.value = formatDateInput(nextHour);
+    
+    // Default end time is 1 hour after pickup
+    const defaultEndTime = new Date(nextHour);
+    defaultEndTime.setHours(defaultEndTime.getHours() + 1);
+    
+    // Populate hour dropdowns with initial values
+    populateHourOptions(pickupDateHour, nextHour.getHours());
+    populateHourOptions(returnDateHour, defaultEndTime.getHours());
+    
+    // Update available hours when pickup date changes
+    pickupDateDay.addEventListener('change', () => {
+      const selectedDate = pickupDateDay.value;
+      const today = formatDateInput(now);
+      
+      // If selected date is today, restrict hours to future hours only
+      if (selectedDate === today) {
+        const currentHour = now.getHours();
+        // Populate with hours after the current hour
+        populateHourOptions(pickupDateHour, null, currentHour + 1, 23);
+      } else {
+        // For future dates, show all hours
+        populateHourOptions(pickupDateHour);
+      }
+      
+      // Validate the combined date and time
+      validatePickupDateTime();
     });
+    
+    // Validate pickup date and time when hour changes
+    pickupDateHour.addEventListener('change', validatePickupDateTime);
+    
+    // Function to validate pickup date and time
+    function validatePickupDateTime() {
+      const selectedDate = pickupDateDay.value;
+      const selectedHour = pickupDateHour.value;
+      
+      // Check if selected time is in the past
+      if (isTimeInPast(selectedDate, selectedHour)) {
+        // Set to next hour from current time
+        const nextAvailableHour = roundToNextHour(new Date());
+        pickupDateDay.value = formatDateInput(nextAvailableHour);
+        populateHourOptions(pickupDateHour, nextAvailableHour.getHours());
+        showValidationError(pickupDateDay, "Cannot book times in the past");
+      } else {
+        clearValidationError(pickupDateDay);
+      }
+      
+      // Update return date constraints
+      updateReturnDateConstraints();
+    }
+    
+    // Function to update return date constraints based on pickup date
+    function updateReturnDateConstraints() {
+      const pickupDateTime = getCombinedDateTime(pickupDateDay, pickupDateHour);
+      if (!pickupDateTime) return;
+      
+      // Set minimum return date to pickup date
+      returnDateDay.min = formatDateInput(pickupDateTime);
+      
+      // If return date is before pickup date, update it
+      const returnDateTime = getCombinedDateTime(returnDateDay, returnDateHour);
+      if (!returnDateTime || returnDateTime <= pickupDateTime) {
+        // Set return time to 1 hour after pickup
+        const newEndTime = new Date(pickupDateTime);
+        newEndTime.setHours(newEndTime.getHours() + 1);
+        
+        returnDateDay.value = formatDateInput(newEndTime);
+        
+        // Update hour options for return date
+        if (formatDateInput(pickupDateTime) === formatDateInput(newEndTime)) {
+          // Same day: show hours after pickup hour
+          populateHourOptions(returnDateHour, newEndTime.getHours(), parseInt(pickupDateHour.value) + 1, 23);
+        } else {
+          // Different day: show all hours
+          populateHourOptions(returnDateHour, newEndTime.getHours());
+        }
+      }
+    }
+    
+    // Update available return hours when return date changes
+    returnDateDay.addEventListener('change', () => {
+      const pickupDateTime = getCombinedDateTime(pickupDateDay, pickupDateHour);
+      if (!pickupDateTime) return;
+      
+      const isSameDay = pickupDateDay.value === returnDateDay.value;
+      
+      // If same day as pickup, restrict hours to after pickup hour
+      if (isSameDay) {
+        const pickupHour = parseInt(pickupDateHour.value);
+        populateHourOptions(returnDateHour, null, pickupHour + 1, 23);
+      } else {
+        // For future dates, show all hours
+        populateHourOptions(returnDateHour);
+      }
+      
+      validateReturnDateTime();
+    });
+    
+    // Validate return date and time when hour changes
+    returnDateHour.addEventListener('change', validateReturnDateTime);
+    
+    // Function to validate return date and time
+    function validateReturnDateTime() {
+      const pickupDateTime = getCombinedDateTime(pickupDateDay, pickupDateHour);
+      const returnDateTime = getCombinedDateTime(returnDateDay, returnDateHour);
+      
+      if (!pickupDateTime || !returnDateTime) return;
+      
+      // Ensure return time is after pickup time
+      if (returnDateTime <= pickupDateTime) {
+        showValidationError(returnDateDay, 'Return time must be after pickup time');
+        
+        // Reset to valid value (pickup time + 1 hour)
+        const newEndTime = new Date(pickupDateTime);
+        newEndTime.setHours(newEndTime.getHours() + 1);
+        
+        returnDateDay.value = formatDateInput(newEndTime);
+        returnDateHour.value = String(newEndTime.getHours()).padStart(2, '0');
+      } else {
+        clearValidationError(returnDateDay);
+      }
+      
+      // Check if booking exceeds max duration (6 hours)
+      const hoursDiff = calculateHoursBetween(pickupDateTime, returnDateTime);
+      if (hoursDiff > 6) {
+        showValidationError(returnDateDay, 'Maximum booking duration is 6 hours');
+        
+        // Reset to valid value (pickup time + 6 hours)
+        const maxEndTime = new Date(pickupDateTime);
+        maxEndTime.setHours(maxEndTime.getHours() + 6);
+        
+        returnDateDay.value = formatDateInput(maxEndTime);
+        returnDateHour.value = String(maxEndTime.getHours()).padStart(2, '0');
+      }
+    }
+    
+    // This section is no longer needed as it's handled by the new date/hour inputs
   }
   
-  // Check if we're on the booking page and need to initialize the map
-  // Note: The map will be initialized by the Google Maps callback in the HTML
+  // Email validation
+  const emailInput = document.getElementById('email');
+  if (emailInput) {
+    emailInput.addEventListener('blur', () => {
+      if (emailInput.value && !isValidEmail(emailInput.value)) {
+        showValidationError(emailInput, 'Please enter a valid email address');
+      } else {
+        clearValidationError(emailInput);
+      }
+    });
+  }
 });
