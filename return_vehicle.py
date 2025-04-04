@@ -7,7 +7,6 @@ import pika
 import sys, os
 
 import rabbitmq.amqp_lib as amqp
-from invokes import invoke_http
 
 app = Flask(__name__)
 CORS(app)
