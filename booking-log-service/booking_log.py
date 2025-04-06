@@ -374,10 +374,18 @@ def update_booking_with_payment(booking_id):
     if "booking_status" in data:
         booking_data.booking_status = data["booking_status"]
     
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update database", "details": str(e)}), 500
+
+    
     return jsonify({
         "message": "Booking updated successfully",
         "booking": booking_data.json()
     })
+    
 
 if __name__ == "__main__":
     # Create tables if they don't exist

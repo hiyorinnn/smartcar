@@ -252,7 +252,7 @@ def start_booking(booking_id):
         # 3: Update booking with payment details and change status to in_progress
         booking_service_url = f"http://localhost:5006/api/v1/update-status/{booking_id}"
         update_payload = {
-            "payment_status": "successful",
+            "payment_status": "paid",
             "transaction_id": payment_result.get('payment_id'),
             "booking_status": "in_progress"
         }
