@@ -44,37 +44,46 @@
     // Payment Side - Using Stripe 
 const stripe = Stripe('pk_test_51R7XLM4Jm41usPZB8LXUvo3nFp9ItuWiFCOrksMZWQWqgcyAwRqILKJKReuEeVsHd2yVVY4OdQwecWKfZ4lVbeA000vB8ojdqL');
 
-document.addEventListener('DOMContentLoaded', async () => {
 // call payment api 
-  const response = await fetch('http://localhost:5008/api/v1/payments', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ booking_id: {booking_id} }) 
-  });
-
-  const data = await response.json();
-  const clientSecret = data.client_secret;
-
-  const elements = stripe.elements({ clientSecret });
-  const paymentElement = elements.create("payment");
-  paymentElement.mount("#payment-element");
-
-
-  const form = document.getElementById("payment-form");
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: "./success.html",
-        cancel_url: "./error.html", 
-      },
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const response = await axios.post('http://localhost:5008/api/v1/payments', {
+      booking_id: booking_id // Ensure booking_id is defined in your scope
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
-    if (error) {
-      const messageContainer = document.querySelector("#error-message");
-      messageContainer.textContent = error.message;
-    }
-  });
+    const data = response.data;
+    const clientSecret = data.client_secret;
+
+    const elements = stripe.elements({ clientSecret });
+    const paymentElement = elements.create("payment");
+    paymentElement.mount("#payment-element");
+
+    const form = document.getElementById("payment-form");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: "./success.html",
+          cancel_url: "./error.html"
+        }
+      });
+
+      if (error) {
+        const messageContainer = document.querySelector("#error-message");
+        messageContainer.textContent = error.message;
+      }
+    });
+
+  } catch (error) {
+    console.error('Payment API error:', error);
+    const messageContainer = document.querySelector("#error-message");
+    messageContainer.textContent = error.response?.data?.message || error.message;
+  }
 });
+   
