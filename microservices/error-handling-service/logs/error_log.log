@@ -310,3 +310,94 @@
 2025-03-18 22:42:31,424 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:31] "[36mGET /js/chunk-vendors.c0eeab7c.js HTTP/1.1[0m" 304 -
 2025-03-18 22:42:31,431 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:31] "[36mGET /js/app.2fd406af.js HTTP/1.1[0m" 304 -
 2025-03-18 22:42:31,433 - INFO - 127.0.0.1 - - [18/Mar/2025 22:42:31] "[36mGET /css/app.8dd828f7.css HTTP/1.1[0m" 304 -
+2025-04-05 01:53:59,879 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://192.168.0.247:5005
+2025-04-05 01:53:59,879 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-05 01:53:59,882 - INFO -  * Restarting with stat
+2025-04-05 01:54:00,198 - WARNING -  * Debugger is active!
+2025-04-05 01:54:00,198 - INFO -  * Debugger PIN: 704-437-752
+2025-04-05 01:56:25,449 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://192.168.0.247:5005
+2025-04-05 01:56:25,449 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-05 01:56:25,450 - INFO -  * Restarting with stat
+2025-04-05 01:56:25,745 - WARNING -  * Debugger is active!
+2025-04-05 01:56:25,745 - INFO -  * Debugger PIN: 704-437-752
+2025-04-05 02:06:36,542 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://192.168.0.247:5005
+2025-04-05 02:06:36,542 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-05 02:06:36,542 - INFO -  * Restarting with stat
+2025-04-05 02:06:36,892 - WARNING -  * Debugger is active!
+2025-04-05 02:06:36,892 - INFO -  * Debugger PIN: 704-437-752
+2025-04-05 23:29:42,896 - INFO -  * Detected change in 'C:\\wamp64\\www\\smartcar\\microservices\\error-handling-service\\error_handler.py', reloading
+2025-04-05 23:29:43,152 - INFO -  * Restarting with stat
+2025-04-05 17:02:45,442 - ERROR - [172.19.0.1] GET /test-error - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:02:49,177 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:02:49,181 - ERROR - [172.19.0.1] GET /test-error - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:02:52,912 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:03:38,161 - ERROR - [172.19.0.1] GET /test-error - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:03:41,900 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:03:52,100 - ERROR - [172.19.0.1] GET /test-error - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:03:55,856 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:04:20,095 - ERROR - [172.19.0.1] GET /test-error - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:04:23,837 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:35:03,166 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:35:06,891 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:35:07,524 - ERROR - [172.19.0.1] GET /favicon.ico - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:35:11,231 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:35:49,617 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:35:53,322 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:37:09,234 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:37:13,000 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:37:33,444 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:37:37,170 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:37:37,172 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:37:40,895 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:37:40,897 - ERROR - [172.19.0.1] GET /favicon.ico - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:37:44,637 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:37:44,639 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:37:48,322 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:37:48,324 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:37:52,045 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 17:37:55,246 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 17:37:58,947 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 18:51:36,984 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 18:51:41,127 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 18:51:44,851 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 18:52:15,142 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 18:52:18,870 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 18:53:25,399 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 18:53:29,154 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 18:53:54,185 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 18:53:57,914 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 20:08:02,695 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 20:08:06,409 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 20:08:18,873 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 20:08:22,605 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-05 20:11:36,918 - ERROR - [172.19.0.1] GET / - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-05 20:11:40,659 - ERROR - Database Error: 2005 (HY000): Unknown MySQL server host 'db' (-2)
+2025-04-06 10:43:02,560 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:43:02,560 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:43:02,563 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:43:02,617 - ERROR - Database Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-04-06 10:43:25,734 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:43:25,734 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:43:25,736 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:43:25,776 - ERROR - Database Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-04-06 10:45:35,406 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:45:35,406 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:45:35,408 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:45:35,453 - ERROR - Database Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-04-06 10:45:47,703 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:45:47,703 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:45:47,705 - ERROR - [172.18.0.1] GET /invalid - 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-06 10:45:47,743 - ERROR - Database Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
