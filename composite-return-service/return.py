@@ -36,7 +36,7 @@ ERRORHANDLINGURL = "http://localhost:5005/api/error-handling/" #To ask Jing Kai 
 # If it returns 200, invoke GENERATEPRESIGNEDURL using the above JSON format
 # After receiving the generated pre-signed url for each images in a list (GENERATEPRESIGNEDURL will return something like:
 # {
-#     "bookingID": "12345",
+#     "booking_id": "12345",
 #     "presigned_urls": [
 #         {
 #             "image_key": "image1",
@@ -75,7 +75,7 @@ def return_vehicle():
         # Receive data in JSON format from the frontend
         data = request.get_json()
         booking_id = data.get('booking_id')
-        images = data.get('images')
+        images = request.files.getlist('images')
 
         if not booking_id or not images:
             return jsonify({'error': 'Missing booking_id or images'}), 400
@@ -90,7 +90,7 @@ def return_vehicle():
             return jsonify({'error': 'Error retrieving booking logs'}), 500
 
         # Generate pre-signed URLs
-        presigned_response = requests.post(GENERATEPRESIGNEDURL, json={'bookingID': booking_id, 'images': images})
+        presigned_response = requests.post(GENERATEPRESIGNEDURL, json={'booking_id': booking_id, 'images': images})
         
         if presigned_response.status_code != 200:
             return jsonify({'error': 'Failed to generate pre-signed URLs'}), 500

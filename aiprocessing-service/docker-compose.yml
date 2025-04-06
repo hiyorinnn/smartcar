@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  flask-app:
+    build: .
+    container_name: flask-microservice
+    ports:
+      - "5003:5003"

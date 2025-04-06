@@ -12,9 +12,9 @@ CORS(app, origins=["http://127.0.0.1:5500"])
 # Set your S3 bucket name and AWS region
 AWS_REGION = 'us-east-1'
 S3_BUCKET_NAME = 'esmbucketmicroservice'
-AWS_ACCESS_KEY = 'ASIAZVRFQWBSUHDHALV4'
-AWS_SECRET_KEY = 'zcqn6598O1zBeOfFW6hSThjmg9AZEmXj43X5Htka'
-AWS_SESSION_TOKEN = 'IQoJb3JpZ2luX2VjEBcaCXVzLXdlc3QtMiJHMEUCIFGpSxeFAemIf4hpO8ATYWAtffKcLxlew5WFn+XyRylCAiEA3hm7qPN96nGfwU/d5hgxnLrBsFrWLmbjurgN4YkTJlMquAIIcBAAGgw2NjQ3MjQ4Nzc0MTMiDKEpj7j74s/yO0X/9iqVAvSbMzwZgiM9uVhoSeq41HXMjTHW7yWW0Q+HGgiH4rbHDPwGK8tLkhT0GUuKXs9M0MCGUCorHFcITgBBEznrqwLc49SiuIzBbikMmdAsV7CjvvmXL0nDUm7gzAhir41AEZS5CiDW3WB2WA4MRzgT7SDPWFcpbZsF32/4raONcSaLjHVhgX/WnqCz9ZuYvmRNlm0p3S/maXjAJgd1KfEXNyOgvoAiSB4zofG7Xf6faP5bWMCvqjGWMTk6Lgg1t20uu1xFCYdb66Kwl5iosMACGtT0uby3ojI2EveL/AU48k3JmDrlYx0yunV0zWmAt5ZhOcMX++gYoEIStGyAGgU6eLpmI+HNwUu20fE6u7AI7AjgdHaL56sw0NjpvgY6nQH1C2Hbm4+S7efQ2SVZLaHBFHkHfoLhYcgOSf14IXaCEP3wcklT42rQo8SW0/qYYId0lqGQZhlp3gGdQUvNMzKE3UK+004HVtvM8hhWTgBnW8pMa3nZ8J/JFSDsXWYw4/j0MtOsWZ6AH1ce+hNyAZwcMLUyjty6WcwbgWp4c0v3nqEQYeeViY8+DBZSfMeX/q8C5lNLwDqGqmdmhJPv'
+AWS_ACCESS_KEY = 'ASIAZVRFQWBSQL43XJ6W'
+AWS_SECRET_KEY = 'okBT8nYRfii3dnXHbhD130SgTt8u8lssWcYUlrbD'
+AWS_SESSION_TOKEN = 'IQoJb3JpZ2luX2VjELb//////////wEaCXVzLXdlc3QtMiJHMEUCIQCDcw+gdxlUc1Tn2IecY+QVnPe469UrMfKxAUESpgb9vgIgV/ZgWBybZEB8jKRHGPhc47k+c0NN0+UNJ5Nt9oyyiWAquAIILxAAGgw2NjQ3MjQ4Nzc0MTMiDE+ZqWFeit0zOycfrCqVAsqmER5h2nMrNu3eRaH8J9nibi5oB60Fs5TpHsX02OrkA9R99bCqfU951hm64VddAqq/9WfVXxWXNe7WGBpmMePEMZGhz2oKSZHNzluIREGyCEUhvyzj7ZNubyesin6RvXSX94Vkvri5J5DNaNO4Q6t1/PckwfvnkjXV6+4L3lRBg/yGh4saKY5SkHkZ2Guckzy5ZJ+i0Ve1iaDylJGzuTYlHNj45+nLiCH1TJhiGBxdwQ142UDYJ1Quv/NgV8mfPzyA72JfcYfoPNlPGu1eslMK9dVFh0X0YE0ZIKDhAHV0cmDRN2rO4MKV88N9Y1pVn8l30vxdjZqC8AasC5Np++pxD1+CO46VNcQYDqhkLmMIY3SmbyIwkODEvwY6nQHZvuRH1PiYaCK4VegC6HX61TXV5dqqzTpF24+eP4mGBYeUgskFUXcunKzsTyzOuo3HXOSefj2WsRI7/c1FTeUQdrQWSpsHe2mCcyssDZlafJz6XIDX/jkzwe/iT23hHp6UvIxYX7CYYrcis5GQltK2T8OOTtk5XQexj6dLUFiUmrjuvDICOS0/6QtKbe8HzRyBgRC+2boGkSrEmk0Q'
 
 # Initialize the S3 client with boto3
 s3_client = boto3.client(
@@ -28,6 +28,7 @@ s3_client = boto3.client(
 # AWS Rekognition Client Setup
 rekognition_client = boto3.client(
     'rekognition',
+    region_name=AWS_REGION,
     aws_access_key_id=AWS_ACCESS_KEY,
     aws_secret_access_key=AWS_SECRET_KEY,
     aws_session_token=AWS_SESSION_TOKEN
@@ -57,12 +58,12 @@ def generate_presigned_url():
         # Get the data from the request (assuming it's a JSON payload)
         data = request.get_json()
 
-        booking_id = data.get('bookingID')  # Extract the booking ID
+        booking_id = data.get('booking_id')  # Extract the booking ID
         images = data.get('images')  # Extract the images dictionary
 
         # Check if the required fields are present
         if not booking_id or not images:
-            return jsonify({'error': 'Missing bookingID or images'}), 400
+            return jsonify({'error': 'Missing booking_id or images'}), 400
 
         presigned_urls = []  # List to store the generated URLs
 
@@ -91,7 +92,7 @@ def generate_presigned_url():
             })
 
         # Return the generated URLs as a JSON response
-        return jsonify({'bookingID': booking_id, 'presigned_urls': presigned_urls})
+        return jsonify({'booking_id': booking_id, 'presigned_urls': presigned_urls})
 
     except NoCredentialsError:
         return jsonify({'error': 'Credentials not available'}), 403
@@ -109,12 +110,12 @@ def detect_labels():
     # Get the data from the request
     data = request.get_json()
     
-    # Extract the 'bookingID' and 'presigned_urls' from the request JSON
-    booking_id = data.get('bookingID')
+    # Extract the 'booking_id' and 'presigned_urls' from the request JSON
+    booking_id = data.get('booking_id')
     presigned_urls = data.get('presigned_urls')  # This should be a list or dict of presigned URLs
 
     if not booking_id or not presigned_urls:
-        return jsonify({"error": "bookingID and presigned_urls are required"}), 400
+        return jsonify({"error": "booking_id and presigned_urls are required"}), 400
 
     # The model ARN can be static (or dynamic if needed)
     MODEL = 'arn:aws:rekognition:us-east-1:664724877413:project/carDefects/version/carDefects.2025-03-16T13.03.35/1742101419563'
