@@ -293,6 +293,7 @@ def health_check():
     return jsonify({"status": "healthy"}), 200   
 
 
+
 if __name__ == '__main__':
     import atexit
     testing_mode = True  # Set to True when testing to disable scheduler
