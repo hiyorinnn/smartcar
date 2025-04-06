@@ -4,6 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 import json
 from os import environ
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 app = Flask(__name__)
 CORS(app)
@@ -11,7 +17,7 @@ CORS(app)
 
 # Database Configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    environ.get("dbURL") or "mysql+mysqlconnector://root@localhost:3306/car_service"
+    environ.get("dbURL") or "mysql+mysqlconnector://root:root@localhost:3306/car_service"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -343,70 +349,35 @@ def update_booking_status(booking_id):
             "message": f"Failed to update booking status: {str(e)}"
         }), 500
 
-@app.route("/api/booking-logs/<string:booking_id>/payment", methods=['PUT'])
-def update_payment_info(booking_id):
-    """Update payment information for a booking"""
+# Update booking_status and payment status
+@app.route('/api/v1/update-status/<booking_id>', methods=['PUT'])
+def update_booking_with_payment(booking_id):
+    booking_data = BookingLog.query.filter_by(booking_id=booking_id).first()
+
+    if not booking_data:
+        return jsonify({"error": "Booking not found"}), 404
     
-    if not request.is_json:
-        return jsonify({
-            "code": 400,
-            "message": "Input should be in JSON."
-        }), 400
+    data = request.json
+    if not data:
+        return jsonify({"error": "No update data provided"}), 400
     
-    data = request.get_json()
+    # Track what was updated for the response
+    updates = {}
+    logger.info(updates)
     
-    try:
-        booking = db.session.scalar(db.select(BookingLog).filter_by(booking_id=booking_id))
-        
-        if not booking:
-            return jsonify({
-                "code": 404,
-                "message": f"No booking found with booking_id: {booking_id}"
-            }), 404
-        
-        # Update payment fields if provided
-        if 'payment_status' in data:
-            valid_statuses = ['pending', 'paid', 'failed', 'refunded']
-            if data['payment_status'] not in valid_statuses:
-                return jsonify({
-                    "code": 400,
-                    "message": f"Invalid payment status. Must be one of: {', '.join(valid_statuses)}"
-                }), 400
-            booking.payment_status = data['payment_status']
-        
-        if 'payment_method' in data:
-            booking.payment_method = data['payment_method']
-        
-        if 'total_amount' in data:
-            booking.total_amount = data['total_amount']
-        
-        if 'transaction_id' in data:
-            booking.transaction_id = data['transaction_id']
-        
-        if 'payment_timestamp' in data and data['payment_timestamp']:
-            try:
-                booking.payment_timestamp = datetime.datetime.fromisoformat(data['payment_timestamp'])
-            except ValueError:
-                return jsonify({
-                    "code": 400,
-                    "message": "Invalid payment_timestamp format. Use ISO format."
-                }), 400
-        
-        db.session.commit()
-        
-        return jsonify({
-            "code": 200,
-            "message": "Payment information updated successfully",
-            "data": booking.json()
-        }), 200
+    if "payment_status" in data:
+        booking_data.payment_status = data["payment_status"]
     
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error updating payment information: {str(e)}")
-        return jsonify({
-            "code": 500,
-            "message": f"Failed to update payment information: {str(e)}"
-        }), 500
+    if "transaction_id" in data:
+        booking_data.transaction_id = data["transaction_id"]
+    
+    if "booking_status" in data:
+        booking_data.booking_status = data["booking_status"]
+    
+    return jsonify({
+        "message": "Booking updated successfully",
+        "booking": booking_data.json()
+    })
 
 if __name__ == "__main__":
     # Create tables if they don't exist
