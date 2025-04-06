@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import stripe
 import os
 import logging
@@ -14,6 +15,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+CORS(app)
+
 
 # Configure Stripe API key
 stripe.api_key = os.environ.get('STRIPE_API_KEY', 'sk_test_51R7XLM4Jm41usPZBwNr5slG3GHhThtJ4LLHe9MpwsXxnzIT2c11AKYoHGLvO0KwxCEGztfwuI3ozrQ0mAiqJMcM400uwoLUqju')
@@ -22,7 +25,7 @@ stripe.api_key = os.environ.get('STRIPE_API_KEY', 'sk_test_51R7XLM4Jm41usPZBwNr5
 
 #Docker URL
 #rental_composite_URL = os.environ.get('rental_composite_URL', 'http://booking-composite:5002/api/v1')
-#booking_log_URL = "http://booking_lpg:5006/api/booking"
+#booking_log_URL = "http://booking_log:5006/api/booking"
 
 #Local URL 
 rental_composite_URL = 'http://localhost:5007/api/v1'
