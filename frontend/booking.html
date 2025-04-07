@@ -163,80 +163,67 @@
             SMARTCAR
         </div>
         <nav>
-            <ul>
-              <li><a href="index.html">Home</a></li>
-              <li><a href="return_car.html">Return a Car</a></li>
-            </ul>
-          </nav>
+            <a href="index.html">Home</a>
+        </nav>
     </header>
+
     <div class="booking-container">
         <h1 class="booking-title">Book Your <span>Perfect Car</span></h1>
-        
+
         <!-- Cars Map -->
         <div class="car-map">
-            <div id="map" style="height: 400px; width: 100%; margin: 20px 0;"></div>
+            <div id="map" style="height: 600px; width: 1000px; margin: 20px;"></div>
         </div>
-        
+
         <div class="booking-sections">
             <!-- Nearby Cars Section -->
             <div class="section">
                 <h2 class="section-title">Available Cars</h2>
-                <!-- Location display will be inserted here -->
                 <div id="cars-container" class="car-list">
                     <!-- Cars will be dynamically populated here -->
                     <p>Loading available cars...</p>
                 </div>
             </div>
-            
+
             <!-- Booking Details Section -->
             <div class="section">
                 <h2 class="section-title">Booking Details</h2>
                 <form id="booking-form">
                     <div class="form-group">
                         <label for="selected-car">Selected Car</label>
-                        <input type="text" id="selected-car" readonly placeholder="Select a car from the list above">
-                        <small class="error-message" id="selected-car-error">Please select a car from the list above</small>
+                        <input type="text" id="selected-car" readonly placeholder="Select a car">
                     </div>
+
                     <div class="form-group">
                         <label for="first-name">First Name</label>
                         <input type="text" id="first-name" required>
-                        <small class="error-message" id="first-name-error">Please enter your first name</small>
                     </div>
+
                     <div class="form-group">
                         <label for="last-name">Last Name</label>
                         <input type="text" id="last-name" required>
-                        <small class="error-message" id="last-name-error">Please enter your last name</small>
                     </div>
+
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" required>
-                        <small class="error-message" id="email-error">Please enter a valid email address</small>
                     </div>
+
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
                         <input type="tel" id="phone" required>
-                        <small class="error-message" id="phone-error">Please enter a valid phone number</small>
                     </div>
+
                     <div class="form-group">
-                        <label for="pickup-date-day">Pickup Date</label>
-                        <div class="datetime-container">
-                            <input type="date" id="pickup-date-day" required>
-                            <select id="pickup-date-hour" required>
-                                <!-- Hours will be populated by JavaScript -->
-                            </select>
-                        </div>
-                        <small class="error-message" id="pickup-date-day-error">Please select a valid pickup date and time</small>
+                        <label for="pickup-date">Pickup Date</label>
+                        <input type="datetime-local" id="pickup-date" required>
                     </div>
+
                     <div class="form-group">
-                        <label for="return-date-day">Return Date</label>
-                        <div class="datetime-container">
-                            <input type="date" id="return-date-day" required>
-                            <select id="return-date-hour" required>
-                                <!-- Hours will be populated by JavaScript -->
-                            </select>
-                        </div>
-                        <small class="error-message" id="return-date-day-error">Please select a valid return date and time</small>
+                        <label for="return-date">Return Date</label>
+                        <input type="datetime-local" id="return-date" required>
                     </div>
+
                     <div class="form-group">
                         <label for="payment-method">Payment Method</label>
                         <select id="payment-method">
@@ -244,25 +231,23 @@
                             <option value="debit">Debit Card</option>
                             <option value="paypal">PayPal</option>
                         </select>
-                        <small class="error-message" id="payment-method-error">Please select a payment method</small>
                     </div>
+
                     <button type="button" id="book-now" class="btn">Book Now</button>
                 </form>
             </div>
         </div>
     </div>
-    
-    <!-- Load Axios before other scripts -->
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
-    <!-- Load application scripts -->
     <script src="booking.js"></script>
-    
-    <!-- Load Google Maps API last -->
+
     <script
-      async
-      defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w&libraries=marker,geometry&loading=async&callback=initMap"
-    ></script>
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w&libraries=marker,geometry&loading=async&callback=initMap"
+  ></script>
+
+  <script src="car.js"></script>
 </body>
 </html>
