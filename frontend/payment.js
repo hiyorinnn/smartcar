@@ -69,8 +69,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: "./success.html",
-          cancel_url: "./error.html"
+          return_url: "http://localhost/GitHub/smartcar/frontend/success.html",
+          //cancel_url: "./error.html",
         }
       });
 

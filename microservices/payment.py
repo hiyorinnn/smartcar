@@ -111,72 +111,6 @@ def process_payment():
             "error": str(e)
         }), 500
 
-# @app.route('/api/v1/payments/<payment_id>/confirm', methods=['POST'])
-# def confirm_payment(payment_id):
-#     """
-#     Confirm a payment after the client has completed Stripe's payment flow
-    
-#     Expected payload:
-#     {
-#         "stripe_payment_intent_id": "string"
-#     }
-#     """
-#     try:
-#         data = request.json
-#         stripe_payment_intent_id = data.get('stripe_payment_intent_id')
-        
-#         if not stripe_payment_intent_id:
-#             return jsonify({"error": "stripe_payment_intent_id is required"}), 400
-            
-#         logger.info(f"Confirming payment intent: {stripe_payment_intent_id} for payment ID: {payment_id}")
-        
-#         # Retrieve the payment intent from Stripe
-#         intent = stripe.PaymentIntent.retrieve(stripe_payment_intent_id)
-        
-#         if intent.status == 'succeeded':
-#             # Get the booking ID from the metadata
-#             booking_id = intent.metadata.get('booking_id')
-            
-#             if booking_id:
-#                 # Update the rental-composite service with payment confirmation
-#                 try:
-#                     logger.info(f"Notifying rental-composite service about payment for booking ID: {booking_id}")
-#                     update_response = requests.patch(
-#                         f"{rental_composite_URL}/bookings/{booking_id}/payment",
-#                         json={
-#                             "payment_id": payment_id,
-#                             "payment_status": "successful",
-#                             "amount_paid": intent.amount / 100,
-#                             "currency": intent.currency
-#                         },
-#                         timeout=5
-#                     )
-                    
-#                     if update_response.status_code != 200:
-#                         logger.warning(f"Failed to update booking-composite: {update_response.status_code}, {update_response.text}")
-#                 except requests.exceptions.RequestException as e:
-#                     logger.error(f"Error notifying rental-composite service: {str(e)}")
-            
-#             return jsonify({
-#                 "status": "successful",
-#                 "payment_id": payment_id,
-#                 "booking_id": booking_id,
-#                 "stripe_status": intent.status,
-#                 "amount": intent.amount / 100,  # Convert to dollars, instead of cents 
-#                 "currency": intent.currency
-#             }), 200
-#         else:
-#             logger.warning(f"Payment intent {stripe_payment_intent_id} has status: {intent.status}")
-#             return jsonify({
-#                 "status": "pending",
-#                 "payment_id": payment_id,
-#                 "stripe_status": intent.status,
-#                 "message": "Payment has not been completed"
-#             }), 202
-            
-#     except Exception as e:
-#         logger.error(f"Error confirming payment: {str(e)}")
-#         return jsonify({"error": str(e)}), 500
 
 @app.route('/webhook', methods=['POST'])
 def stripe_webhook():
@@ -211,19 +145,20 @@ def stripe_webhook():
                 response = requests.patch(
                     f"{rental_composite_URL}/bookings/{booking_id}/payment",
                     json={
-                        "payment_id": payment_id,
-                        "payment_status": "successful",
+                        "transaction": payment_id,
+                        "payment_status": "paid",
                         "amount_paid": amount,
                         "currency": currency
                     },
                     timeout=5
                 )
-
                 if response.status_code != 200:
                     logger.warning(f"Webhook: Failed to update booking-composite: {response.status_code}, {response.text}")
-
+                
+                
             except requests.exceptions.RequestException as e:
                 logger.error(f"Webhook: Error notifying rental-composite: {str(e)}")
+                
 
     return jsonify({"status": "received"}), 200
 
