@@ -105,18 +105,25 @@ async function bookCar() {
     try {
         // Log booking to booking log microservice with full URL
         const response = await axios.post('http://127.0.0.1:5006/api/booking-log', bookingData);
-        
         console.log('Booking response:', response.data);
+
         
         // Update car availability 
         await axios.put(`http://localhost:5000/car/${selectedCar.id}/availability`, { available: false });
-
         alert('Booking successful! Your booking has been logged.');
+
+        // Push bookingID to payment page 
+        const bookingId = response.data.data.booking_id;
+        // Store it in localStorage (or sessionStorage)
+        localStorage.setItem("bookingData", JSON.stringify({ booking_id: bookingId }));
+        window.location.href = "./checkout.html";
+
     } catch (error) {
         console.error('Booking error:', error.response ? error.response.data : error);
         alert('Booking failed. Please check the console for details.');
     }
 }
+
 
 function calculateTotalAmount(car, startTime, endTime) {
     const start = new Date(startTime);
