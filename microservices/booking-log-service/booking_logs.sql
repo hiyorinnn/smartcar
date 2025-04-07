@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS booking_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    user_id VARCHAR(13),
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    contact_number VARCHAR(20) NOT NULL,
+    car_id VARCHAR(13) NOT NULL,
+    booking_status ENUM('not_started', 'in_progress', 'ended') NOT NULL DEFAULT 'not_started',
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    payment_status ENUM('pending', 'paid', 'failed', 'refunded') NOT NULL DEFAULT 'pending',
+    payment_method VARCHAR(50),
+    total_amount DECIMAL(10, 2),
+    transaction_id VARCHAR(100),
+    payment_timestamp DATETIME,
+    details JSON,
+    FOREIGN KEY (car_id) REFERENCES car_available(id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
