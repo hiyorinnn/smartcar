@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Multiple Images</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <form id="uploadForm">
+    <!-- Hidden field with a value for booking_id --> <!--Celeste, this value need to bring from previous page-->
+    <input type="hidden" name="booking_id" value="1234" required><br><br>
+    <input type="file" name="images" accept="image/*" multiple required><br><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="statusMessage"></p>
+  <p id="defectCountDisplay"></p> <!-- This will display the defect count -->
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const status = document.getElementById('statusMessage');
+      const defectCountDisplay = document.getElementById('defectCountDisplay');
+
+      // Have a hidden field for booking_id (automatically included in formData)
+      try {
+        // Show loading message
+        status.textContent = 'Uploading... Please wait ⏳';
+
+        // Make POST request with form data (including hidden field)
+        console.log("Form Data:", formData);
+        const response = await axios.post('http://127.0.0.1:5006/api/return-vehicle', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        const result = response.data;
+        console.log("Defect count:", result.defect_count); // Access the defect count here
+
+        // Display the defect count on the page
+        defectCountDisplay.textContent = `Defect Count: ${result.defect_count}`;
+
+        // Clear status message
+        status.textContent = 'Upload successful!';
+
+      } catch (error) {
+        console.error('Error:', error);
+        status.textContent = 'Upload failed. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

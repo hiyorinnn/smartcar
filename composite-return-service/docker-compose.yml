@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  return:
+    build:
+      context: .
+      dockerfile: return.Dockerfile
+    ports:
+      - "5006:5006"
+    networks:
+      - flask-network
+
+networks:
+  flask-network:
+    driver: bridge

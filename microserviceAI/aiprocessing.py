@@ -152,4 +152,5 @@ def detect_labels():
     return jsonify({"booking_id": booking_id, "defect_count": defect_count}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, host=0.0.0.0, port=5003)
+    app.run(debug=True, host='0.0.0.0', port=5003)
+

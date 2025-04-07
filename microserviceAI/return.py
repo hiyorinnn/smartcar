@@ -16,6 +16,7 @@ BOOKINGLOGURL = "http://booking:5004/api/booking-log/{booking_id}"
 
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
+    print("reached here")
     try:
         # Receive data in multipart/form-data format from the frontend
         booking_id = request.form.get('booking_id')
