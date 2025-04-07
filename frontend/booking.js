@@ -502,6 +502,14 @@ async function bookCar() {
   
   let isValid = true;
   
+  // Clear any previous validation errors
+  document.querySelectorAll('.error-message').forEach(el => {
+    el.style.display = 'none';
+  });
+  document.querySelectorAll('.error').forEach(el => {
+    el.classList.remove('error');
+  });
+  
   // Validation checks
   
   // 1. Check if car is selected
@@ -540,8 +548,26 @@ async function bookCar() {
     isValid = false;
   }
   
+  // 7. Check if first name and last name are provided
+  if (!firstName.trim()) {
+    showValidationError(document.getElementById('first-name'), 'First name is required');
+    isValid = false;
+  }
+  
+  if (!lastName.trim()) {
+    showValidationError(document.getElementById('last-name'), 'Last name is required');
+    isValid = false;
+  }
+  
+  // 8. Check if phone number is provided
+  if (!phone.trim()) {
+    showValidationError(document.getElementById('phone'), 'Phone number is required');
+    isValid = false;
+  }
+  
   // Check if validation passed
   if (!isValid) {
+    console.log('Validation failed. Booking not submitted.');
     return;
   }
   
@@ -591,7 +617,7 @@ async function bookCar() {
   
   try {
     // Log booking to booking log microservice with full URL
-    console.log('Sending booking data:', bookingData);
+    console.log('Validation passed. Sending booking data:', bookingData);
     
     // Use window.location.hostname to make it work in different environments
     const hostname = window.location.hostname === 'localhost' ? '127.0.0.1' : window.location.hostname;
