@@ -117,7 +117,7 @@
 
 // Rental Details Side
 
-const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+const bookingData = JSON.parse(sessionStorage.getItem("currentBooking"));
 
 if (!bookingData || !bookingData.booking_id) {
   alert("No booking data found. Please book a car first.");
