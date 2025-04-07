@@ -11,11 +11,11 @@ app = Flask(__name__)
 CORS(app)
 
 # AWS setup: To add in environment variables
-AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')
-S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME', 'esdbucketmicroservice')
-AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
-AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
-AWS_SESSION_TOKEN = os.getenv('AWS_SESSION_TOKEN')
+AWS_REGION = 'us-east-1'
+S3_BUCKET_NAME = 'esdbucketmicroservice'
+AWS_ACCESS_KEY = 'ASIAVRUVTXJAS2UDHBDK'
+AWS_SECRET_KEY = 'KS1nV2wM0+r26hK0G4lOXq+EcNAn8hTEm4fQdp4R'
+AWS_SESSION_TOKEN = 'IQoJb3JpZ2luX2VjEOT//////////wEaCXVzLXdlc3QtMiJHMEUCIQDPQulT4j1aihRa0u9XlrXCCL2apF1Ss/+q9p0FPMKtSAIgNZj9NDuFqoiozFb/mQ+YbFk7bj1IcFDZHm14dXeHtwEquAIIXRAAGgwzODE0OTIxMTYwMzMiDPebXDUPAr7Qg8IkSCqVAlTlDZCYlJ8pzRHq3SkmZ4donIkqDWpmdLUFqyGs7SGhcEavUU7km5Z26siSs8NvGo9r63bTpigcoGOD/phmpTJBB6TGI3xOs7Df2fCcPgWTHs751SQDf+qJo9T+xuO3V4OrVhAHR6A7i2CE5BSwK2juiseItotuXPk/RNzActNo6A/40LKSyYJnGpvJ97bh8Ewy0eBGlhoFGqHU7d/st13dkHYP3rUeT0RAu9dfovEiEumlbFnVI8rmxmdk24nWxfemENwP9+kUSAazFvoyHlPEgoI8GuNBeAPukUsTzq/s40Y+nqGEJUSQQxmRW1uf0/pcFDirwDclZ7RZC3eDItvKxlq3tczkSii/r9ea3c9fAxb3vV8wh+3OvwY6nQH/r6A/Lzc/tk3+OLE4EPqF/kIXbJBM6kYLtfUgvki8sXWnTsVrJp4d8lv+JCifsT0FbgKCvqia6eEsZAW9ynT4apVgzmZz85NtkbtP1wQJk6f/cZK/XJEFJx4lDo2r9lKgWJoYrJS8yckbj98UCL1W57Ghq0/AXFK8HYqiSvUswa0mgc27VVp7OFEbypi1m56lgKIswCCmEleha01j'
 
 # Initialize the S3 client with boto3
 s3 = boto3.client(
@@ -35,8 +35,6 @@ rekognition_client = boto3.client(
     aws_session_token=AWS_SESSION_TOKEN
 )
 
-BUCKET_NAME = 'esmbucketmicroservice'
-
 @app.route('/api/upload', methods=['POST'])
 def upload():
     data = request.get_json()
@@ -44,26 +42,32 @@ def upload():
     booking_id = data.get('booking_id')
 
     uploaded_urls = []
-
+    
     try:
         for i, image in enumerate(images):
             file_buffer = base64.b64decode(image['buffer'])
             file_name = f"uploads/{booking_id}_{i+1}_{image['originalname']}"
 
             # Upload the image to S3
-            s3.upload_fileobj(
-                io.BytesIO(file_buffer),
-                BUCKET_NAME,
-                file_name,
-                ExtraArgs={'ContentType': image['mimetype']}
-            )
-
+            try:
+                s3.upload_fileobj(
+                    io.BytesIO(file_buffer),
+                    S3_BUCKET_NAME,
+                    file_name,
+                    ExtraArgs={'ContentType': image['mimetype']}
+                )
+            except ClientError as e:
+                print(f"Error uploading file: {e}")
+                return jsonify({'error': 'Failed to upload file to S3'}), 500
+            
             # Generate a pre-signed URL for the uploaded image
             response = s3.generate_presigned_url(
                 'get_object',
-                Params={'Bucket': BUCKET_NAME, 'Key': file_name},
+                Params={'Bucket': S3_BUCKET_NAME, 'Key': file_name},
                 ExpiresIn=3600  # URL expires in 1 hour
             )
+
+            print("reached here")
 
             # Append the pre-signed URL to the list
             uploaded_urls.append(response)

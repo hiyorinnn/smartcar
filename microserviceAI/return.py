@@ -10,13 +10,12 @@ CORS(app)
 PAYMENTURL = "To be updated, port: 5000"  # To ask from Joyce
 NOTIFICATIONURL = "http://notification:5001/api/send-sms"
 VIOLATIONLOGURL = "https://personal-qednlunm.outsystemscloud.com/violationlog/rest/violationlog/createViolationLog"
-UPLOADURL = "http://aiprocessing:5003/api/upload"
-REKOGNITIONURL = "http://aiprocessing:5003/api/rekognition"
-BOOKINGLOGURL = "http://booking:5004/api/booking-log/{booking_id}"
+UPLOADURL = "http://localhost:5003/api/upload"
+REKOGNITIONURL = "http://localhost:5003/api/rekognition"
+BOOKINGLOGURL = "http://booking:5006/api/booking-log/{booking_id}" #changed from 4-6
 
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
-    print("reached here")
     try:
         # Receive data in multipart/form-data format from the frontend
         booking_id = request.form.get('booking_id')
@@ -39,6 +38,7 @@ def return_vehicle():
             "booking_id": booking_id,
             "images": images_data
         }
+
 
         # Retrieve booking details
         # booking_response = requests.get(BOOKINGLOGURL.format(booking_id))
@@ -100,4 +100,4 @@ def return_vehicle():
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5006)
+    app.run(debug=True, host='0.0.0.0', port=5010)
