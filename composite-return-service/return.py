@@ -1,7 +1,15 @@
+#import dependencies
 from flask import Flask, jsonify, request, redirect
 import base64
+import sys
+import os
 import requests
+import pika
+import json
 from flask_cors import CORS
+#import amqp functions from amqp_lib.py
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import rabbitmq.amqp_lib as amqp
 
 app = Flask(__name__)
 CORS(app)
@@ -14,6 +22,33 @@ UPLOADURL = "http://aiprocessing:5003/api/upload"
 REKOGNITIONURL = "http://aiprocessing:5003/api/rekognition"
 BOOKINGLOGURL = "http://booking:5004/api/booking-log/{booking_id}"
 
+# RabbitMQ
+rabbit_host = "localhost"
+rabbit_port = 5672
+exchange_name = "order_topic"
+exchange_type = "topic"
+
+connection = None 
+channel = None
+
+def connectAMQP():
+    # Use global variables to reduce number of reconnection to RabbitMQ
+    # There are better ways but this suffices for our lab
+    global connection
+    global channel
+
+    print("  Connecting to AMQP broker...")
+    try:
+        connection, channel = amqp.connect(
+                hostname=rabbit_host,
+                port=rabbit_port,
+                exchange_name=exchange_name,
+                exchange_type=exchange_type,
+        )
+    except Exception as exception:
+        print(f"  Unable to connect to RabbitMQ.\n     {exception=}\n")
+        exit(1) # terminate
+    
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
     try:
@@ -82,6 +117,23 @@ def return_vehicle():
         #         return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
         #     # Send notification if defects are found
+        # Send notification
+        try:
+            phone_number = response.data.phone_number.value
+            success = channel.basic_publish(
+                exchange=exchange_name, 
+                routing_key="order.notif", 
+                body= json.dumps({'booking_id': booking_id, 'phone_number' : phone_number, 'message': 'Your vehicle return process is complete.'})
+            )
+            if success:
+                return jsonify({'message': 'Vehicle return process completed successfully'}), 200
+            else:
+                return jsonify({'error': 'Failed to send notification'}), 500
+        except pika.exceptions.UnroutableError:
+            return jsonify({'error': 'Failed to send notification'}), 500
+        except Exception as e:
+            return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+        
         #     notification_response = requests.post(NOTIFICATIONURL, json={'booking_id': booking_id, "total_charge": total_charge, 'message': 'You have an outstanding payment.'})
 
         #     if notification_response.status_code != 200:
@@ -99,4 +151,5 @@ def return_vehicle():
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 if __name__ == '__main__':
+    connectAMQP()
     app.run(debug=True, host='0.0.0.0', port=5006)
