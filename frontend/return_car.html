@@ -37,6 +37,7 @@
                     <div class="form-group">
                         <label for="selected-booking">Selected Booking</label>
                         <input type="text" id="selected-booking" readonly placeholder="Select a booking to return">
+                        <input type="hidden" id="booking-id" name="booking_id">
                     </div>
 
                     <div class="form-group actual-return-date-group">
@@ -49,18 +50,18 @@
                         <label for="car-photos">Upload Car Photos</label>
                         <div class="photo-upload-container">
                             <div class="file-upload-area">
-                                <input type="file" id="car-photos" multiple accept="image/*" class="file-input">
+                                <input type="file" id="car-photos" name="images" multiple accept="image/*" class="file-input">
                                 <label for="car-photos" class="file-upload-label">
                                     <span class="upload-icon">📷</span>
                                     <span class="upload-text">Choose Files</span>
                                 </label>
-                                <span class="selected-files-text">No files selected</span>
                             </div>
                             <div id="photo-preview-container" class="photo-previews"></div>
                             <p class="upload-instruction">Upload multiple photos of the car for condition assessment</p>
                         </div>
                         <button type="button" id="analyze-condition" class="btn">Analyze Car Condition</button>
                         <div id="upload-status" class="upload-status"></div>
+                        <div id="defect-count-display" class="defect-count-display"></div>
                     </div>
 
                     <div class="form-group">
@@ -69,11 +70,6 @@
                             <input type="text" id="condition" readonly value="Awaiting analysis...">
                             <div id="condition-details" class="condition-details"></div>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="additional-notes">Additional Notes</label>
-                        <textarea id="additional-notes" rows="4"></textarea>
                     </div>
 
                     <div class="form-group" id="additional-charges-container">
@@ -93,6 +89,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="return.js"></script>
+    <script src="return_car.js"></script>
 </body>
 </html>

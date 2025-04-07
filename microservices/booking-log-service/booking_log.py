@@ -289,7 +289,50 @@ def get_user_booking_logs(email):
             "message": f"Failed to retrieve booking logs: {str(e)}"
         }), 500
 
-#Get booking details based on booking_id
+# Get all booking logs of user by user_id
+@app.route("/api/booking-logs/user/<string:user_id>", methods=['GET'])
+def get_user_booking_logs_by_id(user_id):
+    try:
+        # Find user by user_id
+        user = db.session.scalar(db.select(User).filter_by(user_id=user_id))
+        
+        if not user:
+            return jsonify({
+                "code": 404,
+                "message": f"No user found with user_id: {user_id}"
+            }), 404
+        
+        # Get all booking logs for the user_id
+        booking_logs = db.session.scalars(
+            db.select(BookingLog).filter_by(user_id=user_id).order_by(BookingLog.timestamp.desc())
+        ).all()
+        
+        if booking_logs:
+            logs_json = [log.json() for log in booking_logs]
+            
+            # Include user data
+            response_data = {"booking_logs": logs_json}
+            response_data["user"] = user.json()
+            
+            return jsonify({
+                "code": 200,
+                "message": "Booking logs retrieved successfully",
+                "data": response_data
+            }), 200
+        else:
+            return jsonify({
+                "code": 404, 
+                "message": f"No booking logs found for user_id: {user_id}"
+            }), 404
+    
+    except Exception as e:
+        print(f"Error retrieving booking logs: {str(e)}")
+        return jsonify({
+            "code": 500,
+            "message": f"Failed to retrieve booking logs: {str(e)}"
+        }), 500
+
+# Get booking details based on booking_id
 @app.route('/api/booking/<string:booking_id>', methods=['GET'])
 def get_booking(booking_id):
     booking = BookingLog.query.filter_by(booking_id=booking_id).first()

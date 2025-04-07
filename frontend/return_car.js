@@ -37,22 +37,20 @@ function setCurrentDateTime() {
 
 // Fetch active bookings for the user
 async function fetchActiveBookings() {
-    // For demo purposes, we'll use localStorage to get the email
-    // In a real app, you might want to implement proper authentication
-    userEmail = localStorage.getItem('userEmail') || prompt("Please enter your email to see your bookings:");
+    // Get user ID from localStorage (consistent with booking.js)
+    const userId = localStorage.getItem('userUID');
     
-    if (!userEmail) {
+    if (!userId) {
         document.getElementById('active-bookings-container').innerHTML = 
-            '<p>Email is required to fetch your bookings.</p>';
+            '<p>User ID not found. Please log in first.</p>';
         return;
     }
     
-    // Store the email for future use
-    localStorage.setItem('userEmail', userEmail);
-    
     try {
-        const response = await axios.get(`http://127.0.0.1:5006/api/booking-logs/${userEmail}`);
+        // Use user ID to fetch bookings
+        const response = await axios.get(`http://127.0.0.1:5006/api/booking-logs/user/${userId}`);
         const activeBookingsContainer = document.getElementById('active-bookings-container');
+        
         activeBookingsContainer.innerHTML = ''; // Clear loading text
         
         // Filter only active bookings (status is 'not_started' or 'in_progress')
@@ -69,8 +67,8 @@ async function fetchActiveBookings() {
             const bookingCard = document.createElement('div');
             bookingCard.className = 'car-card';
             
-            // Get car details from booking (assuming they're stored in details.car_details)
-            const carDetails = booking.details?.car_details || { make: 'Unknown', model: 'Unknown' };
+            // Get car details from booking
+            const carDetails = booking.details?.details?.car_details || { make: 'Unknown', model: 'Unknown' };
             
             bookingCard.innerHTML = `
                 <h3>Booking #${booking.booking_id.substring(0, 8)}...</h3>
@@ -101,7 +99,6 @@ function toggleFormFields(enabled) {
     const formElements = [
         'actual-return-date',
         'car-photos',
-        'additional-notes',
         'analyze-condition',
         'calculate-charges',
         'confirm-return',
@@ -141,8 +138,10 @@ function selectBooking(booking, cardElement) {
     // Get car details from booking
     const carDetails = booking.details?.car_details || { make: 'Unknown', model: 'Unknown' };
     
+    // Display booking_id as the primary identifier, followed by car details if available
     document.getElementById('selected-booking').value = 
-        `${carDetails.make} ${carDetails.model} (${booking.booking_id.substring(0, 8)}...)`;
+        `Booking ID: ${booking.booking_id} ${carDetails.make !== 'Unknown' ? `(${carDetails.make} ${carDetails.model})` : ''}`;
+    document.getElementById('booking-id').value = booking.booking_id;
     
     // Reset charges and condition
     document.getElementById('late-fee').textContent = '$0.00';
@@ -153,7 +152,6 @@ function selectBooking(booking, cardElement) {
     
     // Clear photo previews
     document.getElementById('photo-preview-container').innerHTML = '';
-    document.querySelector('.selected-files-text').textContent = 'No files selected';
     uploadedPhotos = [];
     assessmentResult = null;
     
@@ -172,16 +170,6 @@ function handlePhotoUpload(event) {
     
     const fileInput = document.getElementById('car-photos');
     const previewContainer = document.getElementById('photo-preview-container');
-    const selectedFilesText = document.querySelector('.selected-files-text');
-    
-    // Update selected files text
-    if (fileInput.files.length === 0) {
-        selectedFilesText.textContent = 'No files selected';
-    } else if (fileInput.files.length === 1) {
-        selectedFilesText.textContent = '1 file selected';
-    } else {
-        selectedFilesText.textContent = `${fileInput.files.length} files selected`;
-    }
     
     // Clear previous previews
     previewContainer.innerHTML = '';
@@ -230,16 +218,6 @@ function removePhoto(index) {
     const previewContainer = document.getElementById('photo-preview-container');
     previewContainer.innerHTML = '';
     
-    // Update the selected files text
-    const selectedFilesText = document.querySelector('.selected-files-text');
-    if (uploadedPhotos.length === 0) {
-        selectedFilesText.textContent = 'No files selected';
-    } else if (uploadedPhotos.length === 1) {
-        selectedFilesText.textContent = '1 file selected';
-    } else {
-        selectedFilesText.textContent = `${uploadedPhotos.length} files selected`;
-    }
-    
     // Recreate remaining previews
     uploadedPhotos.forEach((file, i) => {
         const preview = document.createElement('div');
@@ -279,6 +257,8 @@ async function analyzeCarCondition() {
     }
     
     const uploadStatus = document.getElementById('upload-status');
+    const defectCountDisplay = document.getElementById('defect-count-display');
+    
     uploadStatus.textContent = 'Uploading and analyzing photos...';
     uploadStatus.classList.add('uploading-animation');
     
@@ -286,20 +266,33 @@ async function analyzeCarCondition() {
         // Create a FormData object to send the photos
         const formData = new FormData();
         uploadedPhotos.forEach((photo, index) => {
-            formData.append('photos', photo);
+            formData.append('images', photo);
         });
         
         formData.append('booking_id', selectedBooking.booking_id);
         
         // Send the photos to your backend microservice for analysis
-        const response = await axios.post('http://127.0.0.1:5006/api/car-condition-analysis', formData, {
+        const response = await axios.post('http://127.0.0.1:5006/api/return-vehicle', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
         
         // Handle the response
-        assessmentResult = response.data;
+        const result = response.data;
+        console.log("Defect count:", result.defect_count);
+        
+        // Display defect count
+        defectCountDisplay.textContent = `Defect Count: ${result.defect_count}`;
+        
+        // Create assessment result object
+        assessmentResult = {
+            defect_count: result.defect_count,
+            condition_summary: getConditionSummary(result.defect_count),
+            condition_code: getConditionCode(result.defect_count),
+            damage_charge: calculateDamageCharge(result.defect_count),
+            details: [`${result.defect_count} defects detected in the vehicle.`]
+        };
         
         // Update the condition field with the result
         const conditionInput = document.getElementById('condition');
@@ -334,12 +327,37 @@ async function analyzeCarCondition() {
     }
 }
 
+// Helper function to determine condition summary based on defect count
+function getConditionSummary(defectCount) {
+    if (defectCount === 0) return 'Excellent - No issues';
+    if (defectCount <= 2) return 'Good - Minor wear';
+    if (defectCount <= 5) return 'Fair - Some issues';
+    return 'Poor - Significant issues';
+}
+
+// Helper function to determine condition code based on defect count
+function getConditionCode(defectCount) {
+    if (defectCount === 0) return 'excellent';
+    if (defectCount <= 2) return 'good';
+    if (defectCount <= 5) return 'fair';
+    return 'poor';
+}
+
+// Helper function to calculate damage charge based on defect count
+function calculateDamageCharge(defectCount) {
+    if (defectCount === 0) return 0;
+    if (defectCount <= 2) return defectCount * 25; // $25 per minor defect
+    if (defectCount <= 5) return 50 + (defectCount - 2) * 40; // $50 base + $40 per additional defect
+    return 170 + (defectCount - 5) * 60; // $170 base + $60 per additional defect
+}
+
 // Mock assessment result for testing purposes
 function mockAssessmentResult() {
     assessmentResult = {
+        defect_count: 2,
         condition_summary: 'Good - Minor wear',
         condition_code: 'good',
-        damage_charge: 20,
+        damage_charge: 50,
         details: [
             'Minor scratches detected on rear bumper',
             'Small dent on passenger side door',
@@ -350,7 +368,9 @@ function mockAssessmentResult() {
     // Update the condition field with the result
     const conditionInput = document.getElementById('condition');
     const conditionDetails = document.getElementById('condition-details');
+    const defectCountDisplay = document.getElementById('defect-count-display');
     
+    defectCountDisplay.textContent = `Defect Count: ${assessmentResult.defect_count}`;
     conditionInput.value = assessmentResult.condition_summary;
     
     let detailsHTML = '<h4>Detailed Assessment:</h4><ul>';
@@ -447,8 +467,7 @@ async function confirmReturn() {
     // Calculate charges first
     const charges = calculateCharges();
     
-    // Get additional notes
-    const additionalNotes = document.getElementById('additional-notes').value;
+    // Get actual return date
     const actualReturnDate = document.getElementById('actual-return-date').value;
     
     try {
@@ -468,7 +487,6 @@ async function confirmReturn() {
                     actual_return_time: new Date(actualReturnDate).toISOString(),
                     condition: assessmentResult.condition_code || 'unknown',
                     condition_details: assessmentResult.details || [],
-                    additional_notes: additionalNotes,
                     additional_charges: {
                         late_fee: charges.lateFee,
                         damage_charge: charges.damageCharge,
@@ -503,7 +521,6 @@ async function confirmReturn() {
         
         // Reset form
         document.getElementById('selected-booking').value = '';
-        document.getElementById('additional-notes').value = '';
         document.getElementById('condition').value = 'Awaiting analysis...';
         document.getElementById('condition-details').innerHTML = '';
         
@@ -514,7 +531,6 @@ async function confirmReturn() {
         
         // Clear photo previews
         document.getElementById('photo-preview-container').innerHTML = '';
-        document.querySelector('.selected-files-text').textContent = 'No files selected';
         uploadedPhotos = [];
         assessmentResult = null;
         
@@ -558,7 +574,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirmed) {
                     uploadedPhotos = [];
                     document.getElementById('photo-preview-container').innerHTML = '';
-                    document.querySelector('.selected-files-text').textContent = 'No files selected';
                 }
             }
         });
