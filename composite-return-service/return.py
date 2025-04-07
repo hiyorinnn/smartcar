@@ -22,18 +22,15 @@ UPLOADURL = "http://aiprocessing:5003/api/upload"
 REKOGNITIONURL = "http://aiprocessing:5003/api/rekognition"
 BOOKINGLOGURL = "http://booking:5004/api/booking-log/{booking_id}"
 
-# RabbitMQ
+# RabbitMQ Configuration
 rabbit_host = "localhost"
 rabbit_port = 5672
 exchange_name = "order_topic"
 exchange_type = "topic"
-
 connection = None 
 channel = None
 
 def connectAMQP():
-    # Use global variables to reduce number of reconnection to RabbitMQ
-    # There are better ways but this suffices for our lab
     global connection
     global channel
 
@@ -75,12 +72,12 @@ def return_vehicle():
         }
 
         # Retrieve booking details
-        # booking_response = requests.get(BOOKINGLOGURL.format(booking_id))
+        booking_response = requests.get(BOOKINGLOGURL.format(booking_id))
 
-        # if booking_response.status_code == 404:
-        #     return jsonify({'error': 'Booking not found'}), 404
-        # elif booking_response.status_code != 200:
-        #     return jsonify({'error': 'Error retrieving booking logs'}), 500
+        if booking_response.status_code == 404:
+            return jsonify({'error': 'Booking not found'}), 404
+        elif booking_response.status_code != 200:
+            return jsonify({'error': 'Error retrieving booking logs'}), 500
 
         # Upload images
         upload_response = requests.post(UPLOADURL, json=payload)
@@ -99,8 +96,24 @@ def return_vehicle():
         rekognition_data = rekognition_response.json()
         defect_count = rekognition_data.get('defect_count', 0)
 
+        try:
+            phone_number = booking_response.data.phone_number.value
+            success = channel.basic_publish(
+                exchange=exchange_name, 
+                routing_key="order.notif", 
+                body= json.dumps({'booking_id': booking_id, 'phone_number' : phone_number, 'message': 'Your vehicle return process is complete.'})
+            )
+            if success:
+                return jsonify({'message': 'Vehicle return process completed successfully'}), 200
+            else:
+                return jsonify({'error': 'Failed to send notification'}), 500
+        except pika.exceptions.UnroutableError:
+            return jsonify({'error': 'Failed to send notification'}), 500
+        except Exception as e:
+            return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+        
         return jsonify({"defect_count": defect_count}), 200
-
+    
         # # Log violations if there are defects
         # if defect_count > 0:
         #     violation_response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
@@ -117,22 +130,7 @@ def return_vehicle():
         #         return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
         #     # Send notification if defects are found
-        # Send notification
-        try:
-            phone_number = response.data.phone_number.value
-            success = channel.basic_publish(
-                exchange=exchange_name, 
-                routing_key="order.notif", 
-                body= json.dumps({'booking_id': booking_id, 'phone_number' : phone_number, 'message': 'Your vehicle return process is complete.'})
-            )
-            if success:
-                return jsonify({'message': 'Vehicle return process completed successfully'}), 200
-            else:
-                return jsonify({'error': 'Failed to send notification'}), 500
-        except pika.exceptions.UnroutableError:
-            return jsonify({'error': 'Failed to send notification'}), 500
-        except Exception as e:
-            return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+        
         
         #     notification_response = requests.post(NOTIFICATIONURL, json={'booking_id': booking_id, "total_charge": total_charge, 'message': 'You have an outstanding payment.'})
 
