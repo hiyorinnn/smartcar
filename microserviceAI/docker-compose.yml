@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  aiprocessing:
+    build:
+      context: .
+      dockerfile: aiprocessing.Dockerfile
+    environment:
+      - AWS_REGION=${AWS_REGION}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+    env_file:
+      - .env
+    networks:
+      - flask-network
+
+  return:
+    build:
+      context: .
+      dockerfile: return.Dockerfile
+    ports:
+      - "5006:5006"  # Expose the backend port to be accessible externally
+    networks:
+      - flask-network
+
+networks:
+  flask-network:
+    driver: bridge
