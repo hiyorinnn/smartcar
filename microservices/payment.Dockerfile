@@ -3,6 +3,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 COPY requirements.txt .
+COPY payment.py .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
@@ -17,4 +18,4 @@ ENV booking_log_URL=http://booking_log:5006/api/booking
 
 EXPOSE 5008
 
-CMD ["python", "app.py"]
+CMD ["python", "payment.py"]

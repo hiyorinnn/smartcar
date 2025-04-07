@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 import logging
 import datetime
@@ -10,6 +11,7 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+CORS(app)
 
 # Create a scheduler for handling timed car availability updates
 scheduler = BackgroundScheduler()
@@ -18,7 +20,7 @@ scheduler = BackgroundScheduler()
 #For use with Docker
 CAR_AVAILABILITY_SERVICE_URL = "http://car_available:5000"  
 BOOKING_LOG_SERVICE_URL = "http://booking_log:5006/api" 
-
+PAYMENT_SERVICE_URL = "http://payment_service:5008/api/v1/payments"
 # For local testing
 # CAR_AVAILABILITY_SERVICE_URL = "http://localhost:5000"
 # BOOKING_LOG_SERVICE_URL = "http://127.0.0.1:5006/api"
@@ -208,8 +210,8 @@ def start_booking(booking_id):
     # - schedule to end booking  #
     ##############################
 
-        #Local link
-        payment_service_url = "http://localhost:5008/api/v1/payments"
+        #DOCKER LINK
+        payment_service_url = f"{PAYMENT_SERVICE_URL}"
         payment_payload = {
             "booking_id": booking_id,
             "total_amount": total_amount
@@ -250,7 +252,7 @@ def start_booking(booking_id):
         )
         
         # 3: Update booking with payment details and change status to in_progress
-        booking_service_url = f"http://localhost:5006/api/v1/update-status/{booking_id}"
+        booking_service_url = f"{BOOKING_LOG_SERVICE_URL}/update-status/{booking_id}"
         update_payload = {
             "payment_status": "paid",
             "transaction_id": payment_result.get('payment_id'),

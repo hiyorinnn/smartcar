@@ -111,25 +111,31 @@ def process_payment():
             "error": str(e)
         }), 500
 
-
+import sys
 @app.route('/webhook', methods=['POST'])
 def stripe_webhook():
     payload = request.data
     sig_header = request.headers.get('Stripe-Signature')
-    endpoint_secret = os.environ.get('STRIPE_WEBHOOK_SECRET', 'whsec_2dWJNk3ZJZ7xtTzl0qpVZAShENq4OJws')
+    endpoint_secret = os.environ.get('STRIPE_WEBHOOK_SECRET', 'whsec_3e285bea74983dec8c4fb3eac977f18e248e35a7d28401298d07b7178d1d719b')
+
+    if not sig_header:
+        print("❌ Missing Stripe-Signature header", file=sys.stderr)
+        return jsonify({"error": "Missing signature"}), 400
 
     try:
+        print(f"📦 Raw Payload: {payload}", file=sys.stderr)
+        print(f"📨 Stripe-Signature: {sig_header}", file=sys.stderr)
+
         event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
+            payload=payload, sig_header=sig_header, secret=endpoint_secret
         )
+
     except ValueError as e:
-        logger.error(f"Invalid payload: {e}")
+        print(f"❌ Invalid payload: {e}", file=sys.stderr)
         return jsonify({"error": "Invalid payload"}), 400
     except stripe.error.SignatureVerificationError as e:
-        logger.error(f"Invalid signature: {e}")
+        print(f"❌ Invalid signature: {e}", file=sys.stderr)
         return jsonify({"error": "Invalid signature"}), 400
-
-    logger.info(f"Received Stripe event: {event['type']}")
 
     if event['type'] == 'payment_intent.succeeded':
         intent = event['data']['object']
