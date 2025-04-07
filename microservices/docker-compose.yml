@@ -118,6 +118,26 @@ services:
     networks:
       - smartcar-net
   
+   ###################################
+  # Rental Composite microservice
+  ###################################
+  rental-composite:
+    build:
+      context: ./
+      dockerfile: rental-composite.Dockerfile
+    container_name: rental-composite
+    restart: always
+    environment:
+      - CAR_AVAILABILITY_SERVICE_URL=http://car_available:5000
+      - BOOKING_LOG_SERVICE_URL=http://booking_log:5006/api
+    ports:
+      - "5007:5007"
+    networks:
+      - smartcar-net
+    depends_on:
+      - car_available
+      - booking_log
+
   ###################################
   # Payment microservice
   ###################################
@@ -139,23 +159,19 @@ services:
     depends_on:
       - booking_log
       - rental-composite
-
+  
   ###################################
-  # Rental Composite microservice
+  # Notification microservice
   ###################################
-  rental-composite:
+  notification:
     build:
       context: ./
-      dockerfile: rental-composite.Dockerfile
-    container_name: rental-composite
+      dockerfile: notification.Dockerfile
     restart: always
     environment:
-      - CAR_AVAILABILITY_SERVICE_URL=http://car_available:5000
-      - BOOKING_LOG_SERVICE_URL=http://booking_log:5006/api
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
+      PYTHONUNBUFFERED: 1
     ports:
-      - "5007:5007"
+      - "5009:5009" 
     networks:
       - smartcar-net
-    depends_on:
-      - car_available
-      - booking_log
