@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Payment Successful | SmartCar</title>
+    <title>Payment Failed | SmartCar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,8 +14,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
     <style>
       * {
         margin: 0;
@@ -68,7 +66,7 @@
         font-size: 1.8rem;
       }
 
-      .success-container {
+      .error-container {
         max-width: 800px;
         margin: 50px auto;
         padding: 40px;
@@ -79,93 +77,100 @@
         flex-grow: 1;
       }
 
-      .success-icon {
+      .error-icon {
         font-size: 5rem;
-        color: #10b981;
+        color: #ef4444;
         margin-bottom: 20px;
-        animation: scaleIn 0.5s ease-out;
+        animation: shake 0.5s ease-in-out;
       }
 
-      @keyframes scaleIn {
-        0% {
-          transform: scale(0);
-          opacity: 0;
-        }
-        60% {
-          transform: scale(1.2);
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-10px); }
+        40%, 80% { transform: translateX(10px); }
       }
 
-      .success-title {
+      .error-title {
         font-size: 2.5rem;
         color: #1e293b;
         margin-bottom: 15px;
         font-weight: 600;
       }
 
-      .success-message {
+      .error-message {
         color: #4b5563;
         font-size: 1.1rem;
         margin-bottom: 30px;
         line-height: 1.6;
       }
 
-      .booking-details {
+      .error-details {
+        background-color: #fee2e2;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: left;
+        border: 1px solid #fecaca;
+      }
+
+      .error-details-title {
+        font-size: 1.2rem;
+        color: #b91c1c;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      .error-code {
+        background-color: #f8fafc;
+        color: #1e293b;
+        padding: 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-family: monospace;
+        font-size: 1rem;
+        margin-bottom: 15px;
+      }
+
+      .error-help {
+        color: #6b7280;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .possible-reasons {
         background-color: #f8fafc;
         border-radius: 12px;
-        padding: 30px;
+        padding: 25px;
         margin-bottom: 30px;
         text-align: left;
         border: 1px solid #e5e7eb;
       }
 
-      .booking-details-title {
-        font-size: 1.3rem;
+      .reasons-title {
+        font-size: 1.2rem;
         color: #2563eb;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         position: relative;
         padding-bottom: 10px;
         border-bottom: 2px dashed #e5e7eb;
       }
 
-      .detail-item {
+      .reason-item {
         display: flex;
         margin-bottom: 15px;
-        align-items: center;
+        align-items: flex-start;
       }
 
-      .detail-item i {
-        min-width: 30px;
-        color: #2563eb;
-        font-size: 1.1rem;
+      .reason-item i {
+        min-width: 25px;
+        color: #ef4444;
+        font-size: 1rem;
+        margin-top: 3px;
       }
 
-      .detail-label {
-        font-weight: 500;
+      .reason-text {
         color: #4b5563;
-        margin-right: 10px;
-        min-width: 120px;
-      }
-
-      .detail-value {
-        color: #1e293b;
-        font-weight: 500;
-      }
-
-      .confirmation-code {
-        background-color: #dbeafe;
-        color: #2563eb;
-        padding: 15px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1.1rem;
-        letter-spacing: 1px;
-        margin-bottom: 30px;
-        display: inline-block;
+        line-height: 1.5;
       }
 
       .btn {
@@ -217,6 +222,22 @@
         background-color: #eef2ff;
       }
 
+      .contact-support {
+        margin-top: 20px;
+        color: #6b7280;
+        font-size: 0.95rem;
+      }
+
+      .support-email {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .support-email:hover {
+        text-decoration: underline;
+      }
+
       footer {
         text-align: center;
         padding: 20px;
@@ -226,12 +247,12 @@
       }
 
       @media (max-width: 768px) {
-        .success-container {
+        .error-container {
           padding: 30px 20px;
           margin: 30px 20px;
         }
         
-        .success-title {
+        .error-title {
           font-size: 2rem;
         }
         
@@ -255,45 +276,63 @@
       </div>
     </header>
 
-    <div class="success-container">
-      <i class="fas fa-check-circle success-icon"></i>
-      <h1 class="success-title">Payment Successful!</h1>
-      <p class="success-message">Your booking has been confirmed and your receipt has been emailed to you. We look forward to seeing you soon!</p>
+    <div class="error-container">
+      <i class="fas fa-exclamation-circle error-icon"></i>
+      <h1 class="error-title">Payment Failed</h1>
+      <p class="error-message">We were unable to process your payment. Your booking has not been confirmed.</p>
       
-      <div class="booking-details">
-        <h2 class="booking-details-title">Booking Details</h2>
-        <div class="detail-item">
-          <i class="fas fa-car-side"></i>
-          <span class="detail-label">Vehicle:</span>
-          <span class="detail-value" id="car-make-model"></span> 
-          (<span class="detail-value" id="price-per-hour"></span>)
+      <div class="error-details">
+        <h3 class="error-details-title">Error Details:</h3>
+        <div class="error-code" id="error-code">Error Code: PAYMENT_INTENT_AUTHENTICATION_FAILURE</div>
+        <p class="error-help">Please try again or use a different payment method.</p>
+      </div>
+      
+      <div class="possible-reasons">
+        <h2 class="reasons-title">Possible Reasons</h2>
+        <div class="reason-item">
+          <i class="fas fa-times-circle"></i>
+          <p class="reason-text"><strong>Insufficient funds:</strong> Your card doesn't have enough funds to complete this transaction.</p>
         </div>
-        <div class="detail-item">
-          <i class="far fa-calendar-check"></i>
-          <span class="detail-label">Pickup Date:</span>
-          <span class="detail-value" id="start-time"></span>
+        <div class="reason-item">
+          <i class="fas fa-times-circle"></i>
+          <p class="reason-text"><strong>Card declined:</strong> Your card was declined by your bank or card issuer.</p>
         </div>
-        <div class="detail-item">
-          <i class="far fa-calendar-times"></i>
-          <span class="detail-label">Return Date:</span>
-          <span class="detail-value" id="end-time"></span>
+        <div class="reason-item">
+          <i class="fas fa-times-circle"></i>
+          <p class="reason-text"><strong>Authentication failed:</strong> 3D Secure authentication failed or was canceled.</p>
         </div>
-        <div class="detail-item">
-          <i class="far fa-clock"></i>
-          <span class="detail-label">Duration:</span>
-          <span class="detail-value" id="duration"></span>
-        </div>
-        <div class="detail-item">
-          <i class="fas fa-money-bill-wave"></i>
-          <span class="detail-label">Total Paid:</span>
-          <span class="detail-value" id="total-price-final"></span>
+        <div class="reason-item">
+          <i class="fas fa-times-circle"></i>
+          <p class="reason-text"><strong>Network error:</strong> A temporary connection issue occurred during payment processing.</p>
         </div>
       </div>
-    
+      
+      <a href="payment.html" class="btn">Try Again</a>
       <a href="index.html" class="btn btn-secondary">Return Home</a>
+      
+      <p class="contact-support">
+        Need help? Contact our support team at <a href="mailto:support@smartcar.com" class="support-email">support@smartcar.com</a>
+      </p>
     </div>
 
     <footer>
       <p>&copy; 2025 SmartCar. All rights reserved.</p>
     </footer>
-    <script src="./payment.js"></script>
+
+    <script>
+      // Get error details from URL parameters
+      function getErrorDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorCode = urlParams.get('error_code') || 'UNKNOWN_ERROR';
+        const errorMessage = urlParams.get('error_message') || 'An unknown error occurred';
+        
+        document.getElementById('error-code').innerText = `Error Code: ${errorCode}`;
+        
+        // You could add more specific error handling based on the error code
+      }
+      
+      // Load error details when page loads
+      document.addEventListener('DOMContentLoaded', getErrorDetails);
+    </script>
+  </body>
+</html>

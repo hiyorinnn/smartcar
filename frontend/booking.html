@@ -103,6 +103,55 @@
             border-radius: 4px;
             background-color: white;
         }
+
+        nav {
+            margin: 0 auto 0 50px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 0;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #2563eb;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #2563eb;
+            transition: width 0.3s;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        nav ul li a.active {
+            color: #2563eb;
+        }
+
+        nav ul li a.active::after {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -114,8 +163,11 @@
             SMARTCAR
         </div>
         <nav>
-            <a href="index.html">Home</a>
-        </nav>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="return_car.html">Return a Car</a></li>
+            </ul>
+          </nav>
     </header>
     <div class="booking-container">
         <h1 class="booking-title">Book Your <span>Perfect Car</span></h1>
