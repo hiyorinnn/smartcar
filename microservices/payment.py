@@ -24,12 +24,12 @@ stripe.api_key = os.environ.get('STRIPE_API_KEY', 'sk_test_51R7XLM4Jm41usPZBwNr5
 # rental-composite service configuration
 
 #Docker URL
-#rental_composite_URL = os.environ.get('rental_composite_URL', 'http://booking-composite:5002/api/v1')
-#booking_log_URL = "http://booking_log:5006/api/booking"
+rental_composite_URL = os.environ.get('rental_composite_URL', 'http://rental-composite:5007/api/v1')
+booking_log_URL = "http://booking_log:5006/api/booking"
 
-#Local URL 
-rental_composite_URL = 'http://localhost:5007/api/v1'
-booking_log_URL = "http://localhost:5006/api/booking"
+# #Local URL 
+# rental_composite_URL = 'http://localhost:5007/api/v1'
+# booking_log_URL = "http://localhost:5006/api/booking"
 
 @app.route('/api/v1/payments', methods=['POST'])
 def process_payment():

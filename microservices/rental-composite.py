@@ -15,13 +15,13 @@ app = Flask(__name__)
 scheduler = BackgroundScheduler()
 # scheduler.start()
 
-# #For use with Docker
-# CAR_AVAILABILITY_SERVICE_URL = "http://car_available:5000"  
-# BOOKING_LOG_SERVICE_URL = "http://booking_log:5006/api" 
+#For use with Docker
+CAR_AVAILABILITY_SERVICE_URL = "http://car_available:5000"  
+BOOKING_LOG_SERVICE_URL = "http://booking_log:5006/api" 
 
 # For local testing
-CAR_AVAILABILITY_SERVICE_URL = "http://localhost:5000"
-BOOKING_LOG_SERVICE_URL = "http://127.0.0.1:5006/api"
+# CAR_AVAILABILITY_SERVICE_URL = "http://localhost:5000"
+# BOOKING_LOG_SERVICE_URL = "http://127.0.0.1:5006/api"
 
 # #########################################
 # # Update car availability based on time #
@@ -296,7 +296,7 @@ def health_check():
 
 if __name__ == '__main__':
     import atexit
-    testing_mode = True  # Set to True when testing to disable scheduler
+    testing_mode = False  # Set to True when testing to disable scheduler
 
     if not testing_mode:
         scheduler.start()
