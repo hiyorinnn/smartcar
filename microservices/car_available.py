@@ -9,7 +9,7 @@ CORS(app)
 
 # Database Configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    environ.get("dbURL") or "mysql+mysqlconnector://root@localhost:3306/car_service"
+    environ.get("dbURL") or "mysql+mysqlconnector://root:root@localhost:3306/car_service"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -98,58 +98,6 @@ def find_by_id(id):
     if car:
         return jsonify({"code": 200, "data": car.json()})
     return jsonify({"code": 404, "message": "Car not found."}), 404
-
-# Create a new car
-@app.route("/car/<string:id>", methods=["POST"])
-def create_car(id):
-    if db.session.scalar(db.select(Car).filter_by(id=id)):
-        return (
-            jsonify(
-                {
-                    "code": 400,
-                    "data": {"id": id},
-                    "message": "Car already exists.",
-                }
-            ),
-            400,
-        )
-
-    data = request.get_json()
-    required_fields = ["make", "model", "year", "color", "price_per_hour", "latitude", "longitude"]
-
-    for field in required_fields:
-        if field not in data:
-            return jsonify({"code": 400, "message": f"Missing required field: {field}"}), 400
-
-    car = Car(
-        id=id,
-        make=data["make"],
-        model=data["model"],
-        year=data["year"],
-        color=data["color"],
-        price_per_hour=data["price_per_hour"],
-        latitude=data["latitude"],
-        longitude=data["longitude"],
-        available=data.get("available", True),
-    )
-
-    try:
-        db.session.add(car)
-        db.session.commit()
-    except Exception as e:
-        print("Exception:{}".format(str(e)))
-        return (
-            jsonify(
-                {
-                    "code": 500,
-                    "data": {"id": id},
-                    "message": "An error occurred creating the car.",
-                }
-            ),
-            500,
-        )
-
-    return jsonify({"code": 201, "data": car.json()}), 201
 
 #Update car availability
 @app.route("/car/<string:id>/availability", methods=["PUT"])

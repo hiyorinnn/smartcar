@@ -83,7 +83,7 @@ services:
       - smartcar-net
     depends_on:
       - car_available
-  
+
   ###################################
   # Error Handler microservice
   ###################################
@@ -93,9 +93,12 @@ services:
       dockerfile: error_handler.Dockerfile
     restart: always
     environment:
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/smartcar_logs
       PYTHONUNBUFFERED: 1
     ports:
-      - "5005:5005"  # Changed from 5002 to avoid conflict with GPS service
+      - "5005:5005"
+    # volumes:
+    #   - C:\wamp64\www\smartcar\microservices\error-handling-service\logs:/app/logs
     networks:
       - smartcar-net
 
@@ -104,13 +107,88 @@ services:
   ###################################
   booking_log:
     build:
-      context: ../booking-log-service/
+      context: ./booking-log-service
       dockerfile: booking_log.Dockerfile
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
-      - "5006:5006"  # Update to 5006 to avoid conflict with other services
+      - "5006:5006" # Update to 5006 to avoid conflict with other services
     networks:
       - smartcar-net
+  
+  ###################################
+  # Payment microservice
+  ###################################
+  payment_service:
+    build:
+      context: ./
+      dockerfile: payment.Dockerfile
+    container_name: payment_service
+    restart: always
+    environment:
+      - STRIPE_API_KEY=sk_test_51R7XLM4Jm41usPZBwNr5slG3GHhThtJ4LLHe9MpwsXxnzIT2c11AKYoHGLvO0KwxCEGztfwuI3ozrQ0mAiqJMcM400uwoLUqju
+      - STRIPE_WEBHOOK_SECRET=whsec_2dWJNk3ZJZ7xtTzl0qpVZAShENq4OJws
+      - rental_composite_URL=http://rental-composite:5007/api/v1
+      - booking_log_URL=http://booking_log:5006/api
+    ports:
+      - "5008:5008"
+    networks:
+      - smartcar-net
+    depends_on:
+      - booking_log
+      - rental-composite
+
+  ###################################
+  # Rental Composite microservice
+  ###################################
+  rental-composite:
+    build:
+      context: ./
+      dockerfile: rental-composite.Dockerfile
+    container_name: rental-composite
+    restart: always
+    environment:
+      - CAR_AVAILABILITY_SERVICE_URL=http://car_available:5000
+      - BOOKING_LOG_SERVICE_URL=http://booking_log:5006/api
+    ports:
+      - "5007:5007"
+    networks:
+      - smartcar-net
+    depends_on:
+      - car_available
+      - booking_log
+
+  aiprocessing:
+    build:
+      context: ./aiprocessing-service
+      dockerfile: aiprocessing.Dockerfile
+    restart: always
+    environment:
+      - AWS_REGION=${AWS_REGION}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+    env_file:
+      - .env
+    networks:
+      - smartcar-net
+      
+  
+  return:
+    build:
+      context: ./return-service
+      dockerfile: return.Dockerfile
+    restart: always
+    ports:
+      - "5011:5011"  
+    networks:
+      - smartcar-net
+    # depends_on:
+      # - error_handler
+      # - booking_log
+      # - payment_service
+      # - aiprocessing
+      # to add notification
