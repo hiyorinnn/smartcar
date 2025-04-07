@@ -54,19 +54,32 @@ function setupSearchButton() {
             return;
         }
         
-        // Store in sessionStorage
-        console.log(`Storing location: ${locationInput}`);
-        sessionStorage.setItem('selectedLocation', locationInput);
+        // Get coordinates if available
+        const latInput = document.getElementById('location-lat');
+        const lngInput = document.getElementById('location-lng');
+        const lat = latInput ? latInput.value : null;
+        const lng = lngInput ? lngInput.value : null;
         
-        // Direct user to booking.html
+        // Construct search parameters
+        const searchParams = {
+            location: locationInput,
+            lat: lat,
+            lng: lng
+        };
+        
+        // Create URLSearchParams object from searchParams
+        const queryParams = new URLSearchParams();
+        for (const [key, value] of Object.entries(searchParams)) {
+            if (value) queryParams.append(key, value);
+        }
+        
+        // Direct user to booking.html with search parameters
         window.location.href = './booking.html';
     });
 }
 
 // Handle current location button
 document.getElementById('current-location-btn')?.addEventListener('click', function() {
-    console.log('Selected location from sessionStorage:', sessionStorage.getItem('selectedLocation'));
-    
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             document.getElementById('location-lat').value = position.coords.latitude;

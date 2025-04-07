@@ -6,104 +6,6 @@
     <title>SmartCar - Book a Car</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="booking.css">
-    <style>
-        /* Additional styles for location features */
-        .location-display {
-            background-color: #e3f2fd;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-weight: 500;
-            color: #1565c0;
-        }
-        
-        .car-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .car-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .car-card.selected {
-            border-color: #2196F3;
-            background-color: #e3f2fd;
-        }
-        
-        .user-location-marker {
-            z-index: 100;
-        }
-        
-        .info-window {
-            padding: 5px;
-            min-width: 200px;
-        }
-        
-        .info-window-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .directions-btn, .book-btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .directions-btn {
-            background-color: #4CAF50;
-            color: white;
-        }
-        
-        .book-btn {
-            background-color: #2196F3;
-            color: white;
-        }
-        
-        /* Error message styling */
-        .error-message {
-            color: #d32f2f;
-            font-size: 12px;
-            margin-top: 4px;
-            font-weight: 400;
-            display: none;
-        }
-        
-        input.error, select.error {
-            border-color: #d32f2f;
-        }
-        
-        /* Custom datetime picker styles */
-        .datetime-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .datetime-container input[type="date"] {
-            flex: 2;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        
-        .datetime-container select {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -113,78 +15,65 @@
             </div>
             SMARTCAR
         </div>
-        <nav>
-            <a href="index.html">Home</a>
-        </nav>
     </header>
+
     <div class="booking-container">
         <h1 class="booking-title">Book Your <span>Perfect Car</span></h1>
-        
+
         <!-- Cars Map -->
         <div class="car-map">
-            <div id="map" style="height: 400px; width: 100%; margin: 20px 0;"></div>
+            <div id="map" style="height: 600px; width: 1000px; margin: 20px;"></div>
         </div>
-        
+
         <div class="booking-sections">
             <!-- Nearby Cars Section -->
             <div class="section">
                 <h2 class="section-title">Available Cars</h2>
-                <!-- Location display will be inserted here -->
                 <div id="cars-container" class="car-list">
                     <!-- Cars will be dynamically populated here -->
                     <p>Loading available cars...</p>
                 </div>
             </div>
-            
+
             <!-- Booking Details Section -->
             <div class="section">
                 <h2 class="section-title">Booking Details</h2>
                 <form id="booking-form">
                     <div class="form-group">
                         <label for="selected-car">Selected Car</label>
-                        <input type="text" id="selected-car" readonly placeholder="Select a car from the list above">
-                        <small class="error-message" id="selected-car-error">Please select a car from the list above</small>
+                        <input type="text" id="selected-car" readonly placeholder="Select a car">
                     </div>
+
                     <div class="form-group">
                         <label for="first-name">First Name</label>
                         <input type="text" id="first-name" required>
-                        <small class="error-message" id="first-name-error">Please enter your first name</small>
                     </div>
+
                     <div class="form-group">
                         <label for="last-name">Last Name</label>
                         <input type="text" id="last-name" required>
-                        <small class="error-message" id="last-name-error">Please enter your last name</small>
                     </div>
+
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" required>
-                        <small class="error-message" id="email-error">Please enter a valid email address</small>
                     </div>
+
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
                         <input type="tel" id="phone" required>
-                        <small class="error-message" id="phone-error">Please enter a valid phone number</small>
                     </div>
+
                     <div class="form-group">
-                        <label for="pickup-date-day">Pickup Date</label>
-                        <div class="datetime-container">
-                            <input type="date" id="pickup-date-day" required>
-                            <select id="pickup-date-hour" required>
-                                <!-- Hours will be populated by JavaScript -->
-                            </select>
-                        </div>
-                        <small class="error-message" id="pickup-date-day-error">Please select a valid pickup date and time</small>
+                        <label for="pickup-date">Pickup Date</label>
+                        <input type="datetime-local" id="pickup-date" required>
                     </div>
+
                     <div class="form-group">
-                        <label for="return-date-day">Return Date</label>
-                        <div class="datetime-container">
-                            <input type="date" id="return-date-day" required>
-                            <select id="return-date-hour" required>
-                                <!-- Hours will be populated by JavaScript -->
-                            </select>
-                        </div>
-                        <small class="error-message" id="return-date-day-error">Please select a valid return date and time</small>
+                        <label for="return-date">Return Date</label>
+                        <input type="datetime-local" id="return-date" required>
                     </div>
+
                     <div class="form-group">
                         <label for="payment-method">Payment Method</label>
                         <select id="payment-method">
@@ -192,25 +81,23 @@
                             <option value="debit">Debit Card</option>
                             <option value="paypal">PayPal</option>
                         </select>
-                        <small class="error-message" id="payment-method-error">Please select a payment method</small>
                     </div>
+
                     <button type="button" id="book-now" class="btn">Book Now</button>
                 </form>
             </div>
         </div>
     </div>
-    
-    <!-- Load Axios before other scripts -->
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
-    <!-- Load application scripts -->
     <script src="booking.js"></script>
-    
-    <!-- Load Google Maps API last -->
+
     <script
-      async
-      defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w&libraries=marker,geometry&loading=async&callback=initMap"
-    ></script>
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcICSOshZcB7VvTbaYfij-lTNXgg-Zx7w&libraries=marker,geometry&loading=async&callback=initMap"
+  ></script>
+
+  <script src="car.js"></script>
 </body>
 </html>
