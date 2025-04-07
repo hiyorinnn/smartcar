@@ -2,12 +2,11 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
+COPY amqp_setup.py .
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . . 
+EXPOSE 5010
 
-EXPOSE 5009
-
-CMD [ "python", "notification.py" ]
+CMD [ "python", "amqp_setup.py" ]

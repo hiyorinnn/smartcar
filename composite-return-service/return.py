@@ -9,7 +9,7 @@ import json
 from flask_cors import CORS
 #import amqp functions from amqp_lib.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import rabbitmq.amqp_lib as amqp
+import microservices.amqp_lib as amqp
 
 app = Flask(__name__)
 CORS(app)
