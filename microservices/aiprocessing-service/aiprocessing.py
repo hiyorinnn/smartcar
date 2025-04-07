@@ -39,6 +39,13 @@ rekognition_client = boto3.client(
 @app.route('/api/upload', methods=['POST'])
 def upload():
     data = request.get_json()
+
+    # Check if 'images' and 'booking_id' are in the request
+    if 'images' not in data or not data['images']:
+        return jsonify({'error': 'No images provided'}), 400
+    if 'booking_id' not in data or not data['booking_id']:
+        return jsonify({'error': 'booking_id is required'}), 400
+    
     images = data['images']
     booking_id = data.get('booking_id')
 
@@ -80,8 +87,7 @@ def upload():
         return jsonify({'error': str(e)}), 403
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-# Function to Detect Custom Labels and Return them
+
 # Function to Detect Custom Labels and Return them
 def show_custom_labels(model, bucket_name, s3_key, min_confidence):
     print(f"Bucket Name: {bucket_name}")
@@ -119,6 +125,12 @@ def show_custom_labels(model, bucket_name, s3_key, min_confidence):
 def detect_labels():
     # Get the data from the request
     data = request.get_json()
+
+    # Check if 'booking_id' and 'imageUrls' are provided
+    if 'booking_id' not in data or not data['booking_id']:
+        return jsonify({"error": "booking_id is required"}), 400
+    if 'imageUrls' not in data or not data['imageUrls']:
+        return jsonify({"error": "imageUrls are required"}), 400
 
     # Extract the 'booking_id' and 'imageUrls' from the request JSON
     booking_id = data.get('booking_id')  # This should contain the 'booking_id'
