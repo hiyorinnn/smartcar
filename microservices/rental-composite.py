@@ -66,7 +66,7 @@ def get_booking_details(booking_id):
         Dictionary containing booking details or None if not found
     """
     url = f"{BOOKING_LOG_SERVICE_URL}/booking/{booking_id}"
-    # http://127.0.0.1:5006/api/booking/booking-1744091289964-nbnu22di6
+    #http://127.0.0.1:5006/api/booking/booking-1744091289964-nbnu22di6
     
     try:
         logger.info(f"Fetching booking details for ID: {booking_id}")
