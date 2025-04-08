@@ -257,7 +257,7 @@
         <div class="item-card">
           <div class="fine-details">
             <span class="fine-name"><i class="fas fa-exclamation-circle"></i> <span id="fine-type">Damages Fees</span></span>
-            <span class="fine-price" id="fine-amount">${Amount}</span>
+            <span class="fine-price" id="fine-amount"></span>
           </div>
           <div class="fine-description" id="fine-description">
           Fees for damaged caused on the car, assessed from the images you uploaded upon return.
@@ -266,7 +266,7 @@
 
         <div class="total-row">
           <span class="total-label">Total Amount</span>
-          <span class="total-price" id="total-fine-amount">${Amount}</span>
+          <span class="total-price" id="total-fine-amount"></span>
         </div>
       </div>
 
@@ -274,12 +274,75 @@
         <h2 class="section-title">Payment Details</h2>
         <form id="payment-form">
           <div id="payment-element"><!-- Stripe injects payment UI here --></div>
-          <button class="btn" id="submit">Pay Fine</button>
+          <button class="btn" id="submit-payment">Pay Fine</button>
           <div id="payment-message" class="hidden"></div>
         </form>
       </div>
     </div>
-
-    <script src="./stripe.js"></script>
   </body>
 </html>
+
+<script>
+  const stripe = Stripe("pk_test_51R7XLM4Jm41usPZB8LXUvo3nFp9ItuWiFCOrksMZWQWqgcyAwRqILKJKReuEeVsHd2yVVY4OdQwecWKfZ4lVbeA000vB8ojdqL");
+  let elements;
+  
+  // Simulated fine amount - need to get this amount from another api call
+  const amt = 50.0; 
+  
+  document.getElementById('fine-amount').innerText = `$${amt}`;
+  document.getElementById('total-fine-amount').innerText = `$${amt}`;
+  
+  // Send Stripe intent
+  async function initializeStripeElements() {
+    try {
+      const response = await axios.post("http://localhost:5008/api/v1/pay-fine", {
+        amount: amt
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const clientSecret = response.data.client_secret;
+  
+      elements = stripe.elements({ clientSecret });
+      const paymentElement = elements.create("payment");
+      paymentElement.mount("#payment-element");
+  
+    } catch (error) {
+      console.error("Failed to initialise Stripe Elements:", error);
+      document.querySelector("#payment-message").classList.remove("hidden");
+      document.querySelector("#payment-message").textContent = "Failed to initialise payment.";
+    }
+  }
+  
+  async function handlePaymentSubmit(event) {
+    event.preventDefault();
+    const payButton = document.getElementById("submit-payment");
+    payButton.disabled = true;
+    payButton.innerHTML = `<div class="spinner"></div> Processing payment...`;
+  
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: "http://localhost/GitHub/smartcar/frontend/fines-success.html", // change to ur environment
+      },
+    });
+  
+    if (error) {
+      const messageContainer = document.querySelector("#payment-message");
+      messageContainer.classList.remove("hidden");
+      messageContainer.textContent = error.message;
+      payButton.disabled = false;
+      payButton.innerHTML = "Pay Fine";
+    }
+  }
+  
+  document.addEventListener("DOMContentLoaded", async () => {
+    await initializeStripeElements();
+  
+    const form = document.getElementById("payment-form");
+    form.addEventListener("submit", handlePaymentSubmit);
+  });
+  </script>
+  
