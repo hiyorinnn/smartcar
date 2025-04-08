@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: #f0f4f8;
+        background-image: linear-gradient(
+          to right,
+          rgba(37, 99, 235, 0.05) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          to bottom,
+          rgba(37, 99, 235, 0.05) 1px,
+          transparent 1px
+        );
+        background-size: 20px 20px;
+      }
+
+      /* Header Styles */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 5%;
+        background-color: white;
+        color: #2563eb;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      
+      a {
+        text-decoration: none;
+        color: #2563eb;
+      }
+
+      .logo {
+        color: #2563eb;
+        font-weight: bold;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-icon {
+        margin-right: 10px;
+        font-size: 1.8rem;
+      }
+
+      .payment-sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 5%;
+      }
+
+      .section {
+        background-color: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .section:hover {
+        transform: translateY(-5px);
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+        color: #2563eb;
+        position: relative;
+        padding-bottom: 12px;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        width: 60px;
+        background-color: #2563eb;
+        border-radius: 3px;
+      }
+
+      #payment-element {
+        margin-bottom: 24px;
+      }
+
+      .item-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        background-color: #f9fafb;
+      }
+
+      .item-card:hover {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        border-color: #2563eb;
+      }
+
+      .fine-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .fine-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .fine-price {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2563eb;
+      }
+
+      .fine-description {
+        color: #4b5563;
+        margin-top: 10px;
+      }
+
+      .total-row {
+        border-top: 2px dashed #e5e7eb;
+        padding-top: 20px;
+        margin-top: 20px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .total-label {
+        font-size: 1.2rem;
+        color: #1e293b;
+      }
+
+      .total-price {
+        font-size: 1.5rem;
+        color: #2563eb;
+        background-color: #dbeafe;
+        padding: 8px 16px;
+        border-radius: 8px;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-top: 25px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .btn::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        background-color: rgba(0,0,0,0.1);
+        transition: height 0.3s ease;
+        z-index: -1;
+      }
+
+      .btn:hover::after {
+        height: 100%;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      #payment-message {
+        color: #555;
+        font-size: 16px;
+        line-height: 20px;
+        padding-top: 12px;
+        text-align: center;
+      }
+
+      #payment-message.hidden {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .payment-sections {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+          <img src="./src/Frame.svg" />
+        </div>
+        <a href="./index.html">SMARTCAR</a>
+      </div>
+      <h1>Fine Payment</h1>
+      <h1> </h1>
+    </header>
+
+    <div class="payment-sections">
+      <div class="section">
+        <h2 class="section-title">Fine Details</h2>
+        <div class="item-card">
+          <div class="fine-details">
+            <span class="fine-name"><i class="fas fa-exclamation-circle"></i> <span id="fine-type">Damages Fees</span></span>
+            <span class="fine-price" id="fine-amount">${Amount}</span>
+          </div>
+          <div class="fine-description" id="fine-description">
+          Fees for damaged caused on the car, assessed from the images you uploaded upon return.
+          </div>
+        </div>
+
+        <div class="total-row">
+          <span class="total-label">Total Amount</span>
+          <span class="total-price" id="total-fine-amount">${Amount}</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Payment Details</h2>
+        <form id="payment-form">
+          <div id="payment-element"><!-- Stripe injects payment UI here --></div>
+          <button class="btn" id="submit">Pay Fine</button>
+          <div id="payment-message" class="hidden"></div>
+        </form>
+      </div>
+    </div>
+
+    <script src="./stripe.js"></script>
+  </body>
+</html>
