@@ -128,13 +128,11 @@ def return_vehicle():
 
         print(defect_count)
         print(booking_id)
-        print("i long for the sweet release of death")
 
         if defect_count > 0:
             # Step 4: Log violation
             response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
             if response.status_code != 200:
-                print("from the moment of my birth")
                 return jsonify({'error': 'Error logging violations', 'details': response.text}), 500
 
             data = response.json()
@@ -144,12 +142,10 @@ def return_vehicle():
             total_charge = log_data.get("total_charge")
 
             if violation_booking_id is None or total_charge is None:
-                print("I understood the weakness of my flesh")
                 return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
             # Step 5: Send Notification
-            print("I came to be")
-            notification_response = publish_notification("booking-1744032726508-8o62x5c68","90967606")
+            notification_response = publish_notification(violation_booking_id,contact_number)
             print(json.dumps(notification_response))
 
             # Step 6: Payment
