@@ -20,7 +20,8 @@ VIOLATIONLOGURL = "https://personal-qednlunm.outsystemscloud.com/violationlog/re
 UPLOADURL = "http://aiprocessing:9000/api/upload"
 REKOGNITIONURL = "http://aiprocessing:9000/api/rekognition"
 BOOKINGLOGURL = "http://booking_log:5006/api/booking/{}"
-ERROR_HANDLER_URL = "http://error-handling-service:5005/api/log-error"
+ERROR_HANDLER_URL = "http://error_handler:5005/api/log-error"
+
 
 # # RabbitMQ Configuration
 rabbit_host = "host.docker.internal"
@@ -39,9 +40,11 @@ def report_error_to_handler(status_code, error_type, message):
     }
     try:
         response = requests.post(ERROR_HANDLER_URL, json=error_payload)
+        print(f"Error handler response: {response.status_code}, {response.text}")
         return response.json()  # Log or print response if needed
     except Exception as e:
         print(f"Failed to send error to handler: {str(e)}")
+
 
 def connectAMQP():
     global connection

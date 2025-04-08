@@ -41,7 +41,7 @@ logging.basicConfig(
 flask_handler = logging.FileHandler(LOG_FILE)
 flask_handler.setLevel(logging.ERROR)
 flask_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-app.logger.addHandler(flask_handler)
+
 
 # Define error log table
 class ErrorLog(db.Model):
@@ -76,10 +76,13 @@ def log_to_database(level, client_ip, method, url, status_code, message):
         error_log = ErrorLog(level, client_ip, method, url, status_code, message)
         db.session.add(error_log)
         db.session.commit()  # Commit to ensure data is saved
+        print(f"Logged to DB: {message}")  # Add this line for debugging
     except Exception as e:
         # Log database connection error to file if any issue arises
         app.logger.error(f"Database Error: {e}")
-        db.session.rollback()  # Rollback in case of error to maintain session integrity
+        db.session.rollback()  # Rollback to maintain integrity
+        db.session.remove()  # Ensure session is properly closed
+        print(f"DB Error: {e}")  # Debugging
 
 
 # Error Handling
@@ -105,9 +108,10 @@ def handle_exception(e):
 
 def handle_error(status_code, error_type, message):
     """Handles errors by logging them and returning a JSON response."""
-    client_ip = request.remote_addr or "Unknown IP"
-    method = request.method if request else "UNKNOWN"
-    url = request.path if request else "UNKNOWN"
+    client_ip = request.remote_addr if hasattr(request, "remote_addr") else "Unknown IP"
+    method = request.method if hasattr(request, "method") else "UNKNOWN"
+    url = request.path if hasattr(request, "path") else "UNKNOWN"
+
 
     # Log the error details to the console and file
     app.logger.error(f"[{client_ip}] {method} {url} - {status_code} {error_type}: {message}")
@@ -136,6 +140,14 @@ def log_external_error():
     message = data.get("message", "No details provided")
 
     return handle_error(status_code, error_type, message)
+
+@app.route("/test-db-log", methods=["GET"])
+def test_db_log():
+    try:
+        log_to_database("ERROR", "127.0.0.1", "GET", "/test-db-log", 500, "Test error log entry")
+        return jsonify({"message": "Database log entry added"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
