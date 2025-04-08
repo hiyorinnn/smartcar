@@ -1,0 +1,171 @@
+# import sys
+# import os
+# import pika
+# import json
+import base64
+import requests
+from flask_cors import CORS
+from flask import Flask, jsonify, request
+
+# Add project root to path for importing custom modules
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# import amqp_lib as amqp
+
+app = Flask(__name__)
+CORS(app)
+
+# Microservice URLs
+PAYMENTURL = "http://payment_service:5008/api/v1/pay-fine" 
+VIOLATIONLOGURL = "https://personal-qednlunm.outsystemscloud.com/violationlog/rest/violationlog/createViolationLog"
+UPLOADURL = "http://aiprocessing:9000/api/upload"
+REKOGNITIONURL = "http://aiprocessing:9000/api/rekognition"
+BOOKINGLOGURL = "http://booking_log:5006/api/booking/{}"
+
+# # RabbitMQ Configuration
+# rabbit_host = "localhost"
+# rabbit_port = 5672
+# exchange_name = "order_topic"
+# exchange_type = "topic"
+# connection = None 
+# channel = None
+
+# def connectAMQP():
+#     global connection
+#     global channel
+
+#     print("Connecting to AMQP broker...")
+#     try:
+#         connection, channel = amqp.connect(
+#             hostname=rabbit_host,
+#             port=rabbit_port,
+#             exchange_name=exchange_name,
+#             exchange_type=exchange_type,
+#         )
+#     except Exception as exception:
+#         print(f"Unable to connect to RabbitMQ.\n{exception=}\n")
+#         exit(1)  # terminate
+
+@app.route('/api/return-vehicle', methods=['POST'])
+def return_vehicle():
+    try:
+        booking_id = request.form.get('booking_id')
+        files = request.files.getlist('images')
+
+        if not booking_id or not files:
+            return jsonify({'error': 'Missing booking_id or images'}), 400
+
+        images_data = [
+            {
+                "buffer": base64.b64encode(file.read()).decode('utf-8'),
+                "mimetype": file.mimetype,
+                "originalname": file.filename
+            }
+            for file in files
+        ]
+
+        payload = {
+            "booking_id": booking_id,
+            "images": images_data
+        }
+
+        # Step 1: Get booking info
+        booking_response = requests.get(BOOKINGLOGURL.format(booking_id))
+        if booking_response.status_code == 404:
+            return jsonify({'error': 'Booking not found'}), 404
+        elif booking_response.status_code != 200:
+            return jsonify({'error': 'Error retrieving booking logs', 'details': booking_response.text}), 500
+
+        booking_data = booking_response.json()
+        contact_number = booking_data["data"]["contact_number"]
+
+        # Step 2: Upload images
+        # upload_response = requests.post(UPLOADURL, json=payload)
+        # if upload_response.status_code != 200:
+        #     return jsonify({'error': 'Failed to upload images', 'details': upload_response.text}), 500
+
+        # upload_data = upload_response.json()
+
+        # Step 3: Run Rekognition
+        # rekognition_response = requests.post(REKOGNITIONURL, json=upload_data)
+        # if rekognition_response.status_code != 200:
+        #     return jsonify({'error': 'Error processing images', 'details': rekognition_response.text}), 500
+
+        # rekognition_data = rekognition_response.json()
+        # defect_count = rekognition_data.get('defect_count', 0)
+
+        defect_count = 2
+
+        print(defect_count)
+        print(booking_id)
+
+        if defect_count > 0:
+            # Step 4: Log violation
+            response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
+            if response.status_code != 200:
+                return jsonify({'error': 'Error logging violations', 'details': response.text}), 500
+
+            data = response.json()
+            log_data = data.get("GetAllViolationLog", {}).get("GetAllViolationLog", {})
+
+            violation_booking_id = log_data.get("Id")
+            total_charge = log_data.get("total_charge")
+
+            if violation_booking_id is None or total_charge is None:
+                return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
+
+            # Step 5: Send Notification
+            # try:
+
+            #     phone_number = contact_number
+            #     if not phone_number:
+            #         return jsonify({'error': 'Phone number missing in booking log'}), 500
+
+            #     if channel is None:
+            #         return jsonify({'error': 'AMQP channel not available'}), 500
+
+            #     channel.basic_publish(
+            #         exchange=exchange_name, 
+            #         routing_key="order.notif", 
+            #         body=json.dumps({
+            #             'booking_id': violation_booking_id,
+            #             'phone_number': phone_number,
+            #             'message': 'Your vehicle return process is complete.'
+            #         })
+            #     )
+            #     notification_response = {'message': 'Notification sent successfully'}
+
+            # except pika.exceptions.UnroutableError:
+            #     return jsonify({'error': 'Failed to send notification (unroutable)'}), 500
+            # except Exception as e:
+            #     return jsonify({'error': 'Failed to send notification', 'details': str(e)}), 500
+
+            # Step 6: Payment
+            try:
+                # Check if the notification was sent successfully
+                # if notification_response["message"] == "Notification sent successfully":
+                if True:
+                    payment_response = requests.post(PAYMENTURL, json={'amount': total_charge})
+                    
+                    # If payment is successful
+                    if payment_response.status_code == 200:
+                        return jsonify({
+                            'message': 'Vehicle return processed with violations',
+                            'amount': total_charge,
+                        }), 200
+                    else:
+                        # If payment failed
+                        return jsonify({'error': 'Failed to process payment', 'details': payment_response.text}), 500
+
+            except Exception as e:
+                # Handling errors in payment processing
+                return jsonify({'error': 'Payment service error', 'details': str(e)}), 500
+
+        # No violations
+        return jsonify({'message': 'no-violations'}), 200
+
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
+if __name__ == '__main__':
+    # connectAMQP()
+    app.run(debug=True, host='0.0.0.0', port=5011)

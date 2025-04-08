@@ -272,83 +272,59 @@ async function analyzeCarCondition() {
         formData.append('booking_id', selectedBooking.booking_id);
         
         // Send the photos to your backend microservice for analysis
-        const response = await axios.post('http://127.0.0.1:5006/api/return-vehicle', formData, {
+        const response = await axios.post('http://127.0.0.1:5011/api/return-vehicle', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
         
         // Handle the response
-        const result = response.data;
-        console.log("Defect count:", result.defect_count);
-        
-        // Display defect count
-        defectCountDisplay.textContent = `Defect Count: ${result.defect_count}`;
-        
-        // Create assessment result object
-        assessmentResult = {
-            defect_count: result.defect_count,
-            condition_summary: getConditionSummary(result.defect_count),
-            condition_code: getConditionCode(result.defect_count),
-            damage_charge: calculateDamageCharge(result.defect_count),
-            details: [`${result.defect_count} defects detected in the vehicle.`]
-        };
-        
-        // Update the condition field with the result
-        const conditionInput = document.getElementById('condition');
-        const conditionDetails = document.getElementById('condition-details');
-        
-        // Update the condition display
-        conditionInput.value = assessmentResult.condition_summary || 'Analysis failed';
-        
-        // Display detailed findings if available
-        if (assessmentResult.details) {
-            let detailsHTML = '<h4>Detailed Assessment:</h4><ul>';
-            assessmentResult.details.forEach(detail => {
-                detailsHTML += `<li>${detail}</li>`;
-            });
-            detailsHTML += '</ul>';
-            conditionDetails.innerHTML = detailsHTML;
+        assessmentResult = response.data;
+
+        if (assessmentResult.message === 'no-violations') {
+            window.location.href = 'success.html';
+        } else {
+            // Handle other cases e.g., violation found
+            console.log("Violation result:", result);
+            // maybe display a message or redirect to another page
         }
-        
-        // Calculate charges based on the assessment
-        calculateCharges();
-        
-        uploadStatus.textContent = 'Analysis complete!';
-        uploadStatus.classList.remove('uploading-animation');
-        
+    
     } catch (error) {
-        console.error('Error analyzing car condition:', error);
-        uploadStatus.textContent = 'Failed to analyze photos. Please try again.';
-        uploadStatus.classList.remove('uploading-animation');
-        
-        // Mock assessment result for testing if backend is not ready
-        mockAssessmentResult();
+        console.error('Error during photo upload or analysis:', error);
+        alert('Something went wrong. Please try again.');
     }
-}
-
-// Helper function to determine condition summary based on defect count
-function getConditionSummary(defectCount) {
-    if (defectCount === 0) return 'Excellent - No issues';
-    if (defectCount <= 2) return 'Good - Minor wear';
-    if (defectCount <= 5) return 'Fair - Some issues';
-    return 'Poor - Significant issues';
-}
-
-// Helper function to determine condition code based on defect count
-function getConditionCode(defectCount) {
-    if (defectCount === 0) return 'excellent';
-    if (defectCount <= 2) return 'good';
-    if (defectCount <= 5) return 'fair';
-    return 'poor';
-}
-
-// Helper function to calculate damage charge based on defect count
-function calculateDamageCharge(defectCount) {
-    if (defectCount === 0) return 0;
-    if (defectCount <= 2) return defectCount * 25; // $25 per minor defect
-    if (defectCount <= 5) return 50 + (defectCount - 2) * 40; // $50 base + $40 per additional defect
-    return 170 + (defectCount - 5) * 60; // $170 base + $60 per additional defect
+        
+        // // Update the condition field with the result
+        // const conditionInput = document.getElementById('condition');
+        // const conditionDetails = document.getElementById('condition-details');
+        
+        // // Update the condition display
+        // conditionInput.value = assessmentResult.condition_summary || 'Analysis failed';
+        
+        // // Display detailed findings if available
+        // if (assessmentResult.details) {
+        //     let detailsHTML = '<h4>Detailed Assessment:</h4><ul>';
+        //     assessmentResult.details.forEach(detail => {
+        //         detailsHTML += `<li>${detail}</li>`;
+        //     });
+        //     detailsHTML += '</ul>';
+        //     conditionDetails.innerHTML = detailsHTML;
+        // }
+        
+        // // Calculate charges based on the assessment
+        // calculateCharges();
+        
+        // uploadStatus.textContent = 'Analysis complete!';
+        // uploadStatus.classList.remove('uploading-animation');
+        
+    // } catch (error) {
+    //     console.error('Error analyzing car condition:', error);
+    //     uploadStatus.textContent = 'Failed to analyze photos. Please try again.';
+    //     uploadStatus.classList.remove('uploading-animation');
+        
+    //     // Mock assessment result for testing if backend is not ready
+    //     mockAssessmentResult();
+    // }
 }
 
 // Mock assessment result for testing purposes

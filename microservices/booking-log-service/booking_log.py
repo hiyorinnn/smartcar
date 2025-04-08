@@ -337,7 +337,7 @@ def get_user_booking_logs_by_id(user_id):
 def get_booking(booking_id):
     booking = BookingLog.query.filter_by(booking_id=booking_id).first()
     if booking:
-        return jsonify({"code": 200, "data": booking.json()})
+        return jsonify({"code": 200, "data": booking.json()}), 200
     else:
         return jsonify({'message': 'Booking not found'}), 404
 
