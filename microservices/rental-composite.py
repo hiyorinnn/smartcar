@@ -352,7 +352,7 @@ def health_check():
 if __name__ == '__main__':
     import atexit
     connectAMQP()
-    testing_mode = False  # Set to True when testing to disable scheduler
+    testing_mode = True  # Set to True when testing to disable scheduler
 
     if not testing_mode:
         scheduler.start()
