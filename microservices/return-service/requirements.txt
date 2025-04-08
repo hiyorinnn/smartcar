@@ -3,3 +3,4 @@ flask-cors
 boto3
 botocore
 requests
+pika

@@ -164,24 +164,24 @@ services:
       - booking_log
       - rental-composite
   
-  # ###################################
-  # # Notification microservice
-  # ###################################
-  # notification:
-  #   build:
-  #     context: ./
-  #     dockerfile: notification.Dockerfile
-  #   restart: always
-  #   environment:
-  #     dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
-  #     PYTHONUNBUFFERED: 1
-  #   ports:
-  #     - "5009:5009" 
-  #   networks:
-  #     - smartcar-net
-  #   depends_on:
-  #     - rabbitmq
-  #     - amqp_setup # remove if we manually activate amqp_setup instead, since amqp_setup is not a microservice
+  ###################################
+  # Notification microservice
+  ###################################
+  notification:
+    build:
+      context: ./
+      dockerfile: notification.Dockerfile
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5009:5009" 
+    networks:
+      - smartcar-net
+    depends_on:
+      - rabbitmq
+      - amqp_setup # remove if we manually activate amqp_setup instead, since amqp_setup is not a microservice
   
   ###################################
   # Aiprocessing microservice
@@ -216,43 +216,43 @@ services:
       - "5011:5011"  
     networks:
       - smartcar-net
-    # depends_on:
-      # - error_handler
-      # - booking_log
-      # - payment_service
-      # - aiprocessing
-      # - notification
-      # - rabbitmq
-      # - amqp_setup # remove if we manually activate amqp_setup instead, since amqp_setup is not a microservice
+    depends_on:
+      - error_handler
+      - booking_log
+      - payment_service
+      - aiprocessing
+      - notification
+      - rabbitmq
+      - amqp_setup 
   
-  ####################################
+  ###################################
   # RabbitMQ: The messaging broker   
-  ####################################
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   hostname: esd-rabbit
-  #   restart: always
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   volumes: 
-  #     - rabbitmq_data:/var/lib/rabbitmq
-  #   networks:
-  #     - smartcar-net
+  ###################################
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: esd-rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes: 
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - smartcar-net
 
-  # ####################################
-  # # AMQP_Setup Microservice 
-  # ####################################
-  # amqp_setup:
-  #   build:
-  #     context: ../rabbitmq
-  #     dockerfile: amqp_setup.Dockerfile
-  #   restart: always
-  #   environment:
-  #     PYTHONUNBUFFERED: 1
-  #   ports:
-  #     - "5010:5010"
-  #   networks:
-  #     - smartcar-net
-  #   depends_on:
-  #     - rabbitmq
+  ####################################
+  # AMQP_Setup Microservice 
+  ####################################
+  amqp_setup:
+    build:
+      context: ../rabbitmq
+      dockerfile: amqp_setup.Dockerfile
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5010:5010"
+    networks:
+      - smartcar-net
+    depends_on:
+      - rabbitmq
