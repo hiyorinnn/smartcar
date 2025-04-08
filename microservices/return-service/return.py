@@ -3,7 +3,7 @@
 # import pika
 # import json
 import base64
-# import requests
+import requests
 from flask_cors import CORS
 from flask import Flask, jsonify, request, redirect
 
@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Declare all the URLs to the microservices
-PAYMENTURL = ""  # To ask from Joyce
+PAYMENTURL = "http://payment_service:5008/api/v1/pay-fine" 
 NOTIFICATIONURL = ""
 VIOLATIONLOGURL = "https://personal-qednlunm.outsystemscloud.com/violationlog/rest/violationlog/createViolationLog"
 UPLOADURL = "http://aiprocessing:9000/api/upload"
@@ -102,32 +102,25 @@ def return_vehicle():
         #uncomment to test log violations
         defect_count = 1
 
-        return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
+        # return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
         # # Log violations if there are defects
-        # if defect_count > 0:
-        #     violation_response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
+        if defect_count > 0:
+            response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
 
-        #     if violation_response.status_code != 200:
-        #         return jsonify({'error': 'Error logging violations'}), 500
+            if response.status_code != 200:
+                return jsonify({'error': 'Error logging violations'}), 500
 
-        #     # Ensure violation_response has both 'booking_id' and 'total_charge'
-        #     violation_data = violation_response.json()
+            data = response.json()
+            log_data = data.get("GetAllViolationLog", {}).get("GetAllViolationLog", {})
 
-        #     # Extract 'booking_id' and 'total_charge' from the nested response structure
-        #     result_data = violation_data.get("Result", {})
-        #     get_all_violation_log = result_data.get("GetAllViolationLog", {})
+            booking_id = log_data.get("Id")
+            total_charge = log_data.get("total_charge")
 
-        #     # Extract the 'booking_id' and 'total_charge'
-        #     booking_id = get_all_violation_log.get('booking_id')
-        #     total_charge = get_all_violation_log.get('total_charge')
+            if booking_id is None or total_charge is None:
+                return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
-        #     # Check if 'booking_id' and 'total_charge' are available
-        #     if booking_id is None or total_charge is None:
-        #         return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
-            
-        #     # Return the 'total_charge' in the response
-        #     return jsonify({'total_charge': total_charge}), 200
+            violation_response = jsonify({'total_charge': total_charge})
 
         # Mock up data for malcolm to use
             # total_charge = 100
@@ -157,11 +150,15 @@ def return_vehicle():
 
         #     # Construct the redirect URL with booking_id and total_charge as query parameters
         #     if notification_response.status_code == 200:
-        #         query_string = f"booking_id={booking_id}&total_charge={total_charge}"
-        #         payment_url_with_data = f"{PAYMENTURL}?{query_string}"
-        #         return redirect(payment_url_with_data)
+     
+        # To uncomment if True if malcolm's part work
+            if True:
+                payment_response = requests.post(PAYMENTURL, violation_response)
 
-        # return jsonify({'message': 'Vehicle return process completed successfully'}), 200
+            if payment_response.status_code != 200:
+                return jsonify({'error': "Failed to process payment"}), 500
+
+        return jsonify({'message': 'Vehicle return process completed successfully'}), 200
 
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
