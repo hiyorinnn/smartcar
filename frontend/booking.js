@@ -666,7 +666,7 @@ function showBookingSummary(bookingData) {
   const endDate = new Date(bookingData.end_time);
   
   // Store booking data in sessionStorage for the checkout page
-  sessionStorage.setItem('currentBooking', JSON.stringify(bookingData));
+  localStorage.setItem('bookingData', JSON.stringify(bookingData));
   
   modal.innerHTML = `
     <div class="modal-content">
@@ -992,3 +992,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+

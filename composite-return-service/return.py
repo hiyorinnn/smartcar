@@ -9,7 +9,7 @@ import json
 from flask_cors import CORS
 #import amqp functions from amqp_lib.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import rabbitmq.amqp_lib as amqp
+import microservices.amqp_lib as amqp
 
 app = Flask(__name__)
 CORS(app)
@@ -23,7 +23,7 @@ REKOGNITIONURL = "http://aiprocessing:5003/api/rekognition"
 BOOKINGLOGURL = "http://booking:5004/api/booking-log/{booking_id}"
 
 # RabbitMQ Configuration
-rabbit_host = "localhost"
+rabbit_host = "host.docker.internal"
 rabbit_port = 5672
 exchange_name = "order_topic"
 exchange_type = "topic"
