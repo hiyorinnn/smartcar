@@ -67,40 +67,36 @@ def return_vehicle():
             "images": images_data
         }
 
-        # print("reach here")
-        # print(booking_id)
-        # # Retrieve booking details
-        # booking_response = requests.get(BOOKINGLOGURL.format(booking_id))
+        # Retrieve booking details
+        booking_response = requests.get(BOOKINGLOGURL.format(booking_id))
 
-        # if booking_response.status_code == 404:
-        #     return jsonify({'error': 'Booking not found'}), 404
-        # elif booking_response.status_code != 200:
-        #     return jsonify({'error': 'Error retrieving booking logs'}), 500
+        if booking_response.status_code == 404:
+            return jsonify({'error': 'Booking not found'}), 404
+        elif booking_response.status_code != 200:
+            return jsonify({'error': 'Error retrieving booking logs'}), 500
 
-        # # Upload images
-        # upload_response = requests.post(UPLOADURL, json=payload)
+        # Upload images
+        upload_response = requests.post(UPLOADURL, json=payload)
 
-        # print("reached here")
+        if upload_response.status_code != 200:
+            return jsonify({'error': 'Failed to upload images'}), 500
 
-        # if upload_response.status_code != 200:
-        #     return jsonify({'error': 'Failed to upload images'}), 500
-
-        # upload_data = upload_response.json()
+        upload_data = upload_response.json()
 
         # Analyze images with Rekognition
-        # rekognition_response = requests.post(REKOGNITIONURL, json=upload_data)
+        rekognition_response = requests.post(REKOGNITIONURL, json=upload_data)
 
-        # if rekognition_response.status_code != 200:
-        #     return jsonify({'error': 'Error processing images'}), 500
+        if rekognition_response.status_code != 200:
+            return jsonify({'error': 'Error processing images'}), 500
 
-        # rekognition_data = rekognition_response.json()
-        # defect_count = rekognition_data.get('defect_count', 0)
+        rekognition_data = rekognition_response.json()
+        defect_count = rekognition_data.get('defect_count', 0)
 
         # uncomment to test the above part
         # return jsonify({"defect_count": 1})
 
         #uncomment to test log violations
-        defect_count = 1
+        # defect_count = 1
 
         # return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
