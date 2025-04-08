@@ -3,7 +3,10 @@ from flask_cors import CORS
 import requests
 import logging
 import datetime
+import pika
+import json
 from apscheduler.schedulers.background import BackgroundScheduler
+import amqp_lib as amqp
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, 
@@ -24,6 +27,30 @@ PAYMENT_SERVICE_URL = "http://payment_service:5008/api/v1/payments"
 # For local testing
 # CAR_AVAILABILITY_SERVICE_URL = "http://localhost:5000"
 # BOOKING_LOG_SERVICE_URL = "http://127.0.0.1:5006/api"
+
+# RabbitMQ Configuration
+rabbit_host = "host.docker.internal"
+rabbit_port = 5672
+exchange_name = "order_topic"
+exchange_type = "topic"
+connection = None 
+channel = None
+
+def connectAMQP():
+    global connection
+    global channel
+
+    print("  Connecting to AMQP broker...")
+    try:
+        connection, channel = amqp.connect(
+                hostname=rabbit_host,
+                port=rabbit_port,
+                exchange_name=exchange_name,
+                exchange_type=exchange_type,
+        )
+    except Exception as exception:
+        print(f"  Unable to connect to RabbitMQ.\n     {exception=}\n")
+        exit(1) # terminate
 
 # #########################################
 # # Update car availability based on time #
@@ -140,6 +167,34 @@ def update_booking_status(booking_id, payment_id=None):
         logger.error(f"Error connecting to booking log service: {str(e)}")
         return False
 
+def publish_notification(booking_id, phone_number, payment_success):
+    """
+    publishes a message to the notification queue on rabbitmq broker
+    payment_success determines whether the message sent informs of successful or failed payment
+    message is a json-formatted string with booking_id, phone_number and message
+
+    returns a json object with status code 
+    """
+    try:
+            message = ""
+            if (payment_success):
+                message = "Your payment was successful. Booking ID: {booking_id}"
+            else:
+                message = "Your payment was unsuccessful. Please contact support. Booking ID: {booking_id}"
+            success = channel.basic_publish(
+                exchange=exchange_name, 
+                routing_key="order.notif", 
+                body= json.dumps({'booking_id': booking_id, 'phone_number' : phone_number, 'message': message})
+            )
+            if success:
+                return jsonify({'message': 'Notification sent successfully'}), 200
+            else:
+                return jsonify({'error': 'Failed to send notification'}), 500
+    except pika.exceptions.UnroutableError:
+        return jsonify({'error': 'Failed to send notification'}), 500
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
 
 @app.route('/<booking_id>/start', methods=['POST'])
 def start_booking(booking_id):
@@ -229,11 +284,14 @@ def start_booking(booking_id):
         # Process payment response
         payment_result = payment_response.json()
         payment_status = payment_result.get('status')
+        phone_number = booking_details.get('booking_status')
         
         if payment_status != 'successful':
             logger.error(f"Payment failed for booking ID: {booking_id}")
+            publish_notification(booking_id,phone_number,payment_success=False)
             return jsonify({"error": "Payment processing failed"}), 500
-        
+        # Payment successful, notify customer via SMS
+        publish_notification(booking_id,phone_number,payment_success=True)
         # 1: Once payment is successful, update car availability to unavailable
         car_update_response = update_car_availability(car_id, False)
         
@@ -293,6 +351,7 @@ def health_check():
 
 if __name__ == '__main__':
     import atexit
+    connectAMQP()
     testing_mode = False  # Set to True when testing to disable scheduler
 
     if not testing_mode:

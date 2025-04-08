@@ -23,7 +23,7 @@ REKOGNITIONURL = "http://aiprocessing:5003/api/rekognition"
 BOOKINGLOGURL = "http://booking:5004/api/booking-log/{booking_id}"
 
 # RabbitMQ Configuration
-rabbit_host = "localhost"
+rabbit_host = "host.docker.internal"
 rabbit_port = 5672
 exchange_name = "order_topic"
 exchange_type = "topic"
