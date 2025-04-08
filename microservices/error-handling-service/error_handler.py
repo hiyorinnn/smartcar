@@ -106,8 +106,8 @@ def handle_exception(e):
 def handle_error(status_code, error_type, message):
     """Handles errors by logging them and returning a JSON response."""
     client_ip = request.remote_addr or "Unknown IP"
-    method = request.method
-    url = request.path
+    method = request.method if request else "UNKNOWN"
+    url = request.path if request else "UNKNOWN"
 
     # Log the error details to the console and file
     app.logger.error(f"[{client_ip}] {method} {url} - {status_code} {error_type}: {message}")
@@ -122,6 +122,20 @@ def handle_error(status_code, error_type, message):
         "error": error_type,
         "message": message,
     }), status_code
+
+@app.route("/api/log-error", methods=["POST"])
+def log_external_error():
+    """Receives error details from external microservices and logs them."""
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "Invalid JSON payload"}), 400
+
+    status_code = data.get("status_code", 500)
+    error_type = data.get("error_type", "Unknown Error")
+    message = data.get("message", "No details provided")
+
+    return handle_error(status_code, error_type, message)
 
 
 if __name__ == "__main__":
