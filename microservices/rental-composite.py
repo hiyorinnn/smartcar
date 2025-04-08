@@ -15,7 +15,7 @@ CORS(app)
 
 # Create a scheduler for handling timed car availability updates
 scheduler = BackgroundScheduler()
-# scheduler.start()
+scheduler.start()
 
 #For use with Docker
 CAR_AVAILABILITY_SERVICE_URL = "http://car_available:5000"  
