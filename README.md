@@ -13,7 +13,7 @@ This webapp provides a car booking system with user management, booking logs, an
 
 ### 1. Clone the Repository
 ```bash
-git clone 
+git clone https://github.com/hiyorinnn/smartcar.git
 cd smartcar
 ```
 
