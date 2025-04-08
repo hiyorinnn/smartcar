@@ -186,7 +186,7 @@ services:
   ###################################
   # Aiprocessing microservice
   ###################################
-
+  
   aiprocessing:
     build:
       context: ./aiprocessing-service
