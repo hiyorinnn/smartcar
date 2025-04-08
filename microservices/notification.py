@@ -76,9 +76,12 @@ def callback(ch, method, properties, body):
     try:
         # Decode and parse the JSON message
         data = json.loads(body.decode('utf-8'))
-        phone_number = data.get("phone_number")
+        phone_number_raw = data.get("phone_number")
         message = data.get("message")
 
+        if phone_number_raw[0] != "+":
+            phone_number = "+65" + phone_number_raw
+            
         if not phone_number or not message:
             print("Invalid message format. Missing phone_number or message.")
             return
