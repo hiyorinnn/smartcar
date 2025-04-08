@@ -1,15 +1,15 @@
-import sys
-import os
-import pika
-import json
+# import sys
+# import os
+# import pika
+# import json
 import base64
 import requests
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
 # Add project root to path for importing custom modules
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import amqp_lib as amqp
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# import amqp_lib as amqp
 
 app = Flask(__name__)
 CORS(app)
@@ -21,29 +21,29 @@ UPLOADURL = "http://aiprocessing:9000/api/upload"
 REKOGNITIONURL = "http://aiprocessing:9000/api/rekognition"
 BOOKINGLOGURL = "http://booking_log:5006/api/booking/{}"
 
-# RabbitMQ Configuration
-rabbit_host = "localhost"
-rabbit_port = 5672
-exchange_name = "order_topic"
-exchange_type = "topic"
-connection = None 
-channel = None
+# # RabbitMQ Configuration
+# rabbit_host = "localhost"
+# rabbit_port = 5672
+# exchange_name = "order_topic"
+# exchange_type = "topic"
+# connection = None 
+# channel = None
 
-def connectAMQP():
-    global connection
-    global channel
+# def connectAMQP():
+#     global connection
+#     global channel
 
-    print("Connecting to AMQP broker...")
-    try:
-        connection, channel = amqp.connect(
-            hostname=rabbit_host,
-            port=rabbit_port,
-            exchange_name=exchange_name,
-            exchange_type=exchange_type,
-        )
-    except Exception as exception:
-        print(f"Unable to connect to RabbitMQ.\n{exception=}\n")
-        exit(1)  # terminate
+#     print("Connecting to AMQP broker...")
+#     try:
+#         connection, channel = amqp.connect(
+#             hostname=rabbit_host,
+#             port=rabbit_port,
+#             exchange_name=exchange_name,
+#             exchange_type=exchange_type,
+#         )
+#     except Exception as exception:
+#         print(f"Unable to connect to RabbitMQ.\n{exception=}\n")
+#         exit(1)  # terminate
 
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
@@ -114,35 +114,36 @@ def return_vehicle():
                 return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
             # Step 5: Send Notification
-            try:
+            # try:
 
-                phone_number = contact_number
-                if not phone_number:
-                    return jsonify({'error': 'Phone number missing in booking log'}), 500
+            #     phone_number = contact_number
+            #     if not phone_number:
+            #         return jsonify({'error': 'Phone number missing in booking log'}), 500
 
-                if channel is None:
-                    return jsonify({'error': 'AMQP channel not available'}), 500
+            #     if channel is None:
+            #         return jsonify({'error': 'AMQP channel not available'}), 500
 
-                channel.basic_publish(
-                    exchange=exchange_name, 
-                    routing_key="order.notif", 
-                    body=json.dumps({
-                        'booking_id': violation_booking_id,
-                        'phone_number': phone_number,
-                        'message': 'Your vehicle return process is complete.'
-                    })
-                )
-                notification_response = {'message': 'Notification sent successfully'}
+            #     channel.basic_publish(
+            #         exchange=exchange_name, 
+            #         routing_key="order.notif", 
+            #         body=json.dumps({
+            #             'booking_id': violation_booking_id,
+            #             'phone_number': phone_number,
+            #             'message': 'Your vehicle return process is complete.'
+            #         })
+            #     )
+            #     notification_response = {'message': 'Notification sent successfully'}
 
-            except pika.exceptions.UnroutableError:
-                return jsonify({'error': 'Failed to send notification (unroutable)'}), 500
-            except Exception as e:
-                return jsonify({'error': 'Failed to send notification', 'details': str(e)}), 500
+            # except pika.exceptions.UnroutableError:
+            #     return jsonify({'error': 'Failed to send notification (unroutable)'}), 500
+            # except Exception as e:
+            #     return jsonify({'error': 'Failed to send notification', 'details': str(e)}), 500
 
             # Step 6: Payment
             try:
                 # Check if the notification was sent successfully
-                if notification_response["message"] == "Notification sent successfully":
+                # if notification_response["message"] == "Notification sent successfully":
+                if True:
                     payment_response = requests.post(PAYMENTURL, json={'amount': total_charge})
                     
                     # If payment is successful
@@ -166,5 +167,5 @@ def return_vehicle():
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 if __name__ == '__main__':
-    connectAMQP()
+    # connectAMQP()
     app.run(debug=True, host='0.0.0.0', port=5011)
