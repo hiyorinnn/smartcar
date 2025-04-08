@@ -39,6 +39,7 @@ def get_booking_details(booking_id):
         Dictionary containing booking details or None if not found
     """
     url = f"{BOOKING_LOG_SERVICE_URL}/booking/{booking_id}"
+    #http://127.0.0.1:5006/api/booking/booking-1744091289964-nbnu22di6
     
     try:
         logger.info(f"Fetching booking details for ID: {booking_id}")
@@ -109,29 +110,31 @@ def make_car_available(car_id, booking_id):
     except Exception as e:
         logger.error(f"Error making car {car_id} available again: {str(e)}")
 
-def update_booking_status(booking_id, status):
-    """
-    Update the status of a booking
-    
-    Args:
-        booking_id: ID of the booking to update
-        status: New status ('not_started', 'in_progress', or 'ended')
-    
-    Returns:
-        True if successful, False otherwise
-    """
-    url = f"{BOOKING_LOG_SERVICE_URL}/booking-logs/{booking_id}/status"
-    payload = {"booking_status": status}
+def update_booking_status(booking_id, payment_id=None):
+
+    booking_service_url = f"{BOOKING_LOG_SERVICE_URL}/v1/update-status/{booking_id}"
+
+    update_payload = {
+        "booking_status": "in_progress"
+    }
+
+    if payment_id:
+        update_payload.update({
+            "payment_status": "paid",
+            "transaction_id": payment_id
+        })
     
     try:
-        logger.info(f"Updating booking {booking_id} status to {status}")
-        response = requests.put(url, json=payload, timeout=5)
+        logger.info(f"Updating booking {booking_id} with status='in progress' " + 
+                    (f" and payment ID {payment_id}" if payment_id else ""))
         
-        if response.status_code == 200:
-            logger.info(f"Successfully updated booking {booking_id} status to {status}")
+        booking_update_response = requests.put(booking_service_url, json=update_payload, timeout=5)
+        
+        if booking_update_response.status_code == 200:
+            logger.info(f"Successfully updated booking {booking_id} status to in progress ")
             return True
         else:
-            logger.error(f"Failed to update booking status: Status {response.status_code}, {response.text}")
+            logger.error(f"Failed to update booking status: Status {booking_update_response.status_code}, {booking_update_response.text}")
             return False
     except requests.RequestException as e:
         logger.error(f"Error connecting to booking log service: {str(e)}")
@@ -155,7 +158,7 @@ def start_booking(booking_id):
         booking_details = get_booking_details(booking_id)
         
         if not booking_details:
-            logger.warning(f"No booking found for ID: {booking_id}")
+            logger.warning(f"Trigger getting booking details MS - No booking found for ID: {booking_id}")
             return jsonify({"error": "Booking not found"}), 404
         
         current_status = booking_details.get('booking_status')
@@ -250,23 +253,15 @@ def start_booking(booking_id):
             args=[car_id, booking_id],
             id=f"make_available_{booking_id}_{car_id}"
         )
-        
+    
         # 3: Update booking with payment details and change status to in_progress
-        booking_service_url = f"{BOOKING_LOG_SERVICE_URL}/update-status/{booking_id}"
-        update_payload = {
-            "payment_status": "paid",
-            "transaction_id": payment_result.get('payment_id'),
-            "booking_status": "in_progress"
-        }
-        logger.info(f"Updating booking with payment status and changing status to in_progress: {update_payload}")
-        
-        booking_update_response = requests.put(booking_service_url, json=update_payload, timeout=5)
-        
-        if booking_update_response.status_code != 200:
-            logger.error(f"Failed to update booking: {booking_update_response.status_code}, {booking_update_response.text}")
-            # Even if this fails, we've already processed payment and updated car availability
+        logger.info(f"Updating booking log - booking_status, payment_status and transaction-id")
+        success = update_booking_status(booking_id, payment_result.get('payment_id'))
+
+        if not success:
+            logger.error("Tigger booking-ms -- Failed to update booking status")
             return jsonify({"warning": "Booking partially processed - status update failed"}), 500
-            
+
         # Success response
         return jsonify({
             "status": "success",
