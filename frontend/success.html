@@ -27,15 +27,15 @@
       body {
         background-color: #f0f4f8;
         background-image: linear-gradient(
-            to right,
-            rgba(37, 99, 235, 0.05) 1px,
-            transparent 1px
-          ),
-          linear-gradient(
-            to bottom,
-            rgba(37, 99, 235, 0.05) 1px,
-            transparent 1px
-          );
+          to right,
+          rgba(37, 99, 235, 0.05) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          to bottom,
+          rgba(37, 99, 235, 0.05) 1px,
+          transparent 1px
+        );
         background-size: 20px 20px;
         min-height: 100vh;
         display: flex;
@@ -186,13 +186,13 @@
       }
 
       .btn::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 0;
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgba(0,0,0,0.1);
         transition: height 0.3s ease;
         z-index: -1;
       }
@@ -230,17 +230,17 @@
           padding: 30px 20px;
           margin: 30px 20px;
         }
-
+        
         .success-title {
           font-size: 2rem;
         }
-
+        
         .btn {
           display: block;
           width: 100%;
           margin-bottom: 15px;
         }
-
+        
         .btn-secondary {
           margin-left: 0;
         }
@@ -258,17 +258,14 @@
     <div class="success-container">
       <i class="fas fa-check-circle success-icon"></i>
       <h1 class="success-title">Payment Successful!</h1>
-      <p class="success-message">
-        Your booking has been confirmed and your receipt has been emailed to
-        you. We look forward to seeing you soon!
-      </p>
-
+      <p class="success-message">Your booking has been confirmed and your receipt has been emailed to you. We look forward to seeing you soon!</p>
+      
       <div class="booking-details">
         <h2 class="booking-details-title">Booking Details</h2>
         <div class="detail-item">
           <i class="fas fa-car-side"></i>
           <span class="detail-label">Vehicle:</span>
-          <span class="detail-value" id="car-make-model"></span>
+          <span class="detail-value" id="car-make-model"></span> 
           (<span class="detail-value" id="price-per-hour"></span>)
         </div>
         <div class="detail-item">
@@ -292,70 +289,11 @@
           <span class="detail-value" id="total-price-final"></span>
         </div>
       </div>
-
+    
       <a href="index.html" class="btn btn-secondary">Return Home</a>
     </div>
 
     <footer>
       <p>&copy; 2025 SmartCar. All rights reserved.</p>
     </footer>
-    <script>
-      const bookingData = JSON.parse(localStorage.getItem("bookingData"));
-      const booking_id = bookingData.booking_id;
-      async function getBookingDetails() {
-        try {
-          const response = await axios.get(
-            `http://127.0.0.1:5006/api/booking/${booking_id}`
-          );
-          const data = response.data.data;
-          console.log("Booking details:", data);
-
-          // Convert to SG time +8h
-          const add8Hours = (utcString) => {
-            const date = new Date(utcString);
-            date.setTime(date.getTime() + 8 * 60 * 60 * 1000);
-            return date;
-          };
-
-          const car = data.details.details.car_details;
-          const startTime = add8Hours(data.start_time);
-          const endTime = add8Hours(data.end_time);
-          const durationHours =
-            Math.round(((endTime - startTime) / (1000 * 60 * 60)) * 100) / 100;
-
-          const formatDate = (date) => {
-            const options = {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              timeZone: "Asia/Singapore",
-            };
-            return date.toLocaleString("en-SG", options);
-          };
-
-          // Populate HTML with enhanced formatting
-          document.getElementById(
-            "car-make-model"
-          ).innerText = `${car.make} ${car.model}`;
-          document.getElementById(
-            "price-per-hour"
-          ).innerText = `$${car.price_per_hour}/hr`;
-          document.getElementById("start-time").innerText =
-            formatDate(startTime);
-          document.getElementById("end-time").innerText = formatDate(endTime);
-          document.getElementById(
-            "duration"
-          ).innerText = `${durationHours} hours`;
-          document.getElementById(
-            "total-price-final"
-          ).innerText = `$${data.total_amount}`;
-        } catch (error) {
-          console.error("Error fetching booking:", error);
-        }
-      }
-      document.addEventListener("DOMContentLoaded", getBookingDetails);
-    </script>
-  </body>
-</html>
+    <script src="./payment.js"></script>

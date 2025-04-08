@@ -1,15 +1,13 @@
 from flask import Flask, request, jsonify
 import boto3
 import json
-import sys
 import os
-import amqp_lib as amqp
-
+import rabbitmq.amqp_lib as amqp
 
 app = Flask(__name__)
 
 #RabbitMQ configuration, consumes all messages with *.notif
-rabbit_host = "host.docker.internal"
+rabbit_host = "localhost"
 rabbit_port = 5672
 exchange_name = "order_topic"
 exchange_type = "topic"

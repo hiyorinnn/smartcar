@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: return.Dockerfile
     ports:
-      - "5011:5011"
+      - "5006:5006"
     networks:
       - flask-network
 

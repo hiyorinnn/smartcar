@@ -1,8 +1,4 @@
 ## Add your respective docker files names here
-volumes:
-  rabbitmq_data:
-    name: esd_rabbitmq_data
-
 networks:
   smartcar-net:
     driver: bridge
@@ -18,7 +14,7 @@ services:
       dockerfile: car_available.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
       - "5000:5000"
@@ -64,7 +60,7 @@ services:
       dockerfile: user.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
       - "5004:5004"
@@ -97,7 +93,7 @@ services:
       dockerfile: error_handler.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root:root:root:root@host.docker.internal:3306/smartcar_logs
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/smartcar_logs
       PYTHONUNBUFFERED: 1
     ports:
       - "5005:5005"
@@ -115,33 +111,13 @@ services:
       dockerfile: booking_log.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
       - "5006:5006" # Update to 5006 to avoid conflict with other services
     networks:
       - smartcar-net
   
-   ###################################
-  # Rental Composite microservice
-  ###################################
-  rental-composite:
-    build:
-      context: ./
-      dockerfile: rental-composite.Dockerfile
-    container_name: rental-composite
-    restart: always
-    environment:
-      - CAR_AVAILABILITY_SERVICE_URL=http://car_available:5000
-      - BOOKING_LOG_SERVICE_URL=http://booking_log:5006/api
-    ports:
-      - "5007:5007"
-    networks:
-      - smartcar-net
-    depends_on:
-      - car_available
-      - booking_log
-
   ###################################
   # Payment microservice
   ###################################
@@ -163,54 +139,23 @@ services:
     depends_on:
       - booking_log
       - rental-composite
-  
+
   ###################################
-  # Notification microservice
+  # Rental Composite microservice
   ###################################
-  notification:
+  rental-composite:
     build:
       context: ./
-      dockerfile: notification.Dockerfile
+      dockerfile: rental-composite.Dockerfile
+    container_name: rental-composite
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
-      PYTHONUNBUFFERED: 1
+      - CAR_AVAILABILITY_SERVICE_URL=http://car_available:5000
+      - BOOKING_LOG_SERVICE_URL=http://booking_log:5006/api
     ports:
-      - "5009:5009" 
+      - "5007:5007"
     networks:
       - smartcar-net
     depends_on:
-      - rabbitmq
-      - amqp_setup # remove if we manually activate amqp_setup instead, since amqp_setup is not a microservice
-  
-    ####################################
-  # RabbitMQ: The messaging broker   
-  ####################################
-  rabbitmq:
-    image: rabbitmq:3-management
-    hostname: esd-rabbit
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes: 
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - smartcar-net
-
-  ####################################
-  # AMQP_Setup Microservice 
-  ####################################
-  amqp_setup:
-    build:
-      context: ../rabbitmq
-      dockerfile: amqp_setup.Dockerfile
-    restart: always
-    environment:
-      PYTHONUNBUFFERED: 1
-    ports:
-      - "5010:5010"
-    networks:
-      - smartcar-net
-    depends_on:
-      - rabbitmq
+      - car_available
+      - booking_log

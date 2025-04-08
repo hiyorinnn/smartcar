@@ -3,10 +3,7 @@ from flask_cors import CORS
 import requests
 import logging
 import datetime
-import pika
-import json
 from apscheduler.schedulers.background import BackgroundScheduler
-import amqp_lib as amqp
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, 
@@ -18,7 +15,7 @@ CORS(app)
 
 # Create a scheduler for handling timed car availability updates
 scheduler = BackgroundScheduler()
-scheduler.start()
+# scheduler.start()
 
 #For use with Docker
 CAR_AVAILABILITY_SERVICE_URL = "http://car_available:5000"  
@@ -27,30 +24,6 @@ PAYMENT_SERVICE_URL = "http://payment_service:5008/api/v1/payments"
 # For local testing
 # CAR_AVAILABILITY_SERVICE_URL = "http://localhost:5000"
 # BOOKING_LOG_SERVICE_URL = "http://127.0.0.1:5006/api"
-
-# RabbitMQ Configuration
-rabbit_host = "host.docker.internal"
-rabbit_port = 5672
-exchange_name = "order_topic"
-exchange_type = "topic"
-connection = None 
-channel = None
-
-def connectAMQP():
-    global connection
-    global channel
-
-    print("  Connecting to AMQP broker...")
-    try:
-        connection, channel = amqp.connect(
-                hostname=rabbit_host,
-                port=rabbit_port,
-                exchange_name=exchange_name,
-                exchange_type=exchange_type,
-        )
-    except Exception as exception:
-        print(f"  Unable to connect to RabbitMQ.\n     {exception=}\n")
-        exit(1) # terminate
 
 # #########################################
 # # Update car availability based on time #
@@ -66,7 +39,6 @@ def get_booking_details(booking_id):
         Dictionary containing booking details or None if not found
     """
     url = f"{BOOKING_LOG_SERVICE_URL}/booking/{booking_id}"
-    #http://127.0.0.1:5006/api/booking/booking-1744091289964-nbnu22di6
     
     try:
         logger.info(f"Fetching booking details for ID: {booking_id}")
@@ -137,63 +109,33 @@ def make_car_available(car_id, booking_id):
     except Exception as e:
         logger.error(f"Error making car {car_id} available again: {str(e)}")
 
-def update_booking_status(booking_id, payment_id=None):
-
-    booking_service_url = f"{BOOKING_LOG_SERVICE_URL}/v1/update-status/{booking_id}"
-
-    update_payload = {
-        "booking_status": "in_progress"
-    }
-
-    if payment_id:
-        update_payload.update({
-            "payment_status": "paid",
-            "transaction_id": payment_id
-        })
+def update_booking_status(booking_id, status):
+    """
+    Update the status of a booking
+    
+    Args:
+        booking_id: ID of the booking to update
+        status: New status ('not_started', 'in_progress', or 'ended')
+    
+    Returns:
+        True if successful, False otherwise
+    """
+    url = f"{BOOKING_LOG_SERVICE_URL}/booking-logs/{booking_id}/status"
+    payload = {"booking_status": status}
     
     try:
-        logger.info(f"Updating booking {booking_id} with status='in progress' " + 
-                    (f" and payment ID {payment_id}" if payment_id else ""))
+        logger.info(f"Updating booking {booking_id} status to {status}")
+        response = requests.put(url, json=payload, timeout=5)
         
-        booking_update_response = requests.put(booking_service_url, json=update_payload, timeout=5)
-        
-        if booking_update_response.status_code == 200:
-            logger.info(f"Successfully updated booking {booking_id} status to in progress ")
+        if response.status_code == 200:
+            logger.info(f"Successfully updated booking {booking_id} status to {status}")
             return True
         else:
-            logger.error(f"Failed to update booking status: Status {booking_update_response.status_code}, {booking_update_response.text}")
+            logger.error(f"Failed to update booking status: Status {response.status_code}, {response.text}")
             return False
     except requests.RequestException as e:
         logger.error(f"Error connecting to booking log service: {str(e)}")
         return False
-
-def publish_notification(booking_id, phone_number, payment_success):
-    """
-    publishes a message to the notification queue on rabbitmq broker
-    payment_success determines whether the message sent informs of successful or failed payment
-    message is a json-formatted string with booking_id, phone_number and message
-
-    returns a json object with status code 
-    """
-    try:
-            message = ""
-            if (payment_success):
-                message = "Your payment was successful. Booking ID: {booking_id}"
-            else:
-                message = "Your payment was unsuccessful. Please contact support. Booking ID: {booking_id}"
-            success = channel.basic_publish(
-                exchange=exchange_name, 
-                routing_key="order.notif", 
-                body= json.dumps({'booking_id': booking_id, 'phone_number' : phone_number, 'message': message})
-            )
-            if success:
-                return jsonify({'message': 'Notification sent successfully'}), 200
-            else:
-                return jsonify({'error': 'Failed to send notification'}), 500
-    except pika.exceptions.UnroutableError:
-        return jsonify({'error': 'Failed to send notification'}), 500
-    except Exception as e:
-        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 @app.route('/<booking_id>/start', methods=['POST'])
@@ -213,7 +155,7 @@ def start_booking(booking_id):
         booking_details = get_booking_details(booking_id)
         
         if not booking_details:
-            logger.warning(f"Trigger getting booking details MS - No booking found for ID: {booking_id}")
+            logger.warning(f"No booking found for ID: {booking_id}")
             return jsonify({"error": "Booking not found"}), 404
         
         current_status = booking_details.get('booking_status')
@@ -284,14 +226,11 @@ def start_booking(booking_id):
         # Process payment response
         payment_result = payment_response.json()
         payment_status = payment_result.get('status')
-        phone_number = booking_details.get('booking_status')
         
         if payment_status != 'successful':
             logger.error(f"Payment failed for booking ID: {booking_id}")
-            publish_notification(booking_id,phone_number,payment_success=False)
             return jsonify({"error": "Payment processing failed"}), 500
-        # Payment successful, notify customer via SMS
-        publish_notification(booking_id,phone_number,payment_success=True)
+        
         # 1: Once payment is successful, update car availability to unavailable
         car_update_response = update_car_availability(car_id, False)
         
@@ -311,15 +250,23 @@ def start_booking(booking_id):
             args=[car_id, booking_id],
             id=f"make_available_{booking_id}_{car_id}"
         )
-    
+        
         # 3: Update booking with payment details and change status to in_progress
-        logger.info(f"Updating booking log - booking_status, payment_status and transaction-id")
-        success = update_booking_status(booking_id, payment_result.get('payment_id'))
-
-        if not success:
-            logger.error("Tigger booking-ms -- Failed to update booking status")
+        booking_service_url = f"{BOOKING_LOG_SERVICE_URL}/update-status/{booking_id}"
+        update_payload = {
+            "payment_status": "paid",
+            "transaction_id": payment_result.get('payment_id'),
+            "booking_status": "in_progress"
+        }
+        logger.info(f"Updating booking with payment status and changing status to in_progress: {update_payload}")
+        
+        booking_update_response = requests.put(booking_service_url, json=update_payload, timeout=5)
+        
+        if booking_update_response.status_code != 200:
+            logger.error(f"Failed to update booking: {booking_update_response.status_code}, {booking_update_response.text}")
+            # Even if this fails, we've already processed payment and updated car availability
             return jsonify({"warning": "Booking partially processed - status update failed"}), 500
-
+            
         # Success response
         return jsonify({
             "status": "success",
@@ -351,7 +298,6 @@ def health_check():
 
 if __name__ == '__main__':
     import atexit
-    connectAMQP()
     testing_mode = False  # Set to True when testing to disable scheduler
 
     if not testing_mode:
