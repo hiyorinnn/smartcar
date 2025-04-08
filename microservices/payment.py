@@ -168,6 +168,64 @@ def stripe_webhook():
 
     return jsonify({"status": "received"}), 200
 
+#Process fines - direct payment
+@app.route('/api/v1/pay-fine', methods=['POST'])
+def process_direct_payment():
+    try:
+        data = request.json
+        logger.info(f"Received direct payment request: {data}")
+        
+
+        amount = data.get('amount')
+        
+        if not amount:
+            logger.error("Missing amount in request")
+            return jsonify({"error": "amount is required"}), 400
+        amount_in_cents = int(float(amount) * 100)
+        
+        payment_intent_data = {
+            "amount": amount_in_cents,
+            "currency": "sgd",
+            "metadata": {
+                "payment_type": "direct_payment"
+            }
+        }
+                    
+        logger.info(f"Creating Stripe payment intent for {amount_in_cents} cents ({amount} $SGD)")
+        
+        # Create the payment intent
+        intent = stripe.PaymentIntent.create(**payment_intent_data)
+        
+        # Generate a unique payment ID for our system
+        payment_id = str(uuid.uuid4())
+        
+        # Return client secret and payment details
+        return jsonify({
+            "status": "successful",
+            "payment_id": payment_id,
+            "stripe_payment_intent_id": intent.id,
+            "client_secret": intent.client_secret,
+            "amount": amount,
+            "currency": 'sgd',
+            "created_at": datetime.now().isoformat()
+        }), 200
+            
+    except stripe.error.StripeError as e:
+        # Handle Stripe-specific errors
+        logger.error(f"Stripe error: {str(e)}")
+        return jsonify({
+            "status": "failed",
+            "error": str(e)
+        }), 400
+        
+    except Exception as e:
+        # Handle general errors
+        logger.error(f"Error processing fines: {str(e)}")
+        return jsonify({
+            "status": "failed",
+            "error": str(e)
+        }), 500
+
 
 
 @app.route('/api/v1/health', methods=['GET'])
