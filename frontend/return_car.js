@@ -279,52 +279,52 @@ async function analyzeCarCondition() {
         });
         
         // Handle the response
-        assessmentResult = response.data;
+    //     assessmentResult = response.data;
 
-        if (assessmentResult.message === 'no-violations') {
-            window.location.href = 'success.html';
-        } else {
-            // Handle other cases e.g., violation found
-            console.log("Violation result:", result);
-            // maybe display a message or redirect to another page
-        }
+    //     if (assessmentResult.message === 'no-violations') {
+    //         window.location.href = 'success.html';
+    //     } else {
+    //         // Handle other cases e.g., violation found
+    //         console.log("Violation result:", result);
+    //         // maybe display a message or redirect to another page
+    //     }
     
-    } catch (error) {
-        console.error('Error during photo upload or analysis:', error);
-        alert('Something went wrong. Please try again.');
-    }
+    // } catch (error) {
+    //     console.error('Error during photo upload or analysis:', error);
+    //     alert('Something went wrong. Please try again.');
+    // }
         
         // // Update the condition field with the result
-        // const conditionInput = document.getElementById('condition');
-        // const conditionDetails = document.getElementById('condition-details');
+        const conditionInput = document.getElementById('condition');
+        const conditionDetails = document.getElementById('condition-details');
         
-        // // Update the condition display
-        // conditionInput.value = assessmentResult.condition_summary || 'Analysis failed';
+        // Update the condition display
+        conditionInput.value = assessmentResult.condition_summary || 'Analysis failed';
         
-        // // Display detailed findings if available
-        // if (assessmentResult.details) {
-        //     let detailsHTML = '<h4>Detailed Assessment:</h4><ul>';
-        //     assessmentResult.details.forEach(detail => {
-        //         detailsHTML += `<li>${detail}</li>`;
-        //     });
-        //     detailsHTML += '</ul>';
-        //     conditionDetails.innerHTML = detailsHTML;
-        // }
+        // Display detailed findings if available
+        if (assessmentResult.details) {
+            let detailsHTML = '<h4>Detailed Assessment:</h4><ul>';
+            assessmentResult.details.forEach(detail => {
+                detailsHTML += `<li>${detail}</li>`;
+            });
+            detailsHTML += '</ul>';
+            conditionDetails.innerHTML = detailsHTML;
+        }
         
-        // // Calculate charges based on the assessment
-        // calculateCharges();
+        // Calculate charges based on the assessment
+        calculateCharges();
         
-        // uploadStatus.textContent = 'Analysis complete!';
-        // uploadStatus.classList.remove('uploading-animation');
+        uploadStatus.textContent = 'Analysis complete!';
+        uploadStatus.classList.remove('uploading-animation');
         
-    // } catch (error) {
-    //     console.error('Error analyzing car condition:', error);
-    //     uploadStatus.textContent = 'Failed to analyze photos. Please try again.';
-    //     uploadStatus.classList.remove('uploading-animation');
+    } catch (error) {
+        console.error('Error analyzing car condition:', error);
+        uploadStatus.textContent = 'Failed to analyze photos. Please try again.';
+        uploadStatus.classList.remove('uploading-animation');
         
-    //     // Mock assessment result for testing if backend is not ready
-    //     mockAssessmentResult();
-    // }
+        // Mock assessment result for testing if backend is not ready
+        mockAssessmentResult();
+    }
 }
 
 // Mock assessment result for testing purposes
