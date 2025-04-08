@@ -18,7 +18,7 @@ services:
       dockerfile: car_available.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
       - "5000:5000"
@@ -64,7 +64,7 @@ services:
       dockerfile: user.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
       - "5004:5004"
@@ -97,7 +97,7 @@ services:
       dockerfile: error_handler.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/smartcar_logs
+      dbURL: mysql+mysqlconnector://root:root:root:root@host.docker.internal:3306/smartcar_logs
       PYTHONUNBUFFERED: 1
     ports:
       - "5005:5005"
@@ -115,7 +115,7 @@ services:
       dockerfile: booking_log.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
       - "5006:5006" # Update to 5006 to avoid conflict with other services
@@ -173,7 +173,7 @@ services:
       dockerfile: notification.Dockerfile
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
     ports:
       - "5009:5009" 
