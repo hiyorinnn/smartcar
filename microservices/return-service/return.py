@@ -20,6 +20,7 @@ VIOLATIONLOGURL = "https://personal-qednlunm.outsystemscloud.com/violationlog/re
 UPLOADURL = "http://aiprocessing:9000/api/upload"
 REKOGNITIONURL = "http://aiprocessing:9000/api/rekognition"
 BOOKINGLOGURL = "http://booking_log:5006/api/booking/{}"
+ERROR_HANDLER_URL = "http://error-handling-service:5005/api/log-error"
 
 # # RabbitMQ Configuration
 rabbit_host = "host.docker.internal"
@@ -28,6 +29,19 @@ exchange_name = "order_topic"
 exchange_type = "topic"
 connection = None 
 channel = None
+
+def report_error_to_handler(status_code, error_type, message):
+    """Send error details to the error handling microservice."""
+    error_payload = {
+        "status_code": status_code,
+        "error_type": error_type,
+        "message": message
+    }
+    try:
+        response = requests.post(ERROR_HANDLER_URL, json=error_payload)
+        return response.json()  # Log or print response if needed
+    except Exception as e:
+        print(f"Failed to send error to handler: {str(e)}")
 
 def connectAMQP():
     global connection
@@ -83,6 +97,7 @@ def return_vehicle():
         files = request.files.getlist('images')
 
         if not booking_id or not files:
+            report_error_to_handler(400, "Bad Request", "Missing booking_id or images")
             return jsonify({'error': 'Missing booking_id or images'}), 400
 
         images_data = [
@@ -102,8 +117,10 @@ def return_vehicle():
         # Step 1: Get booking info
         booking_response = requests.get(BOOKINGLOGURL.format(booking_id))
         if booking_response.status_code == 404:
+            report_error_to_handler(404, "Not Found", f"Booking ID {booking_id} not found")
             return jsonify({'error': 'Booking not found'}), 404
         elif booking_response.status_code != 200:
+            report_error_to_handler(500, "Booking Retrieval Error", f"Error retrieving booking logs: {booking_response.text}")
             return jsonify({'error': 'Error retrieving booking logs', 'details': booking_response.text}), 500
 
         booking_data = booking_response.json()
@@ -133,6 +150,7 @@ def return_vehicle():
             # Step 4: Log violation
             response = requests.post(VIOLATIONLOGURL, json={'booking_id': booking_id, 'defect_count': defect_count})
             if response.status_code != 200:
+                report_error_to_handler(500, "Violation Log Error", f"Error logging violations: {response.text}")
                 return jsonify({'error': 'Error logging violations', 'details': response.text}), 500
 
             data = response.json()
@@ -142,6 +160,7 @@ def return_vehicle():
             total_charge = log_data.get("total_charge")
 
             if violation_booking_id is None or total_charge is None:
+                report_error_to_handler(500, "Violation Data Error", "Missing booking ID or total charge in violation response")
                 return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
             # Step 5: Send Notification
@@ -163,17 +182,21 @@ def return_vehicle():
                         }), 200
                     else:
                         # If payment failed
+                        report_error_to_handler(500, "Payment Processing Error", f"Failed to process payment: {payment_response.text}")
                         return jsonify({'error': 'Failed to process payment', 'details': payment_response.text}), 500
 
             except Exception as e:
                 # Handling errors in payment processing
-                return jsonify({'error': 'Payment service error', 'details': str(e)}), 500
+                report_error_to_handler(500, "Internal Server Error", str(e))
+                return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
         # No violations
         return jsonify({'message': 'no-violations'}), 200
 
     except Exception as e:
+        report_error_to_handler(500, "Internal Server Error", str(e))
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
 
 if __name__ == '__main__':
     connectAMQP()
