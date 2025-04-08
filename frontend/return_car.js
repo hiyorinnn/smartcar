@@ -292,7 +292,7 @@ async function analyzeCarCondition() {
         formData.append('booking_id', selectedBooking.booking_id);
         
         // Send the photos to your backend microservice for analysis
-        const response = await axios.post('http://127.0.0.1:5006/api/car-condition-analysis', formData, {
+        const response = await axios.post('http://127.0.0.1:5011/api/return-vehicle', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

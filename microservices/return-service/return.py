@@ -149,12 +149,12 @@ def return_vehicle():
      
         # To uncomment if True if malcolm's part work
             if True:
+                # redirection
                 payment_response = requests.post(PAYMENTURL, violation_response)
-
-            if payment_response.status_code != 200:
-                return jsonify({'error': "Failed to process payment"}), 500
-
-        return jsonify({'message': 'Vehicle return process completed successfully'}), 200
+            else: 
+                return jsonify({'message': 'no-violations'}), 200
+        
+        return jsonify({'message': 'no-violations'}), 200
 
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
