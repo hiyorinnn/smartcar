@@ -32,6 +32,7 @@ cd smartcar
 ### 4. Docker Setup
 1. Build the Docker containers (ensuring fresh build with no cached components):
    ```bash
+   cd microservices
    docker-compose build --no-cache
    ```
 
