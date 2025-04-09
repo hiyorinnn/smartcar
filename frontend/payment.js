@@ -17,15 +17,16 @@ async function getBookingDetails() {
     console.log("Booking details:", data);
 
     // Convert to SG time +8h
-    const add8Hours = (utcString) => {
+    // edit 9/4/25 Uh I don't think this is needed now, so I'm changing it.
+    const convertToDateString = (utcString) => {
       const date = new Date(utcString);
-      date.setTime(date.getTime() + 8 * 60 * 60 * 1000);
+      date.setTime(date.getTime() + 0 * 60 * 60 * 1000);
       return date;
     };
 
     const car = data.details.details.car_details;
-    const startTime = add8Hours(data.start_time);
-    const endTime = add8Hours(data.end_time);
+    const startTime = convertToDateString(data.start_time);
+    const endTime = convertToDateString(data.end_time);
     const durationHours =
       Math.round(((endTime - startTime) / (1000 * 60 * 60)) * 100) / 100;
 
