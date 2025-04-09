@@ -175,7 +175,6 @@ def process_direct_payment():
         data = request.json
         logger.info(f"Received direct payment request: {data}")
         
-
         amount = data.get('amount')
         
         if not amount:

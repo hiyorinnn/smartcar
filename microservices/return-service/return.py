@@ -20,6 +20,7 @@ VIOLATIONLOGURL = "https://personal-qednlunm.outsystemscloud.com/violationlog/re
 UPLOADURL = "http://aiprocessing:9000/api/upload"
 REKOGNITIONURL = "http://aiprocessing:9000/api/rekognition"
 BOOKINGLOGURL = "http://booking_log:5006/api/booking/{}"
+GETALLBOOKINGURL = "http://booking_log:5006/api/booking-logs/user/{}"
 ERROR_HANDLER_URL = "http://error_handler:5005/api/log-error"
 
 
@@ -92,6 +93,16 @@ def publish_notification(booking_id, phone_number):
     except Exception as e:
         return jsonify({'error': 'Failed to send notification', 'details': str(e)}), 500
    
+@app.route('/api/get-all-bookings/<user_id>', methods=["GET"])
+def get_bookings(user_id):  # <-- Accept user_id here
+
+    response = requests.get(GETALLBOOKINGURL.format(user_id))
+
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({"error": "Failed to fetch bookings"}), response.status_code
+
 
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
@@ -168,13 +179,12 @@ def return_vehicle():
 
             # Step 5: Send Notification
             notification_response = publish_notification(violation_booking_id,contact_number)
-            print(json.dumps(notification_response))
+            # print(json.dumps(notification_response))
 
             # Step 6: Payment
             try:
                 # Check if the notification was sent successfully
-                # if notification_response["message"] == "Notification sent successfully":
-                if True:
+                if notification_response.status_code == 200:
                     payment_response = requests.post(PAYMENTURL, json={'amount': total_charge})
                     
                     # If payment is successful
