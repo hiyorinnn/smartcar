@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -72,8 +73,18 @@
         .success-message {
             font-size: 1.2rem;
             color: #555;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             line-height: 1.6;
+        }
+
+        .status-message {
+            font-size: 1rem;
+            color: #10b981;
+            margin-bottom: 30px;
+            padding: 10px;
+            background-color: #f0fdf4;
+            border-radius: 5px;
+            border-left: 4px solid #10b981;
         }
 
         .btn {
@@ -108,7 +119,74 @@
         <p class="success-message">
             Thank you for paying your fine. Be careful next time!
         </p>
+        <p id="status-update-message" class="status-message"></p>
         <a href="./index.html" class="btn">Return to Home</a>
     </div>
+
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Function to update booking status to 'ended'
+        async function updateBookingStatus() {
+            try {
+                // Get booking_id from URL parameters or localStorage
+                // First try to get directly from URL parameters
+                let bookingId = getUrlParameter('booking_id');
+                
+                // If not found, try to get from Stripe payment_intent parameter
+                if (!bookingId) {
+                    const paymentIntent = getUrlParameter('payment_intent');
+                    
+                    if (paymentIntent) {
+                        // Try to get booking_id from localStorage
+                        const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+                        if (bookingData && bookingData.booking_id) {
+                            bookingId = bookingData.booking_id;
+                        }
+                    }
+                }
+                
+                console.log('Retrieved booking ID:', bookingId);
+
+                // If still no booking_id, show error
+                if (!bookingId) {
+                    document.getElementById('status-update-message').textContent = 
+                        'Could not find booking information. Your payment was successful, but please contact support.';
+                    document.getElementById('status-update-message').style.color = '#e53e3e';
+                    document.getElementById('status-update-message').style.borderLeftColor = '#e53e3e';
+                    document.getElementById('status-update-message').style.backgroundColor = '#fef2f2';
+                    return;
+                }
+
+                // Update booking status to 'ended'
+                const statusUpdateResponse = await axios.put(
+                    `http://127.0.0.1:5006/api/booking-logs/${bookingId}/status`,
+                    { booking_status: 'ended' }
+                );
+
+                // Show success message
+                document.getElementById('status-update-message').textContent = 
+                    'Your booking has been successfully completed.';
+                
+                console.log('Booking status updated successfully:', statusUpdateResponse.data);
+            } catch (error) {
+                console.error('Error updating booking status:', error);
+                document.getElementById('status-update-message').textContent = 
+                    'Your payment was successful, but we encountered an issue finalizing your booking. Please contact support.';
+                document.getElementById('status-update-message').style.color = '#e53e3e';
+                document.getElementById('status-update-message').style.borderLeftColor = '#e53e3e';
+                document.getElementById('status-update-message').style.backgroundColor = '#fef2f2';
+            }
+        }
+
+        // Run when page loads
+        document.addEventListener('DOMContentLoaded', updateBookingStatus);
+    </script>
 </body>
 </html>

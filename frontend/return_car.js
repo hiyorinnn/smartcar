@@ -404,18 +404,6 @@ async function endBooking() {
             returnInfoData
         );
         
-        // 3. Update car availability (make car available again)
-        if (selectedBooking.details?.car_details?.id) {
-            try {
-                await axios.put(
-                    `http://127.0.0.1:5000/car/${selectedBooking.details.car_details.id}/availability`, 
-                    { available: true }
-                );
-            } catch (error) {
-                console.warn('Could not update car availability:', error);
-                // Continue anyway since the booking is already updated
-            }
-        }
         
         // Create modal for return confirmation - ADDED CODE STARTS HERE
         const modal = document.createElement('div');
