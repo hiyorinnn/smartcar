@@ -4,6 +4,49 @@ let carMarkers = [];
 let directionsService;
 let directionsRenderer;
 
+document.addEventListener('DOMContentLoaded', function () {
+  const userMessage = document.getElementById('user-message');
+  const signInBtn = document.getElementById('signin-link');
+  const signUpBtn = document.getElementById('register-link');
+  const logOutBtn = document.getElementById('logout-link');
+
+function isLoggedIn() {
+  return localStorage.getItem('loggedIn');
+}
+//Updates Page when logged in or out
+function updateUI() {
+  if (isLoggedIn()) {
+    userMessage.textContent = 'Welcome!';
+    signInBtn.style.display = 'none';
+    signUpBtn.style.display = 'none';
+    logOutBtn.style.display = 'inline-block';
+  } else {
+    userMessage.textContent = '';
+    signInBtn.style.display = 'inline-block';
+    signUpBtn.style.display = 'inline-block';
+    logOutBtn.style.display = 'none';
+  }
+}
+
+signInBtn.addEventListener('click', () => {
+  localStorage.setItem('loggedIn', 'true');
+  updateUI();
+});
+
+signUpBtn.addEventListener('click', () => {
+  localStorage.setItem('loggedIn', 'true');
+  updateUI();
+});
+
+logOutBtn.addEventListener('click', () => {
+  localStorage.removeItem('loggedIn');
+  updateUI(); // Stays on same page, just updates view
+});
+
+updateUI();
+
+});
+
 // Initialize the map
 window.initMap = function() {
   map = new google.maps.Map(document.getElementById("map"), {

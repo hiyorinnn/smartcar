@@ -184,7 +184,7 @@ def publish_notification(booking_id):
             else:
                 return jsonify({'error': 'Failed to send notification'}), 500
     except pika.exceptions.UnroutableError:
-        return jsonify({'error': 'Failed to send notification'}), 500
+        return jsonify({'error': 'Failed to send notification (unroutable)'}), 500
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
@@ -283,14 +283,13 @@ def start_booking(booking_id):
             logger.error(f"Payment failed for booking ID: {booking_id}")
             return jsonify({"error": "Payment processing failed"}), 500
         # Payment successful, notify customer via SMS
-        publish_notification_response = publish_notification(booking_id)
+        publish_notification(booking_id)
+        
+        # publish_notification_response = publish_notification(booking_id)
 
-        if publish_notification_response[1] != 200:
-            logger.error(f"Failed to send notification. Error Code: {publish_notification_response[1]}")
-            return jsonify({
-                "error": "Failed to send notification",
-                "details": publish_notification_response[0]
-            }), publish_notification_response[1]
+        # if publish_notification_response[1] != 200:
+        #     logger.error(f"Failed to send notification. Error Code: {publish_notification_response[1]}")
+        #     return jsonify({"Error": "Failed to send notification"}), publish_notification_response[1]
 
         # 1: Once payment is successful, update car availability to unavailable
         car_update_response = update_car_availability(car_id, False)

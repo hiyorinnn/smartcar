@@ -218,7 +218,9 @@
         margin-top: 10px;
         transition: background-color 0.3s;
       }
-
+      .logged-in {
+        padding-right: 10px;
+      }
       .search-button:hover {
         background-color: #1d4ed8;
       }
@@ -292,6 +294,7 @@
           <li><a href="return_car.html">Return a Car</a></li>
         </ul>
       </nav>
+      <span class="logged-in" id = "user-message"></span>
       <div class="auth-buttons">
         <a href="./login.html" class="btn btn-outline" id="signin-link"
           >Sign in</a
@@ -299,6 +302,7 @@
         <a href="./register.html" class="btn btn-primary" id="register-link"
           >Sign up</a
         >
+        <button class="btn btn-primary" style="display: none;" id="logout-link">Log Out</button>
       </div>
       <button class="mobile-menu-btn">☰</button>
     </header>

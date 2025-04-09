@@ -22,7 +22,7 @@ with open("config.json") as config_file:
 # Initialize AWS SNS client
 sns_client = boto3.client(
     "sns",
-    region_name=config.get("AWS_REGION", "ap-southeast-2"),
+    region_name=config.get("AWS_REGION", "ap-southeast-1"),
     aws_access_key_id=config.get("AWS_ACCESS_KEY_ID"),
     aws_secret_access_key=config.get("AWS_SECRET_ACCESS_KEY")
 )
@@ -63,13 +63,14 @@ def send_sms(phone_number, message):
         return jsonify({"error": str(e)}), 500
 
 
-def callback(ch, method, body):
+def callback(ch, method, properties, body):
     """
     Callback function to process messages from RabbitMQ.
     
     Args:
     - ch: RabbitMQ channel
     - method: Delivery method
+    - properties: 
     - body: Message body (expected to be JSON)
     """
     try:
