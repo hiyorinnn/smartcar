@@ -64,7 +64,7 @@ def connectAMQP():
         print(f"Unable to connect to RabbitMQ.\n{exception=}\n")
         exit(1)  # terminate
 
-def publish_notification(booking_id, phone_number):
+def publish_notification(booking_id, phone_number, is_defected):
     """
     publishes a message to the notification queue on rabbitmq broker
     message is a json-formatted string with booking_id, phone_number and message
@@ -78,13 +78,17 @@ def publish_notification(booking_id, phone_number):
         if channel is None:
             return jsonify({'error': 'AMQP channel not available'}), 500
 
+        if is_defected:
+            message = "We have detected defects in your most recent closed booking. Please make payment via the app or contact support if you wish to seek further clarification"
+        else:
+            message = "Your vehicle return process is complete."
         channel.basic_publish(
             exchange=exchange_name, 
             routing_key="order.notif", 
             body=json.dumps({
                 'booking_id': booking_id,
                 'phone_number': phone_number,
-                'message': 'Your vehicle return process is complete.'
+                'message': message
             })
         )
         return jsonify({'message': 'Notification sent successfully'})
@@ -179,7 +183,7 @@ def return_vehicle():
                 return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
             # Step 5: Send Notification
-            notification_response = publish_notification(violation_booking_id,contact_number)
+            notification_response = publish_notification(booking_id,contact_number, is_defected=True)
             # print(json.dumps(notification_response))
 
             # Step 6: Payment
@@ -215,6 +219,7 @@ def return_vehicle():
                 return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
         # No violations
+        publish_notification(booking_id,contact_number, is_defected=False)
         return jsonify({'message': 'no-violations'}), 200
 
     except Exception as e:

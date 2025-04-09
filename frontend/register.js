@@ -32,6 +32,7 @@ registerForm.addEventListener("submit", async (event) => {
       localStorage.setItem('Name', data.name || 'User');
       localStorage.setItem('userEmail', email);
       localStorage.setItem('userUID', data.user_id);
+      localStorage.setItem('loggedIn', true);
       
       // Redirect to home page
       window.location.href = "./index.html";
