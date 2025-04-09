@@ -59,6 +59,7 @@ def connectAMQP():
             exchange_type=exchange_type,
         )
     except Exception as exception:
+        report_error_to_handler(500, "RabbitMQ Connection Error", str(exception))
         print(f"Unable to connect to RabbitMQ.\n{exception=}\n")
         exit(1)  # terminate
 
@@ -71,11 +72,13 @@ def publish_notification(booking_id, phone_number):
     """
     try:
         if not phone_number:
+            report_error_to_handler(500, "Notification Error", "Phone number missing in booking log")
             return jsonify({'error': 'Phone number missing in booking log'}), 500
-
+            
         if channel is None:
+            report_error_to_handler(500, "AMQP Error", "AMQP channel not available")
             return jsonify({'error': 'AMQP channel not available'}), 500
-
+            
         channel.basic_publish(
             exchange=exchange_name, 
             routing_key="order.notif", 
@@ -88,11 +91,12 @@ def publish_notification(booking_id, phone_number):
         return jsonify({'message': 'Notification sent successfully'})
 
     except pika.exceptions.UnroutableError:
+        report_error_to_handler(500, "Notification Error", "Failed to send notification")
         return jsonify({'error': 'Failed to send notification'}), 500
     except Exception as e:
+        report_error_to_handler(500, "Notification Error", str(e))
         return jsonify({'error': 'Failed to send notification', 'details': str(e)}), 500
-   
-
+        
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
     try:
