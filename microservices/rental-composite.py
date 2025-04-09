@@ -31,7 +31,7 @@ PAYMENT_SERVICE_URL = "http://payment_service:5008/api/v1/payments"
 # RabbitMQ Configuration
 rabbit_host = "host.docker.internal"
 rabbit_port = 5672
-exchange_name = "order_topic"
+exchange_name = "smartcar_topic"
 exchange_type = "topic"
 connection = None 
 channel = None
@@ -179,6 +179,7 @@ def publish_notification(booking_id):
             booking_details = get_booking_details(booking_id)
             phone_number = booking_details.get("contact_number")
             start_time = booking_details.get("start_time")
+            
             end_time =  booking_details.get("end_time")
             car_id =  booking_details.get("car_id")
             message = "Your booking (ID number " + booking_id + ") is confirmed. Details:\nStart Time: " + start_time + "\nEnd Time: " + end_time + "\nCar ID: " + car_id
