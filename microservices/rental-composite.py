@@ -169,11 +169,9 @@ def update_booking_status(booking_id, payment_id=None):
 
 def publish_notification(booking_id):
     """
+    gets booking details of the booking_id argument
     publishes a message to the notification queue on rabbitmq broker
-    payment_success determines whether the message sent informs of successful or failed payment
-    message is a json-formatted string with booking_id, phone_number and message
-
-    returns a json object with status code 
+    returns tuple of Response JSON object, int error code 
     """
     try:
             booking_details = get_booking_details(booking_id)
