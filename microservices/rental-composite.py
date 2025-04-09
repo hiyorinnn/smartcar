@@ -179,7 +179,7 @@ def publish_notification(booking_id):
             booking_details = get_booking_details(booking_id)
             phone_number = booking_details.get("contact_number")
             start_time = booking_details.get("start_time")
-            
+
             end_time =  booking_details.get("end_time")
             car_id =  booking_details.get("car_id")
             message = "Your booking (ID number " + booking_id + ") is confirmed. Details:\nStart Time: " + start_time + "\nEnd Time: " + end_time + "\nCar ID: " + car_id
@@ -266,9 +266,10 @@ def start_booking(booking_id):
             return jsonify({"error": "Booking does not contain total_amount"}), 400
         
     ##############################
-    # Process Payment            # 
-    # - update car availability  #
-    # - schedule to end booking  #
+    # - Process Payment          # 
+    # - Send Notification        #
+    # - Update car availability  #
+    # - Schedule to end booking  #
     ##############################
 
         #DOCKER LINK
@@ -350,7 +351,7 @@ def start_booking(booking_id):
 
  ################
  # Health Check #
- # ##############
+ ################
 
 @app.route('/health', methods=['GET'])
 def health_check():
