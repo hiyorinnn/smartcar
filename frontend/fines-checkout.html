@@ -285,6 +285,15 @@
 <script>
   const stripe = Stripe("pk_test_51R7XLM4Jm41usPZB8LXUvo3nFp9ItuWiFCOrksMZWQWqgcyAwRqILKJKReuEeVsHd2yVVY4OdQwecWKfZ4lVbeA000vB8ojdqL");
   let elements;
+  let bookingId = null;
+  
+  // Function to get URL parameters
+  function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
   
   // Simulated fine amount - need to get this amount from another api call
   const amt = 50.0; 
@@ -325,8 +334,10 @@
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "http://localhost/GitHub/smartcar/frontend/fines-success.html", // change to ur environment
-        return_url: "http://localhost:3000/frontend/fines-success.html"
+        // Add booking_id to the return URL if available
+        return_url: bookingId 
+          ? `http://localhost:3000/frontend/fines-success.html?booking_id=${bookingId}`
+          : "http://localhost:3000/frontend/fines-success.html"
       },
     });
   
@@ -340,10 +351,22 @@
   }
   
   document.addEventListener("DOMContentLoaded", async () => {
+    // Try to get booking_id from URL parameters
+    bookingId = getUrlParameter('booking_id');
+    
+    // If not in URL, try to get from localStorage
+    if (!bookingId) {
+      const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+      if (bookingData && bookingData.booking_id) {
+        bookingId = bookingData.booking_id;
+      }
+    }
+    
+    console.log("Booking ID for fine payment:", bookingId);
+    
     await initializeStripeElements();
   
     const form = document.getElementById("payment-form");
     form.addEventListener("submit", handlePaymentSubmit);
   });
-  </script>
-  
+</script>

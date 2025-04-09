@@ -11,7 +11,7 @@ app = Flask(__name__)
 #RabbitMQ configuration, consumes all messages with *.notif
 rabbit_host = "host.docker.internal"
 rabbit_port = 5672
-exchange_name = "order_topic"
+exchange_name = "smartcar_topic"
 exchange_type = "topic"
 queue_name = "Notification"
 
@@ -22,7 +22,7 @@ with open("config.json") as config_file:
 # Initialize AWS SNS client
 sns_client = boto3.client(
     "sns",
-    region_name=config.get("AWS_REGION", "ap-southeast-2"),
+    region_name=config.get("AWS_REGION", "ap-southeast-1"),
     aws_access_key_id=config.get("AWS_ACCESS_KEY_ID"),
     aws_secret_access_key=config.get("AWS_SECRET_ACCESS_KEY")
 )
@@ -70,7 +70,7 @@ def callback(ch, method, properties, body):
     Args:
     - ch: RabbitMQ channel
     - method: Delivery method
-    - properties: Message properties
+    - properties: 
     - body: Message body (expected to be JSON)
     """
     try:
@@ -88,9 +88,12 @@ def callback(ch, method, properties, body):
 
         # Ensure Flask app context is active
         with app.app_context():
-            response = send_sms(phone_number, message)        
-
-        print(f"SMS sent successfully: {response}")
+            response = send_sms(phone_number, message)
+                
+        if response[1] == 200:
+            print(f"SMS sent successfully: {response}")
+        else:
+            print(f"Error: {response}")
         
         # Acknowledge the message
         ch.basic_ack(delivery_tag=method.delivery_tag)

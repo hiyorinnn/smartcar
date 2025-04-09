@@ -6,6 +6,18 @@
     <title>SmartCar - Return a Car</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="booking.css">
+    <style>
+        /* Additional styles for the end booking button */
+        #end-booking {
+            display: none; /* Hidden by default */
+            background-color: #4CAF50; /* Green background */
+            color: white;
+            font-weight: bold;
+            padding: 12px 20px;
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -72,17 +84,12 @@
                         </div>
                     </div>
 
-                    <div class="form-group" id="additional-charges-container">
-                        <h3>Additional Charges</h3>
-                        <div id="charge-details">
-                            <p>Late Return Fee: <span id="late-fee">$0.00</span></p>
-                            <p>Damage Charges: <span id="damage-charge">$0.00</span></p>
-                            <p>Total Additional: <span id="total-additional">$0.00</span></p>
-                        </div>
-                    </div>
-
-                    <button type="button" id="calculate-charges" class="btn" style="margin-bottom: 10px;">Calculate Charges</button>
-                    <button type="button" id="confirm-return" class="btn">Confirm Return</button>
+                    
+                    <!-- New End Booking button for zero defects case -->
+                    <button type="button" id="end-booking" class="btn" style="display: none;">End Booking</button>
+                    
+                    <!-- <button type="button" id="calculate-charges" class="btn" style="margin-bottom: 10px;">Calculate Charges</button>
+                    <button type="button" id="confirm-return" class="btn">Confirm Return</button> -->
                 </form>
             </div>
         </div>

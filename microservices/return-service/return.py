@@ -5,6 +5,7 @@ import json
 import base64
 import requests
 from flask_cors import CORS
+from flask import redirect, url_for
 from flask import Flask, jsonify, request
 
 # Add project root to path for importing custom modules
@@ -20,13 +21,14 @@ VIOLATIONLOGURL = "https://personal-qednlunm.outsystemscloud.com/violationlog/re
 UPLOADURL = "http://aiprocessing:9000/api/upload"
 REKOGNITIONURL = "http://aiprocessing:9000/api/rekognition"
 BOOKINGLOGURL = "http://booking_log:5006/api/booking/{}"
+GETALLBOOKINGURL = "http://booking_log:5006/api/booking-logs/user/{}"
 ERROR_HANDLER_URL = "http://error_handler:5005/api/log-error"
 
 
 # # RabbitMQ Configuration
 rabbit_host = "host.docker.internal"
 rabbit_port = 5672
-exchange_name = "order_topic"
+exchange_name = "smartcar_topic"
 exchange_type = "topic"
 connection = None 
 channel = None
@@ -63,7 +65,7 @@ def connectAMQP():
         print(f"Unable to connect to RabbitMQ.\n{exception=}\n")
         exit(1)  # terminate
 
-def publish_notification(booking_id, phone_number):
+def publish_notification(booking_id, phone_number, is_defected):
     """
     publishes a message to the notification queue on rabbitmq broker
     message is a json-formatted string with booking_id, phone_number and message
@@ -79,13 +81,17 @@ def publish_notification(booking_id, phone_number):
             report_error_to_handler(500, "AMQP Error", "AMQP channel not available")
             return jsonify({'error': 'AMQP channel not available'}), 500
             
+        if is_defected:
+            message = "We have detected defects in your most recent closed booking. Please make payment via the app or contact support if you wish to seek further clarification"
+        else:
+            message = "Your vehicle return process is complete."
         channel.basic_publish(
             exchange=exchange_name, 
             routing_key="order.notif", 
             body=json.dumps({
                 'booking_id': booking_id,
                 'phone_number': phone_number,
-                'message': 'Your vehicle return process is complete.'
+                'message': message
             })
         )
         return jsonify({'message': 'Notification sent successfully'})
@@ -96,7 +102,8 @@ def publish_notification(booking_id, phone_number):
     except Exception as e:
         report_error_to_handler(500, "Notification Error", str(e))
         return jsonify({'error': 'Failed to send notification', 'details': str(e)}), 500
-        
+   
+
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
     try:
@@ -140,7 +147,7 @@ def return_vehicle():
 
         # upload_data = upload_response.json()
 
-        # Step 3: Run Rekognition
+        # # Step 3: Run Rekognition
         # rekognition_response = requests.post(REKOGNITIONURL, json=upload_data)
         # if rekognition_response.status_code != 200:
         #     return jsonify({'error': 'Error processing images', 'details': rekognition_response.text}), 500
@@ -148,10 +155,10 @@ def return_vehicle():
         # rekognition_data = rekognition_response.json()
         # defect_count = rekognition_data.get('defect_count', 0)
 
-        defect_count = 2
+        defect_count = 0
 
-        print(defect_count)
-        print(booking_id)
+        # print(defect_count)
+        # print(booking_id)
 
         if defect_count > 0:
             # Step 4: Log violation
@@ -171,21 +178,25 @@ def return_vehicle():
                 return jsonify({'error': 'Missing booking ID or total charge in violation response'}), 500
 
             # Step 5: Send Notification
-            notification_response = publish_notification(violation_booking_id,contact_number)
-            print(json.dumps(notification_response))
+            notification_response = publish_notification(booking_id,contact_number, is_defected=True)
+            # print(json.dumps(notification_response))
 
             # Step 6: Payment
             try:
                 # Check if the notification was sent successfully
-                # if notification_response["message"] == "Notification sent successfully":
-                if True:
+                if notification_response.status_code == 200:
                     payment_response = requests.post(PAYMENTURL, json={'amount': total_charge})
                     
                     # If payment is successful
                     if payment_response.status_code == 200:
+                        # Use the static HTML file path for the redirect
+                        redirect_url = './fines-checkout.html'  # Adjust according to the actual path of your HTML file
+                        
+                        # Return the response with redirect URL and payment details
                         return jsonify({
                             'message': 'Vehicle return processed with violations',
                             'amount': total_charge,
+                            'redirect_url': redirect_url,  # Add the redirect URL in the response
                         }), 200
                     else:
                         # If payment failed
@@ -193,11 +204,17 @@ def return_vehicle():
                         return jsonify({'error': 'Failed to process payment', 'details': payment_response.text}), 500
 
             except Exception as e:
+                # Handle other exceptions if necessary
+                report_error_to_handler(500, "Internal Server Error", str(e))
+                return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
+            except Exception as e:
                 # Handling errors in payment processing
                 report_error_to_handler(500, "Internal Server Error", str(e))
                 return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
         # No violations
+        publish_notification(booking_id,contact_number, is_defected=False)
         return jsonify({'message': 'no-violations'}), 200
 
     except Exception as e:
