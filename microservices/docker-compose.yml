@@ -20,8 +20,8 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5000:5000"
+    # ports: 
+    #   - "5000:5000"
     networks:
       - smartcar-net
 
@@ -35,8 +35,8 @@ services:
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5001:5001"
+    # ports:
+    #   - "5001:5001"
     networks:
       - smartcar-net
 
@@ -50,8 +50,8 @@ services:
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5002:5002"
+    # ports:
+    #   - "5002:5002"
     networks:
       - smartcar-net
 
@@ -66,8 +66,8 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5004:5004"
+    # ports:
+    #   - "5004:5004"
     networks:
       - smartcar-net
 
@@ -99,8 +99,8 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/smartcar_logs
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5005:5005"
+    # ports:
+    #   - "5005:5005"
     # volumes:
     #   - C:\wamp64\www\smartcar\microservices\error-handling-service\logs:/app/logs
     networks:
@@ -117,8 +117,8 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5006:5006" # Update to 5006 to avoid conflict with other services
+    # ports:
+    #   - "5006:5006" 
     networks:
       - smartcar-net
   
