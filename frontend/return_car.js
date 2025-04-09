@@ -152,10 +152,25 @@ function selectBooking(booking, cardElement) {
     document.getElementById('condition-details').innerHTML = '';
     
     // Hide the end booking button and show the normal workflow initially
-    document.getElementById('end-booking').style.display = 'none';
-    document.getElementById('additional-charges-container').style.display = 'block';
-    document.getElementById('calculate-charges').style.display = 'block';
-    document.getElementById('confirm-return').style.display = 'block';
+    const endBookingBtn = document.getElementById('end-booking');
+    if (endBookingBtn) {
+        endBookingBtn.style.display = 'none';
+    }
+    
+    const additionalChargesContainer = document.getElementById('additional-charges-container');
+    if (additionalChargesContainer) {
+        additionalChargesContainer.style.display = 'block';
+    }
+    
+    const calculateChargesBtn = document.getElementById('calculate-charges');
+    if (calculateChargesBtn) {
+        calculateChargesBtn.style.display = 'block';
+    }
+    
+    const confirmReturnBtn = document.getElementById('confirm-return');
+    if (confirmReturnBtn) {
+        confirmReturnBtn.style.display = 'block';
+    }
     
     // Clear photo previews
     document.getElementById('photo-preview-container').innerHTML = '';
