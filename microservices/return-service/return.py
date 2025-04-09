@@ -28,7 +28,7 @@ ERROR_HANDLER_URL = "http://error_handler:5005/api/log-error"
 # # RabbitMQ Configuration
 rabbit_host = "host.docker.internal"
 rabbit_port = 5672
-exchange_name = "order_topic"
+exchange_name = "smartcar_topic"
 exchange_type = "topic"
 connection = None 
 channel = None

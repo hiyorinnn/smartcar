@@ -8,7 +8,7 @@ import pika
 
 amqp_host = "host.docker.internal"
 amqp_port = 5672
-exchange_name = "order_topic"
+exchange_name = "smartcar_topic"
 exchange_type = "topic"
 
 
@@ -66,6 +66,6 @@ create_queue(
 create_queue(
     channel=channel,
     exchange_name=exchange_name,
-    queue_name="Activity_Log",
+    queue_name="Testbed",
     routing_key="#",
 )
