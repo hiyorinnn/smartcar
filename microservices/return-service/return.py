@@ -166,7 +166,7 @@ def return_vehicle():
         # rekognition_data = rekognition_response.json()
         # defect_count = rekognition_data.get('defect_count', 0)
 
-        defect_count = 0
+        defect_count = 1
 
         # print(defect_count)
         # print(booking_id)
