@@ -146,21 +146,21 @@ def return_vehicle():
         contact_number = booking_data["data"]["contact_number"]
 
         # Step 2: Upload images
-        # upload_response = requests.post(UPLOADURL, json=payload)
-        # if upload_response.status_code != 200:
-        #     return jsonify({'error': 'Failed to upload images', 'details': upload_response.text}), 500
+        upload_response = requests.post(UPLOADURL, json=payload)
+        if upload_response.status_code != 200:
+            return jsonify({'error': 'Failed to upload images', 'details': upload_response.text}), 500
 
-        # upload_data = upload_response.json()
+        upload_data = upload_response.json()
 
         # # Step 3: Run Rekognition
-        # rekognition_response = requests.post(REKOGNITIONURL, json=upload_data)
-        # if rekognition_response.status_code != 200:
-        #     return jsonify({'error': 'Error processing images', 'details': rekognition_response.text}), 500
+        rekognition_response = requests.post(REKOGNITIONURL, json=upload_data)
+        if rekognition_response.status_code != 200:
+            return jsonify({'error': 'Error processing images', 'details': rekognition_response.text}), 500
 
-        # rekognition_data = rekognition_response.json()
-        # defect_count = rekognition_data.get('defect_count', 0)
+        rekognition_data = rekognition_response.json()
+        defect_count = rekognition_data.get('defect_count', 0)
 
-        defect_count = 0
+        # defect_count = 0
 
         # print(defect_count)
         # print(booking_id)
