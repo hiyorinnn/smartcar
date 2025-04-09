@@ -101,3 +101,10 @@ docker-compose up -d
 - Check Docker logs: `docker-compose logs -f [service_name]`
 - Ensure all required ports are available (3000, 3306, etc.)
 - Review the `.env` file for correct configuration
+
+### RabbitMQ Startup Problems
+- The RabbitMQ container takes about 15 seconds, before it can accept connections.
+- This supersedes "depend-on" in compose.yaml, 
+- i.e. the dependant containers will read that RabbitMQ container has started and will activate even though it is unready.
+- AMQP_Setup will also continuously restart. It can be stopped after about 30 seconds, or once it logs "Connected"
+- Reason: It is not a microservice, but a single-execution python script that creates the RabbitMQ exchange and queues.

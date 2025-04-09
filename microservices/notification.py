@@ -11,7 +11,7 @@ app = Flask(__name__)
 #RabbitMQ configuration, consumes all messages with *.notif
 rabbit_host = "host.docker.internal"
 rabbit_port = 5672
-exchange_name = "order_topic"
+exchange_name = "smartcar_topic"
 exchange_type = "topic"
 queue_name = "Notification"
 
@@ -63,14 +63,13 @@ def send_sms(phone_number, message):
         return jsonify({"error": str(e)}), 500
 
 
-def callback(ch, method, properties, body):
+def callback(ch, method, body):
     """
     Callback function to process messages from RabbitMQ.
     
     Args:
     - ch: RabbitMQ channel
     - method: Delivery method
-    - properties: Message properties
     - body: Message body (expected to be JSON)
     """
     try:
@@ -88,9 +87,12 @@ def callback(ch, method, properties, body):
 
         # Ensure Flask app context is active
         with app.app_context():
-            response = send_sms(phone_number, message)        
-
-        print(f"SMS sent successfully: {response}")
+            response = send_sms(phone_number, message)
+                
+        if response[1] == 200:
+            print(f"SMS sent successfully: {response}")
+        else:
+            print(f"Error: {response}")
         
         # Acknowledge the message
         ch.basic_ack(delivery_tag=method.delivery_tag)
