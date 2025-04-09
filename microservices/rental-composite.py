@@ -284,7 +284,7 @@ def start_booking(booking_id):
         # Process payment response
         payment_result = payment_response.json()
         payment_status = payment_result.get('status')
-        phone_number = booking_details.get('booking_status')
+        phone_number = booking_details.get('contact_number')
         
         if payment_status != 'successful':
             logger.error(f"Payment failed for booking ID: {booking_id}")
