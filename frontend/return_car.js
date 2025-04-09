@@ -417,10 +417,92 @@ async function endBooking() {
             }
         }
         
-        alert('Car returned successfully in perfect condition! Thank you for using SmartCar.');
+        // Create modal for return confirmation - ADDED CODE STARTS HERE
+        const modal = document.createElement('div');
+        modal.className = 'return-confirmation-modal';
         
-        // Redirect to index.html
-        window.location.href = 'index.html';
+        // Get car details if available
+        const carDetails = selectedBooking.details?.details?.car_details || { make: 'Unknown', model: 'Unknown' };
+        
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h2>Return Successful!</h2>
+                <div class="confirmation-details">
+                    <p><i class="fas fa-check-circle success-icon"></i></p>
+                    <p>Car returned successfully in perfect condition!</p>
+                    <p><strong>Car:</strong> ${carDetails.make} ${carDetails.model}</p>
+                    <p><strong>Return Time:</strong> ${new Date(actualReturnDate).toLocaleString()}</p>
+                    <p><strong>Condition:</strong> Excellent</p>
+                </div>
+                <button class="close-btn">Back to Home</button>
+            </div>
+        `;
+        
+        // Add style for the modal
+        const style = document.createElement('style');
+        style.textContent = `
+            .return-confirmation-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+            }
+            .modal-content {
+                background-color: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                max-width: 500px;
+                width: 90%;
+                text-align: center;
+            }
+            .confirmation-details {
+                text-align: center;
+                margin: 20px 0;
+                padding: 15px;
+                background-color: #f5f5f5;
+                border-radius: 5px;
+            }
+            .success-icon {
+                font-size: 48px;
+                color: #4CAF50;
+                margin-bottom: 15px;
+            }
+            .close-btn {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 25px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                margin-top: 15px;
+                transition: background-color 0.3s;
+            }
+            .close-btn:hover {
+                background-color: #45a049;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(modal);
+        
+        // Add continue button functionality (redirect to index.html)
+        modal.querySelector('.close-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+        
+        // Automatically redirect after 5 seconds
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 5000);
+        // ADDED CODE ENDS HERE
         
     } catch (error) {
         console.error('Error ending booking:', error.response ? error.response.data : error);
