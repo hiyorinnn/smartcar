@@ -142,16 +142,7 @@ function selectBooking(booking, cardElement) {
         bookingIdElement.value = booking.booking_id;
     }
     
-    // Reset charges and condition
-    const damageChargeElement = document.getElementById('damage-charge');
-    if (damageChargeElement) {
-        damageChargeElement.textContent = '$0.00';
-    }
-    
-    const totalAdditionalElement = document.getElementById('total-additional');
-    if (totalAdditionalElement) {
-        totalAdditionalElement.textContent = '$0.00';
-    }
+    // Reset condition
     
     const conditionElement = document.getElementById('condition');
     if (conditionElement) {
@@ -169,10 +160,6 @@ function selectBooking(booking, cardElement) {
         endBookingBtn.style.display = 'none';
     }
     
-    const additionalChargesContainer = document.getElementById('additional-charges-container');
-    if (additionalChargesContainer) {
-        additionalChargesContainer.style.display = 'block';
-    }
     
     // Clear photo previews
     const photoPreviewContainer = document.getElementById('photo-preview-container');
@@ -320,19 +307,6 @@ async function analyzeCarCondition() {
         else if (response.data.message === "Vehicle return processed with violations" && response.status === 200) {
             // Violations detected - update UI and redirect to payment
             
-            // Update charge display if amount is provided
-            if (response.data.amount) {
-                const damageChargeElement = document.getElementById('damage-charge');
-                if (damageChargeElement) {
-                    damageChargeElement.textContent = formatCurrency(response.data.amount);
-                }
-                
-                const totalAdditionalElement = document.getElementById('total-additional');
-                if (totalAdditionalElement) {
-                    totalAdditionalElement.textContent = formatCurrency(response.data.amount);
-                }
-            }
-            
             // Update status and inform user of redirect
             const conditionElement = document.getElementById('condition');
             if (conditionElement) {
@@ -378,12 +352,6 @@ async function analyzeCarCondition() {
 
 // Handle zero defects case
 function handleZeroDefects() {
-    // Hide additional charges section
-    const additionalChargesContainer = document.getElementById('additional-charges-container');
-    if (additionalChargesContainer) {
-        additionalChargesContainer.style.display = 'none';
-    }
-    
     // Show the end booking button
     const endBookingBtn = document.getElementById('end-booking');
     if (endBookingBtn) {
@@ -498,173 +466,36 @@ function mockAssessmentResult() {
     if (assessmentResult.defect_count === 0) {
         handleZeroDefects();
     } else {
-        // Calculate charges based on the assessment for cases with defects
-        calculateCharges();
+        // Handle defects case - redirect to payment
+        handleDefects();
+        
+        // Use the mock data to simulate a redirect
+        setTimeout(() => {
+            alert('Redirecting to payment page for defects...');
+            // In a real scenario, this would redirect to the payment page
+            // window.location.href = 'fines_checkout.html';
+        }, 2000);
     }
     
     document.getElementById('upload-status').textContent = 'Analysis complete! (Mock data)';
     document.getElementById('upload-status').classList.remove('uploading-animation');
 }
 
-// Calculate additional charges
-function calculateCharges() {
-    if (!selectedBooking) {
-        alert('Please select a booking first');
-        return;
-    }
-    
-    // Get actual return date
-    const actualReturnDateElement = document.getElementById('actual-return-date');
-    const actualReturnDate = actualReturnDateElement ? actualReturnDateElement.value : new Date().toISOString();
-    
-    // Get damage charge from assessment result or default to 0
-    let damageCharge = 0;
-    if (assessmentResult && assessmentResult.damage_charge) {
-        damageCharge = assessmentResult.damage_charge;
-    } else {
-        // If no assessment result, base it on the condition input value
-        const conditionElement = document.getElementById('condition');
-        const condition = conditionElement ? conditionElement.value : 'Unknown';
-        
-        // Default condition-based charges if assessment isn't available
-        switch (condition) {
-            case 'Excellent - No issues':
-                damageCharge = 0;
-                break;
-            case 'Good - Minor wear':
-                damageCharge = 20;
-                break;
-            case 'Fair - Some issues':
-                damageCharge = 50;
-                break;
-            case 'Poor - Significant issues':
-                damageCharge = 100;
-                break;
-            default:
-                damageCharge = 0;
-        }
-    }
-    
-    // Show the additional charges container and hide end booking button
-    const additionalChargesContainer = document.getElementById('additional-charges-container');
-    if (additionalChargesContainer) {
-        additionalChargesContainer.style.display = 'block';
-    }
-    
+// Handle defects case - redirect to payment
+function handleDefects() {
+    // Hide the end booking button
     const endBookingBtn = document.getElementById('end-booking');
     if (endBookingBtn) {
         endBookingBtn.style.display = 'none';
     }
     
-    // Update charge display
-    const damageChargeElement = document.getElementById('damage-charge');
-    if (damageChargeElement) {
-        damageChargeElement.textContent = formatCurrency(damageCharge);
+    // Update condition display to show issues
+    const conditionElement = document.getElementById('condition');
+    if (conditionElement) {
+        conditionElement.value = 'Issues detected - payment required';
     }
-    
-    const totalAdditional = damageCharge;
-    const totalAdditionalElement = document.getElementById('total-additional');
-    if (totalAdditionalElement) {
-        totalAdditionalElement.textContent = formatCurrency(totalAdditional);
-    }
-    
-    return {
-        damageCharge,
-        totalAdditional: damageCharge
-    };
 }
 
-// Confirm car return
-async function confirmReturn() {
-    if (!selectedBooking) {
-        alert('Please select a booking first');
-        return;
-    }
-    
-    if (!assessmentResult) {
-        alert('Please analyze the car condition before confirming return');
-        return;
-    }
-    
-    // Calculate charges first
-    const charges = calculateCharges();
-    
-    // Get actual return date
-    const actualReturnDate = document.getElementById('actual-return-date').value;
-    
-    try {
-        // 1. Update booking status to 'ended'
-        const statusUpdateResponse = await axios.put(
-            `http://127.0.0.1:5006/api/booking-logs/${selectedBooking.booking_id}/status`,
-            { booking_status: 'ended' }
-        );
-        
-        // 2. Update payment information with additional charges
-        const additionalPaymentData = {
-            payment_status: 'pending',
-            total_amount: parseFloat(selectedBooking.total_amount || 0) + charges.totalAdditional,
-            details: {
-                ...selectedBooking.details,
-                return_info: {
-                    actual_return_time: new Date(actualReturnDate).toISOString(),
-                    condition: assessmentResult.condition_code || 'unknown',
-                    condition_details: assessmentResult.details || [],
-                    additional_charges: {
-                        damage_charge: charges.damageCharge,
-                        total_additional: charges.totalAdditional
-                    }
-                }
-            }
-        };
-        
-        await axios.put(
-            `http://127.0.0.1:5006/api/v1/update-status/${selectedBooking.booking_id}`,
-            additionalPaymentData
-        );
-        
-        // 3. Update car availability (make car available again)
-        if (selectedBooking.details?.car_details?.id) {
-            try {
-                await axios.put(
-                    `http://127.0.0.1:5000/car/${selectedBooking.details.car_details.id}/availability`, 
-                    { available: true }
-                );
-            } catch (error) {
-                console.warn('Could not update car availability:', error);
-                // Continue anyway since the booking is already updated
-            }
-        }
-        
-        alert('Car returned successfully! Thank you for using SmartCar.');
-        
-        // Refresh the bookings list
-        fetchActiveBookings();
-        
-        // Reset form
-        document.getElementById('selected-booking').value = '';
-        document.getElementById('condition').value = 'Awaiting analysis...';
-        document.getElementById('condition-details').innerHTML = '';
-        
-        // Reset additional charges
-        document.getElementById('damage-charge').textContent = '$0.00';
-        document.getElementById('total-additional').textContent = '$0.00';
-        
-        // Clear photo previews
-        document.getElementById('photo-preview-container').innerHTML = '';
-        uploadedPhotos = [];
-        assessmentResult = null;
-        
-        // Clear selected booking
-        selectedBooking = null;
-        
-        // Disable form fields again
-        toggleFormFields(false);
-        
-    } catch (error) {
-        console.error('Error returning car:', error.response ? error.response.data : error);
-        alert('Failed to process car return. Please try again later.');
-    }
-}
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
