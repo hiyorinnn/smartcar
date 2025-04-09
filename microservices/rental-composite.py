@@ -167,7 +167,7 @@ def update_booking_status(booking_id, payment_id=None):
         logger.error(f"Error connecting to booking log service: {str(e)}")
         return False
 
-def publish_notification(booking_id, phone_number, payment_success):
+def publish_notification(booking_id):
     """
     publishes a message to the notification queue on rabbitmq broker
     payment_success determines whether the message sent informs of successful or failed payment
@@ -176,15 +176,17 @@ def publish_notification(booking_id, phone_number, payment_success):
     returns a json object with status code 
     """
     try:
-            message = ""
-            if (payment_success):
-                message = "Your payment was successful. Booking ID: {booking_id}"
-            else:
-                message = "Your payment was unsuccessful. Please contact support. Booking ID: {booking_id}"
+            booking_details = get_booking_details(booking_id)
+            phone_number = booking_details.get("contact_number")
+            start_time = booking_details.get("start_time")
+            end_time =  booking_details.get("end_time")
+            car_id =  booking_details.get("car_id")
+            message = "Your booking (ID number " + booking_id + ") is confirmed. Details:\nStart Time: " + start_time + "\nEnd Time: " + end_time + "\nCar ID: " + car_id
+            
             success = channel.basic_publish(
                 exchange=exchange_name, 
                 routing_key="order.notif", 
-                body= json.dumps({'booking_id': booking_id, 'phone_number' : phone_number, 'message': message})
+                body= json.dumps({'phone_number' : phone_number, 'message': message})
             )
             if success:
                 return jsonify({'message': 'Notification sent successfully'}), 200
@@ -284,14 +286,20 @@ def start_booking(booking_id):
         # Process payment response
         payment_result = payment_response.json()
         payment_status = payment_result.get('status')
-        phone_number = booking_details.get('contact_number')
         
         if payment_status != 'successful':
             logger.error(f"Payment failed for booking ID: {booking_id}")
-            publish_notification(booking_id,phone_number,payment_success=False)
             return jsonify({"error": "Payment processing failed"}), 500
         # Payment successful, notify customer via SMS
-        publish_notification(booking_id,phone_number,payment_success=True)
+        publish_notification_response = publish_notification(booking_id)
+
+        if publish_notification_response[1] != 200:
+            logger.error(f"Failed to send notification. Error Code: {publish_notification_response[1]}")
+            return jsonify({
+                "error": "Failed to send notification",
+                "details": publish_notification_response[0]
+            }), publish_notification_response[1]
+
         # 1: Once payment is successful, update car availability to unavailable
         car_update_response = update_car_availability(car_id, False)
         
