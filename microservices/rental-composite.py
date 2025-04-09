@@ -126,14 +126,6 @@ def make_car_available(car_id, booking_id):
             logger.error(f"Failed to make car {car_id} available again: {response.get('message')}")
         else:
             logger.info(f"Successfully made car {car_id} available again after booking {booking_id}")
-            
-            # Update booking status to 'ended' if booking is still active
-            try:
-                booking_details = get_booking_details(booking_id)
-                if booking_details and booking_details.get('booking_status') == 'in_progress':
-                    update_booking_status(booking_id, 'ended')
-            except Exception as e:
-                logger.error(f"Error updating booking status: {str(e)}")
     except Exception as e:
         logger.error(f"Error making car {car_id} available again: {str(e)}")
 
