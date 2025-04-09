@@ -66,7 +66,7 @@ window.initMap = function() {
 
     // Initial data fetch
   fetchCarData();  
-},
+}
 
 // Fetch car data from the microservice
 function fetchCarData() {
@@ -109,7 +109,7 @@ function fetchCarData() {
         mapElement.appendChild(errorDiv);
       }
     });
-},
+}
 
 // Display cars on the map
 function displayCarsOnMap(cars) {
@@ -155,7 +155,7 @@ function displayCarsOnMap(cars) {
     // Add marker to the array
     carMarkers.push(marker);
   });
-},
+}
 
 // Create the marker content element - car-marker.svg
 function createMarkerContent(car) {
@@ -170,7 +170,7 @@ function createMarkerContent(car) {
   
   markerElement.appendChild(img);
   return markerElement;
-},
+}
 
 // Create info window content
 function createInfoWindowContent(car) {
@@ -183,7 +183,7 @@ function createInfoWindowContent(car) {
       <button id="get-directions-${car.id}" class="directions-btn">Get Directions</button>
     </div>
   `;
-},
+}
 
 // To get current location of user 
 function initializeLocationButton() {
@@ -264,7 +264,7 @@ function initializeLocationButton() {
       }
     });
   }
-},
+}
 
 // Call this function after the page loads and Google Maps is initialized
 document.addEventListener('DOMContentLoaded', function() {
