@@ -93,8 +93,6 @@ function toggleFormFields(enabled) {
         'actual-return-date',
         'car-photos',
         'analyze-condition',
-        'calculate-charges',
-        'confirm-return',
         'update-timing',
         'end-booking'
     ];
@@ -133,17 +131,39 @@ function selectBooking(booking, cardElement) {
     const carDetails = booking.details?.car_details || { make: 'Unknown', model: 'Unknown' };
     
     // Display booking_id as the primary identifier, followed by car details if available
-    document.getElementById('selected-booking').value = 
-        `Booking ID: ${booking.booking_id} ${carDetails.make !== 'Unknown' ? `(${carDetails.make} ${carDetails.model})` : ''}`;
-    document.getElementById('booking-id').value = booking.booking_id;
+    const selectedBookingElement = document.getElementById('selected-booking');
+    if (selectedBookingElement) {
+        selectedBookingElement.value = 
+            `Booking ID: ${booking.booking_id} ${carDetails.make !== 'Unknown' ? `(${carDetails.make} ${carDetails.model})` : ''}`;
+    }
+    
+    const bookingIdElement = document.getElementById('booking-id');
+    if (bookingIdElement) {
+        bookingIdElement.value = booking.booking_id;
+    }
     
     // Reset charges and condition
-    document.getElementById('damage-charge').textContent = '$0.00';
-    document.getElementById('total-additional').textContent = '$0.00';
-    document.getElementById('condition').value = 'Awaiting analysis...';
-    document.getElementById('condition-details').innerHTML = '';
+    const damageChargeElement = document.getElementById('damage-charge');
+    if (damageChargeElement) {
+        damageChargeElement.textContent = '$0.00';
+    }
     
-    // Hide the end booking button and show the normal workflow initially
+    const totalAdditionalElement = document.getElementById('total-additional');
+    if (totalAdditionalElement) {
+        totalAdditionalElement.textContent = '$0.00';
+    }
+    
+    const conditionElement = document.getElementById('condition');
+    if (conditionElement) {
+        conditionElement.value = 'Awaiting analysis...';
+    }
+    
+    const conditionDetailsElement = document.getElementById('condition-details');
+    if (conditionDetailsElement) {
+        conditionDetailsElement.innerHTML = '';
+    }
+    
+    // Hide the end booking button initially
     const endBookingBtn = document.getElementById('end-booking');
     if (endBookingBtn) {
         endBookingBtn.style.display = 'none';
@@ -154,18 +174,12 @@ function selectBooking(booking, cardElement) {
         additionalChargesContainer.style.display = 'block';
     }
     
-    const calculateChargesBtn = document.getElementById('calculate-charges');
-    if (calculateChargesBtn) {
-        calculateChargesBtn.style.display = 'block';
-    }
-    
-    const confirmReturnBtn = document.getElementById('confirm-return');
-    if (confirmReturnBtn) {
-        confirmReturnBtn.style.display = 'block';
-    }
-    
     // Clear photo previews
-    document.getElementById('photo-preview-container').innerHTML = '';
+    const photoPreviewContainer = document.getElementById('photo-preview-container');
+    if (photoPreviewContainer) {
+        photoPreviewContainer.innerHTML = '';
+    }
+    
     uploadedPhotos = [];
     assessmentResult = null;
     
@@ -259,7 +273,6 @@ function removePhoto(index) {
 }
 
 // Upload and analyze car photos
-// Upload and analyze car photos
 async function analyzeCarCondition() {
     if (!selectedBooking) {
         alert('Please select a booking first');
@@ -273,8 +286,10 @@ async function analyzeCarCondition() {
     
     const uploadStatus = document.getElementById('upload-status');
     
-    uploadStatus.textContent = 'Uploading and analyzing photos...';
-    uploadStatus.classList.add('uploading-animation');
+    if (uploadStatus) {
+        uploadStatus.textContent = 'Uploading and analyzing photos...';
+        uploadStatus.classList.add('uploading-animation');
+    }
     
     try {
         // Create a FormData object to send the photos
@@ -297,25 +312,43 @@ async function analyzeCarCondition() {
             // No violations case - show end booking button
             handleZeroDefects();
             
-            uploadStatus.textContent = 'Analysis complete! No violations found.';
-            uploadStatus.classList.remove('uploading-animation');
+            if (uploadStatus) {
+                uploadStatus.textContent = 'Analysis complete! No violations found.';
+                uploadStatus.classList.remove('uploading-animation');
+            }
         } 
         else if (response.data.message === "Vehicle return processed with violations" && response.status === 200) {
             // Violations detected - update UI and redirect to payment
             
             // Update charge display if amount is provided
             if (response.data.amount) {
-                document.getElementById('damage-charge').textContent = formatCurrency(response.data.amount);
-                document.getElementById('total-additional').textContent = formatCurrency(response.data.amount);
+                const damageChargeElement = document.getElementById('damage-charge');
+                if (damageChargeElement) {
+                    damageChargeElement.textContent = formatCurrency(response.data.amount);
+                }
+                
+                const totalAdditionalElement = document.getElementById('total-additional');
+                if (totalAdditionalElement) {
+                    totalAdditionalElement.textContent = formatCurrency(response.data.amount);
+                }
             }
             
             // Update status and inform user of redirect
-            document.getElementById('condition').value = 'Issues detected - payment required';
-            document.getElementById('condition-details').innerHTML = 
-                'Vehicle returned with violations. Redirecting to payment page...';
+            const conditionElement = document.getElementById('condition');
+            if (conditionElement) {
+                conditionElement.value = 'Issues detected - payment required';
+            }
             
-            uploadStatus.textContent = 'Analysis complete! Redirecting to payment...';
-            uploadStatus.classList.remove('uploading-animation');
+            const conditionDetailsElement = document.getElementById('condition-details');
+            if (conditionDetailsElement) {
+                conditionDetailsElement.innerHTML = 
+                    'Vehicle returned with violations. Redirecting to payment page...';
+            }
+            
+            if (uploadStatus) {
+                uploadStatus.textContent = 'Analysis complete! Redirecting to payment...';
+                uploadStatus.classList.remove('uploading-animation');
+            }
             
             // Use the redirect_url from the response, fall back to default if not provided
             const redirectUrl = response.data.redirect_url || 'fines_checkout.html';
@@ -328,30 +361,40 @@ async function analyzeCarCondition() {
         else {
             // Unexpected response format
             console.error('Unexpected response format:', response.data);
-            uploadStatus.textContent = 'Error processing analysis. Please try again.';
-            uploadStatus.classList.remove('uploading-animation');
+            if (uploadStatus) {
+                uploadStatus.textContent = 'Error processing analysis. Please try again.';
+                uploadStatus.classList.remove('uploading-animation');
+            }
         }
         
     } catch (error) {
         console.error('Error analyzing car condition:', error);
-        uploadStatus.textContent = 'Failed to analyze photos. Please try again.';
-        uploadStatus.classList.remove('uploading-animation');
+        if (uploadStatus) {
+            uploadStatus.textContent = 'Failed to analyze photos. Please try again.';
+            uploadStatus.classList.remove('uploading-animation');
+        }
     }
 }
 
 // Handle zero defects case
 function handleZeroDefects() {
-    // Hide additional charges section and associated buttons
-    document.getElementById('additional-charges-container').style.display = 'none';
-    document.getElementById('calculate-charges').style.display = 'none';
-    document.getElementById('confirm-return').style.display = 'none';
+    // Hide additional charges section
+    const additionalChargesContainer = document.getElementById('additional-charges-container');
+    if (additionalChargesContainer) {
+        additionalChargesContainer.style.display = 'none';
+    }
     
     // Show the end booking button
     const endBookingBtn = document.getElementById('end-booking');
-    endBookingBtn.style.display = 'block';
+    if (endBookingBtn) {
+        endBookingBtn.style.display = 'block';
+    }
     
     // Update condition display to show perfect condition
-    document.getElementById('condition').value = 'Excellent - No issues detected';
+    const conditionElement = document.getElementById('condition');
+    if (conditionElement) {
+        conditionElement.value = 'Excellent - No issues detected';
+    }
 }
 
 // End booking and redirect to index.html (for zero defects case)
@@ -389,7 +432,7 @@ async function endBooking() {
         };
         
         await axios.put(
-            `http://127.0.0.1:5006/api/booking-logs/${selectedBooking.booking_id}/payment`,
+            `http://127.0.0.1:5006/api/v1/update-status/${selectedBooking.booking_id}`,
             returnInfoData
         );
         
@@ -397,7 +440,7 @@ async function endBooking() {
         if (selectedBooking.details?.car_details?.id) {
             try {
                 await axios.put(
-                    `/car/${selectedBooking.details.car_details.id}/availability`, 
+                    `http://127.0.0.1:5000/car/${selectedBooking.details.car_details.id}/availability`, 
                     { available: true }
                 );
             } catch (error) {
@@ -471,7 +514,8 @@ function calculateCharges() {
     }
     
     // Get actual return date
-    const actualReturnDate = document.getElementById('actual-return-date').value;
+    const actualReturnDateElement = document.getElementById('actual-return-date');
+    const actualReturnDate = actualReturnDateElement ? actualReturnDateElement.value : new Date().toISOString();
     
     // Get damage charge from assessment result or default to 0
     let damageCharge = 0;
@@ -479,7 +523,8 @@ function calculateCharges() {
         damageCharge = assessmentResult.damage_charge;
     } else {
         // If no assessment result, base it on the condition input value
-        const condition = document.getElementById('condition').value;
+        const conditionElement = document.getElementById('condition');
+        const condition = conditionElement ? conditionElement.value : 'Unknown';
         
         // Default condition-based charges if assessment isn't available
         switch (condition) {
@@ -500,17 +545,28 @@ function calculateCharges() {
         }
     }
     
-    // Show the additional charges container and relevant buttons
-    document.getElementById('additional-charges-container').style.display = 'block';
-    document.getElementById('calculate-charges').style.display = 'block';
-    document.getElementById('confirm-return').style.display = 'block';
-    document.getElementById('end-booking').style.display = 'none';
+    // Show the additional charges container and hide end booking button
+    const additionalChargesContainer = document.getElementById('additional-charges-container');
+    if (additionalChargesContainer) {
+        additionalChargesContainer.style.display = 'block';
+    }
+    
+    const endBookingBtn = document.getElementById('end-booking');
+    if (endBookingBtn) {
+        endBookingBtn.style.display = 'none';
+    }
     
     // Update charge display
-    document.getElementById('damage-charge').textContent = formatCurrency(damageCharge);
+    const damageChargeElement = document.getElementById('damage-charge');
+    if (damageChargeElement) {
+        damageChargeElement.textContent = formatCurrency(damageCharge);
+    }
     
     const totalAdditional = damageCharge;
-    document.getElementById('total-additional').textContent = formatCurrency(totalAdditional);
+    const totalAdditionalElement = document.getElementById('total-additional');
+    if (totalAdditionalElement) {
+        totalAdditionalElement.textContent = formatCurrency(totalAdditional);
+    }
     
     return {
         damageCharge,
@@ -562,7 +618,7 @@ async function confirmReturn() {
         };
         
         await axios.put(
-            `http://127.0.0.1:5006/api/booking-logs/${selectedBooking.booking_id}/payment`,
+            `http://127.0.0.1:5006/api/v1/update-status/${selectedBooking.booking_id}`,
             additionalPaymentData
         );
         
@@ -570,7 +626,7 @@ async function confirmReturn() {
         if (selectedBooking.details?.car_details?.id) {
             try {
                 await axios.put(
-                    `/car/${selectedBooking.details.car_details.id}/availability`, 
+                    `http://127.0.0.1:5000/car/${selectedBooking.details.car_details.id}/availability`, 
                     { available: true }
                 );
             } catch (error) {
@@ -613,12 +669,10 @@ async function confirmReturn() {
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     // Button event listeners
-    document.getElementById('calculate-charges').addEventListener('click', calculateCharges);
-    document.getElementById('confirm-return').addEventListener('click', confirmReturn);
     document.getElementById('update-timing').addEventListener('click', setCurrentDateTime);
     document.getElementById('analyze-condition').addEventListener('click', analyzeCarCondition);
     
-    // Add event listener for end booking button (if it exists)
+    // Add event listener for end booking button
     const endBookingBtn = document.getElementById('end-booking');
     if (endBookingBtn) {
         endBookingBtn.addEventListener('click', endBooking);
