@@ -5,6 +5,7 @@ import json
 import base64
 import requests
 from flask_cors import CORS
+from flask import redirect, url_for
 from flask import Flask, jsonify, request
 
 # Add project root to path for importing custom modules
@@ -147,7 +148,7 @@ def return_vehicle():
 
         # upload_data = upload_response.json()
 
-        # Step 3: Run Rekognition
+        # # Step 3: Run Rekognition
         # rekognition_response = requests.post(REKOGNITIONURL, json=upload_data)
         # if rekognition_response.status_code != 200:
         #     return jsonify({'error': 'Error processing images', 'details': rekognition_response.text}), 500
@@ -155,10 +156,10 @@ def return_vehicle():
         # rekognition_data = rekognition_response.json()
         # defect_count = rekognition_data.get('defect_count', 0)
 
-        defect_count = 2
+        defect_count = 1
 
-        print(defect_count)
-        print(booking_id)
+        # print(defect_count)
+        # print(booking_id)
 
         if defect_count > 0:
             # Step 4: Log violation
@@ -189,14 +190,24 @@ def return_vehicle():
                     
                     # If payment is successful
                     if payment_response.status_code == 200:
+                        # Use the static HTML file path for the redirect
+                        redirect_url = './fines-checkout.html'  # Adjust according to the actual path of your HTML file
+                        
+                        # Return the response with redirect URL and payment details
                         return jsonify({
                             'message': 'Vehicle return processed with violations',
                             'amount': total_charge,
+                            'redirect_url': redirect_url,  # Add the redirect URL in the response
                         }), 200
                     else:
                         # If payment failed
                         report_error_to_handler(500, "Payment Processing Error", f"Failed to process payment: {payment_response.text}")
                         return jsonify({'error': 'Failed to process payment', 'details': payment_response.text}), 500
+
+            except Exception as e:
+                # Handle other exceptions if necessary
+                report_error_to_handler(500, "Internal Server Error", str(e))
+                return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
             except Exception as e:
                 # Handling errors in payment processing

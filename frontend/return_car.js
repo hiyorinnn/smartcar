@@ -10,13 +10,6 @@ function formatDate(dateString) {
     return date.toLocaleString();
 }
 
-// Calculate time difference in hours
-function calculateHoursDifference(startDate, endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    return Math.max(0, (end - start) / (1000 * 60 * 60));
-}
-
 // Format currency
 function formatCurrency(amount) {
     return '$' + parseFloat(amount).toFixed(2);
@@ -145,7 +138,6 @@ function selectBooking(booking, cardElement) {
     document.getElementById('booking-id').value = booking.booking_id;
     
     // Reset charges and condition
-    document.getElementById('late-fee').textContent = '$0.00';
     document.getElementById('damage-charge').textContent = '$0.00';
     document.getElementById('total-additional').textContent = '$0.00';
     document.getElementById('condition').value = 'Awaiting analysis...';
@@ -267,6 +259,7 @@ function removePhoto(index) {
 }
 
 // Upload and analyze car photos
+// Upload and analyze car photos
 async function analyzeCarCondition() {
     if (!selectedBooking) {
         alert('Please select a booking first');
@@ -279,7 +272,6 @@ async function analyzeCarCondition() {
     }
     
     const uploadStatus = document.getElementById('upload-status');
-    const defectCountDisplay = document.getElementById('defect-count-display');
     
     uploadStatus.textContent = 'Uploading and analyzing photos...';
     uploadStatus.classList.add('uploading-animation');
@@ -300,44 +292,50 @@ async function analyzeCarCondition() {
             }
         });
         
-        // Handle the response
-        assessmentResult = response.data;
-        
-        // Update the condition field with the result
-        const conditionInput = document.getElementById('condition');
-        const conditionDetails = document.getElementById('condition-details');
-        
-        // Update the condition display
-        conditionInput.value = assessmentResult.condition_summary || 'Analysis failed';
-        
-        // Display detailed findings if available
-        if (assessmentResult.details) {
-            let detailsHTML = '<h4>Detailed Assessment:</h4><ul>';
-            assessmentResult.details.forEach(detail => {
-                detailsHTML += `<li>${detail}</li>`;
-            });
-            detailsHTML += '</ul>';
-            conditionDetails.innerHTML = detailsHTML;
-        }
-        
-        // Check for zero defects and adjust UI accordingly
-        if (assessmentResult.defect_count === 0) {
+        // Check response type and handle accordingly
+        if (response.data.message === "no-violations" && response.status === 200) {
+            // No violations case - show end booking button
             handleZeroDefects();
-        } else {
-            // Calculate charges based on the assessment for cases with defects
-            calculateCharges();
+            
+            uploadStatus.textContent = 'Analysis complete! No violations found.';
+            uploadStatus.classList.remove('uploading-animation');
+        } 
+        else if (response.data.message === "Vehicle return processed with violations" && response.status === 200) {
+            // Violations detected - update UI and redirect to payment
+            
+            // Update charge display if amount is provided
+            if (response.data.amount) {
+                document.getElementById('damage-charge').textContent = formatCurrency(response.data.amount);
+                document.getElementById('total-additional').textContent = formatCurrency(response.data.amount);
+            }
+            
+            // Update status and inform user of redirect
+            document.getElementById('condition').value = 'Issues detected - payment required';
+            document.getElementById('condition-details').innerHTML = 
+                'Vehicle returned with violations. Redirecting to payment page...';
+            
+            uploadStatus.textContent = 'Analysis complete! Redirecting to payment...';
+            uploadStatus.classList.remove('uploading-animation');
+            
+            // Use the redirect_url from the response, fall back to default if not provided
+            const redirectUrl = response.data.redirect_url || 'fines_checkout.html';
+            
+            // Redirect to the payment URL after a short delay
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 2000); // 2-second delay to allow the user to see the message
         }
-        
-        uploadStatus.textContent = 'Analysis complete!';
-        uploadStatus.classList.remove('uploading-animation');
+        else {
+            // Unexpected response format
+            console.error('Unexpected response format:', response.data);
+            uploadStatus.textContent = 'Error processing analysis. Please try again.';
+            uploadStatus.classList.remove('uploading-animation');
+        }
         
     } catch (error) {
         console.error('Error analyzing car condition:', error);
         uploadStatus.textContent = 'Failed to analyze photos. Please try again.';
         uploadStatus.classList.remove('uploading-animation');
-        
-        // Mock assessment result for testing if backend is not ready
-        mockAssessmentResult();
     }
 }
 
@@ -383,7 +381,6 @@ async function endBooking() {
                     condition: 'excellent',
                     condition_details: ['No defects detected'],
                     additional_charges: {
-                        late_fee: 0,
                         damage_charge: 0,
                         total_additional: 0
                     }
@@ -473,22 +470,8 @@ function calculateCharges() {
         return;
     }
     
-    // Get values from form
+    // Get actual return date
     const actualReturnDate = document.getElementById('actual-return-date').value;
-    
-    // Get car details and price per hour
-    const carDetails = selectedBooking.details?.car_details || { price_per_hour: 50 };
-    const hourlyRate = carDetails.price_per_hour || 50;
-    
-    // Calculate late fee
-    let lateFee = 0;
-    const scheduledEndTime = new Date(selectedBooking.end_time);
-    const actualEndTime = new Date(actualReturnDate);
-    
-    if (actualEndTime > scheduledEndTime) {
-        const extraHours = calculateHoursDifference(scheduledEndTime, actualEndTime);
-        lateFee = extraHours * hourlyRate * 1.5; // 50% surcharge for late returns
-    }
     
     // Get damage charge from assessment result or default to 0
     let damageCharge = 0;
@@ -524,16 +507,14 @@ function calculateCharges() {
     document.getElementById('end-booking').style.display = 'none';
     
     // Update charge display
-    document.getElementById('late-fee').textContent = formatCurrency(lateFee);
     document.getElementById('damage-charge').textContent = formatCurrency(damageCharge);
     
-    const totalAdditional = lateFee + damageCharge;
+    const totalAdditional = damageCharge;
     document.getElementById('total-additional').textContent = formatCurrency(totalAdditional);
     
     return {
-        lateFee,
         damageCharge,
-        totalAdditional
+        totalAdditional: damageCharge
     };
 }
 
@@ -573,7 +554,6 @@ async function confirmReturn() {
                     condition: assessmentResult.condition_code || 'unknown',
                     condition_details: assessmentResult.details || [],
                     additional_charges: {
-                        late_fee: charges.lateFee,
                         damage_charge: charges.damageCharge,
                         total_additional: charges.totalAdditional
                     }
@@ -610,7 +590,6 @@ async function confirmReturn() {
         document.getElementById('condition-details').innerHTML = '';
         
         // Reset additional charges
-        document.getElementById('late-fee').textContent = '$0.00';
         document.getElementById('damage-charge').textContent = '$0.00';
         document.getElementById('total-additional').textContent = '$0.00';
         
