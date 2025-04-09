@@ -48,7 +48,7 @@ async function fetchActiveBookings() {
     
     try {
         // Use user ID to fetch bookings
-        const response = await axios.get(`http://127.0.0.1:5006/api/booking-logs/user/${userId}`);
+        const response = await axios.get(`http://127.0.0.1:5011/api/get-all-bookings/${userId}`);
         const activeBookingsContainer = document.getElementById('active-bookings-container');
         
         activeBookingsContainer.innerHTML = ''; // Clear loading text
