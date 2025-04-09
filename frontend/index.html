@@ -51,6 +51,10 @@
         font-size: 1.8rem;
       }
 
+      nav {
+        margin: 0 auto 0 50px;
+      }
+
       nav ul {
         display: flex;
         list-style: none;
@@ -63,6 +67,37 @@
       nav ul li a {
         color: #333;
         text-decoration: none;
+        font-weight: 500;
+        padding: 10px 0;
+        position: relative;
+        transition: color 0.3s;
+      }
+
+      nav ul li a:hover {
+        color: #2563eb;
+      }
+
+      nav ul li a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #2563eb;
+        transition: width 0.3s;
+      }
+
+      nav ul li a:hover::after {
+        width: 100%;
+      }
+
+      nav ul li a.active {
+        color: #2563eb;
+      }
+
+      nav ul li a.active::after {
+        width: 100%;
       }
 
       .auth-buttons {
@@ -92,6 +127,7 @@
         color: #333;
         border: 1px solid #ccc;
       }
+      
       .hero {
         display: flex;
         flex-direction: column;
@@ -209,6 +245,15 @@
         background-color: #e0e0e0;
       }
 
+      /* Mobile menu button */
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         h1 {
@@ -221,6 +266,10 @@
 
         nav {
           display: none;
+        }
+
+        .mobile-menu-btn {
+          display: block;
         }
 
         .search-form {
@@ -237,6 +286,12 @@
         </div>
         SMARTCAR
       </div>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="return_car.html">Return a Car</a></li>
+        </ul>
+      </nav>
       <div class="auth-buttons">
         <a href="./login.html" class="btn btn-outline" id="signin-link"
           >Sign in</a
@@ -245,6 +300,7 @@
           >Sign up</a
         >
       </div>
+      <button class="mobile-menu-btn">☰</button>
     </header>
 
     <section class="hero">
