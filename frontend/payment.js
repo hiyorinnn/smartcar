@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             // After successful booking start, redirect to success page
             // window.location.href = "http://localhost/GitHub/smartcar/frontend/success.html";
-            window.location.href = "http://localhost:3000/frontend/success.html"
+            window.location.href = "./success.html"
           } catch (rentalError) {
             console.error("Error starting booking:", rentalError);
             const messageContainer = document.querySelector("#error-message");
