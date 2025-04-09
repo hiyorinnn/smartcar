@@ -1,5 +1,6 @@
 ## Add your respective docker files names here
 volumes:
+  pgdata:
   rabbitmq_data:
     name: esd_rabbitmq_data
 
@@ -9,19 +10,83 @@ networks:
     name: smartcar-net
 
 services:
+
+  #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  kong-database:
+    image: postgres:17.4
+    restart: always
+    networks:
+      - smartcar-net
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  #######################################
+  # Kong database migration
+  #######################################
+  kong-migration:
+    image: kong/kong-gateway:3.9
+    command: "kong migrations bootstrap"
+    restart: on-failure
+    networks:
+      - smartcar-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+    depends_on:
+      - kong-database
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  kong:
+    image: kong/kong-gateway:3.9
+    restart: always
+    networks:
+      - smartcar-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+    depends_on:
+      - kong-migration
+    ports: # https://docs.konghq.com/gateway/latest/production/networking/default-ports/
+      - "8000:8000" # Takes incoming HTTP traffic from Consumers, and forwards it to upstream Services.
+      - "8001:8001" # Admin API. Listens for calls from the command line over HTTP.
+      - "8002:8002" # Kong Manager (GUI). Listens for HTTP traffic.
+
   ###################################
   # Car Available microservice
   ###################################
   car_available:
     build:
-      context: ./
+      context: ./ 
       dockerfile: car_available.Dockerfile
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5000:5000"
     networks:
       - smartcar-net
 
@@ -30,7 +95,7 @@ services:
   ###################################
   location:
     build:
-      context: ./
+      context: ./ 
       dockerfile: location.Dockerfile
     restart: always
     environment:
@@ -45,13 +110,11 @@ services:
   ###################################
   gps:
     build:
-      context: ./
+      context: ./ 
       dockerfile: gps.Dockerfile
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5002:5002"
     networks:
       - smartcar-net
 
@@ -60,14 +123,12 @@ services:
   ###################################
   user:
     build:
-      context: ./
+      context: ./ 
       dockerfile: user.Dockerfile
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5004:5004"
     networks:
       - smartcar-net
 
@@ -81,8 +142,6 @@ services:
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
-    ports:
-      - "50051:50051"
     networks:
       - smartcar-net
     depends_on:
@@ -99,10 +158,6 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/smartcar_logs
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5005:5005"
-    # volumes:
-    #   - C:\wamp64\www\smartcar\microservices\error-handling-service\logs:/app/logs
     networks:
       - smartcar-net
 
@@ -117,17 +172,15 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/car_service
       PYTHONUNBUFFERED: 1
-    ports:
-      - "5006:5006" # Update to 5006 to avoid conflict with other services
     networks:
       - smartcar-net
-  
+
   ###################################
   # Rental Composite microservice
   ###################################
   rental-composite:
     build:
-      context: ./
+      context: ./ 
       dockerfile: rental-composite.Dockerfile
     container_name: rental-composite
     restart: always
@@ -147,7 +200,7 @@ services:
   ###################################
   payment_service:
     build:
-      context: ./
+      context: ./ 
       dockerfile: payment.Dockerfile
     container_name: payment_service
     restart: always
@@ -156,14 +209,12 @@ services:
       - STRIPE_WEBHOOK_SECRET=whsec_2dWJNk3ZJZ7xtTzl0qpVZAShENq4OJws
       - rental_composite_URL=http://rental-composite:5007/api/v1
       - booking_log_URL=http://booking_log:5006/api
-    ports:
-      - "5008:5008"
     networks:
       - smartcar-net
     depends_on:
       - booking_log
       - rental-composite
-  
+
   ###################################
   # Notification microservice
   ###################################
@@ -182,11 +233,10 @@ services:
     depends_on:
       - rabbitmq
       - amqp_setup # remove if we manually activate amqp_setup instead, since amqp_setup is not a microservice
-  
+
   ###################################
   # Aiprocessing microservice
   ###################################
-  
   aiprocessing:
     build:
       context: ./aiprocessing-service
@@ -202,18 +252,17 @@ services:
       - .env
     networks:
       - smartcar-net
-      
+
   ###################################
   # Return microservice
   ###################################
-
   return:
     build:
       context: ./return-service
       dockerfile: return.Dockerfile
     restart: always
     ports:
-      - "5011:5011"  
+      - "5011:5011"
     networks:
       - smartcar-net
     depends_on:
@@ -224,7 +273,7 @@ services:
       - notification
       - rabbitmq
       - amqp_setup 
-  
+
   ###################################
   # RabbitMQ: The messaging broker   
   ###################################
