@@ -4,6 +4,49 @@ let carMarkers = [];
 let directionsService;
 let directionsRenderer;
 
+document.addEventListener('DOMContentLoaded', function () {
+  const userMessage = document.getElementById('user-message');
+  const signInBtn = document.getElementById('signin-link');
+  const signUpBtn = document.getElementById('register-link');
+  const logOutBtn = document.getElementById('logout-link');
+
+function isLoggedIn() {
+  return localStorage.getItem('loggedIn');
+}
+//Updates Page when logged in or out
+function updateUI() {
+  if (isLoggedIn()) {
+    userMessage.textContent = 'Welcome!';
+    signInBtn.style.display = 'none';
+    signUpBtn.style.display = 'none';
+    logOutBtn.style.display = 'inline-block';
+  } else {
+    userMessage.textContent = '';
+    signInBtn.style.display = 'inline-block';
+    signUpBtn.style.display = 'inline-block';
+    logOutBtn.style.display = 'none';
+  }
+}
+
+signInBtn.addEventListener('click', () => {
+  localStorage.setItem('loggedIn', 'true');
+  updateUI();
+});
+
+signUpBtn.addEventListener('click', () => {
+  localStorage.setItem('loggedIn', 'true');
+  updateUI();
+});
+
+logOutBtn.addEventListener('click', () => {
+  localStorage.removeItem('loggedIn');
+  updateUI(); // Stays on same page, just updates view
+});
+
+updateUI();
+
+});
+
 // Initialize the map
 window.initMap = function() {
   map = new google.maps.Map(document.getElementById("map"), {
@@ -23,7 +66,7 @@ window.initMap = function() {
 
     // Initial data fetch
   fetchCarData();  
-}
+},
 
 // Fetch car data from the microservice
 function fetchCarData() {
@@ -66,7 +109,7 @@ function fetchCarData() {
         mapElement.appendChild(errorDiv);
       }
     });
-}
+},
 
 // Display cars on the map
 function displayCarsOnMap(cars) {
@@ -112,7 +155,7 @@ function displayCarsOnMap(cars) {
     // Add marker to the array
     carMarkers.push(marker);
   });
-}
+},
 
 // Create the marker content element - car-marker.svg
 function createMarkerContent(car) {
@@ -127,7 +170,7 @@ function createMarkerContent(car) {
   
   markerElement.appendChild(img);
   return markerElement;
-}
+},
 
 // Create info window content
 function createInfoWindowContent(car) {
@@ -140,7 +183,7 @@ function createInfoWindowContent(car) {
       <button id="get-directions-${car.id}" class="directions-btn">Get Directions</button>
     </div>
   `;
-}
+},
 
 // To get current location of user 
 function initializeLocationButton() {
@@ -221,7 +264,7 @@ function initializeLocationButton() {
       }
     });
   }
-}
+},
 
 // Call this function after the page loads and Google Maps is initialized
 document.addEventListener('DOMContentLoaded', function() {

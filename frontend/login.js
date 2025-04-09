@@ -37,6 +37,7 @@ loginForm.addEventListener('submit', async (event) => {
       localStorage.setItem('userName', data.name || 'User');
       localStorage.setItem('userEmail', email);
       localStorage.setItem('userUID', data.user_id);
+      localStorage.setItem('loggedIn', true);
 
       // Redirect to home page
       window.location.href = './index.html';
