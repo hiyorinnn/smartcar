@@ -102,7 +102,18 @@ def publish_notification(booking_id, phone_number, is_defected):
     except Exception as e:
         report_error_to_handler(500, "Notification Error", str(e))
         return jsonify({'error': 'Failed to send notification', 'details': str(e)}), 500
-   
+
+@app.route('/api/get-all-bookings/<user_id>', methods=["GET"])
+def get_bookings(user_id):  # <-- Accept user_id here
+
+    response = requests.get(GETALLBOOKINGURL.format(user_id))
+
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        report_error_to_handler(response.status_code, "Failed to fetch bookings", "error: Failed to fetch bookings")
+        return jsonify({"error": "Failed to fetch bookings"}), response.status_code
+  
 
 @app.route('/api/return-vehicle', methods=['POST'])
 def return_vehicle():
