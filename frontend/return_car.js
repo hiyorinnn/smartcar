@@ -46,10 +46,10 @@ async function fetchActiveBookings() {
         
         activeBookingsContainer.innerHTML = ''; // Clear loading text
         
-        // Filter only active bookings (status is 'not_started' or 'in_progress')
+        // Filter only bookings that are in progress
         const bookings = response.data.data.booking_logs;
         const activeBookings = bookings.filter(booking => 
-            booking.booking_status === 'not_started' || booking.booking_status === 'in_progress');
+            booking.booking_status === 'in_progress');
         
         if (activeBookings.length === 0) {
             activeBookingsContainer.innerHTML = '<p>You have no active bookings.</p>';
