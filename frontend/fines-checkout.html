@@ -334,10 +334,7 @@
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // Add booking_id to the return URL if available
-        return_url: bookingId 
-          ? `./fines-success.html?booking_id=${bookingId}`
-          : "./fines-success.html"
+        return_url: 'http://localhost:3000/frontend/fines-success.html'
       },
     });
   

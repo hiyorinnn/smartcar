@@ -31,25 +31,27 @@ cd smartcar
 
 ### 4. Docker Setup
 1. Build the Docker containers (ensuring fresh build with no cached components):
-   ```bash
+```bash
    cd microservices
    docker-compose build --no-cache
    ```
 
 2. Start the application containers in detached mode:
-   ```bash
+   Ensure that 
+```bash
    docker-compose up -d
    ```
 
 3. Verify all containers are running:
-   ```bash
+```bash
    docker-compose ps
    ```
 
 ### 5. Access the Application
 1. Ensure Python is installed then run
+2. Ensure that you are in smartcar directory 
 
-   ```bash
+```bash
     python -m http.server 3000
    ```
 
