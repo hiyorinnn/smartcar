@@ -336,8 +336,8 @@
       confirmParams: {
         // Add booking_id to the return URL if available
         return_url: bookingId 
-          ? `http://localhost:3000/frontend/fines-success.html?booking_id=${bookingId}`
-          : "http://localhost:3000/frontend/fines-success.html"
+          ? `./fines-success.html?booking_id=${bookingId}`
+          : "./fines-success.html"
       },
     });
   
