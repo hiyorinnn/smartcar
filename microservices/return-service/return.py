@@ -195,7 +195,7 @@ def return_vehicle():
                     # If payment is successful
                     if payment_response.status_code == 200:
                         # Use the static HTML file path for the redirect
-                        redirect_url = './fines-checkout.html'  # Adjust according to the actual path of your HTML file
+                        redirect_url = './fines-checkout.html' 
                         
                         # Return the response with redirect URL and payment details
                         return jsonify({

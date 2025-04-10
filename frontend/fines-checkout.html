@@ -27,15 +27,15 @@
       body {
         background-color: #f0f4f8;
         background-image: linear-gradient(
-          to right,
-          rgba(37, 99, 235, 0.05) 1px,
-          transparent 1px
-        ),
-        linear-gradient(
-          to bottom,
-          rgba(37, 99, 235, 0.05) 1px,
-          transparent 1px
-        );
+            to right,
+            rgba(37, 99, 235, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(37, 99, 235, 0.05) 1px,
+            transparent 1px
+          );
         background-size: 20px 20px;
       }
 
@@ -52,7 +52,7 @@
         top: 0;
         z-index: 100;
       }
-      
+
       a {
         text-decoration: none;
         color: #2563eb;
@@ -195,13 +195,13 @@
       }
 
       .btn::after {
-        content: '';
+        content: "";
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 0;
-        background-color: rgba(0,0,0,0.1);
+        background-color: rgba(0, 0, 0, 0.1);
         transition: height 0.3s ease;
         z-index: -1;
       }
@@ -248,7 +248,7 @@
         <a href="./index.html">SMARTCAR</a>
       </div>
       <h1>Fine Payment</h1>
-      <h1> </h1>
+      <h1></h1>
     </header>
 
     <div class="payment-sections">
@@ -256,11 +256,15 @@
         <h2 class="section-title">Fine Details</h2>
         <div class="item-card">
           <div class="fine-details">
-            <span class="fine-name"><i class="fas fa-exclamation-circle"></i> <span id="fine-type">Damages Fees</span></span>
+            <span class="fine-name"
+              ><i class="fas fa-exclamation-circle"></i>
+              <span id="fine-type">Damages Fees</span></span
+            >
             <span class="fine-price" id="fine-amount"></span>
           </div>
           <div class="fine-description" id="fine-description">
-          Fees for damaged caused on the car, assessed from the images you uploaded upon return.
+            Fees for damaged caused on the car, assessed from the images you
+            uploaded upon return.
           </div>
         </div>
 
@@ -273,7 +277,9 @@
       <div class="section">
         <h2 class="section-title">Payment Details</h2>
         <form id="payment-form">
-          <div id="payment-element"><!-- Stripe injects payment UI here --></div>
+          <div id="payment-element">
+            <!-- Stripe injects payment UI here -->
+          </div>
           <button class="btn" id="submit-payment">Pay Fine</button>
           <div id="payment-message" class="hidden"></div>
         </form>
@@ -283,48 +289,58 @@
 </html>
 
 <script>
-  const stripe = Stripe("pk_test_51R7XLM4Jm41usPZB8LXUvo3nFp9ItuWiFCOrksMZWQWqgcyAwRqILKJKReuEeVsHd2yVVY4OdQwecWKfZ4lVbeA000vB8ojdqL");
+  const stripe = Stripe(
+    "pk_test_51R7XLM4Jm41usPZB8LXUvo3nFp9ItuWiFCOrksMZWQWqgcyAwRqILKJKReuEeVsHd2yVVY4OdQwecWKfZ4lVbeA000vB8ojdqL"
+  );
   let elements;
   let bookingId = null;
-  
-  // Function to get URL parameters
+  let fineAmount = null;
+
   function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
     var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results === null
+      ? ""
+      : decodeURIComponent(results[1].replace(/\+/g, " "));
   }
-  
-  // Simulated fine amount - need to get this amount from another api call
-  const amt = 50.0; 
-  
-  document.getElementById('fine-amount').innerText = `$${amt}`;
-  document.getElementById('total-fine-amount').innerText = `$${amt}`;
-  
-  // Send Stripe intent
-  async function initializeStripeElements() {
+
+  // Update UI
+  function updateFineAmount(amount) {
+    // Format the amount for display (assuming amount is in dollars)
+    const formattedAmount = `$${parseFloat(amount).toFixed(2)}`;
+    document.getElementById("fine-amount").innerText = formattedAmount;
+    document.getElementById("total-fine-amount").innerText = formattedAmount;
+  }
+
+  // Stripe intent
+  async function initializeStripeElements(amount) {
     try {
-      const response = await axios.post("http://localhost:5008/api/v1/pay-fine", {
-        amount: amt
-      }, {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.post(
+        "http://localhost:5008/api/v1/pay-fine",
+        {
+          amount: amount,
         },
-      });
-  
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       const clientSecret = response.data.client_secret;
-  
+
       elements = stripe.elements({ clientSecret });
       const paymentElement = elements.create("payment");
       paymentElement.mount("#payment-element");
-  
-    } catch (error) {
+      } catch (error) {
       console.error("Failed to initialise Stripe Elements:", error);
       document.querySelector("#payment-message").classList.remove("hidden");
-      document.querySelector("#payment-message").textContent = "Failed to initialise payment.";
+      document.querySelector("#payment-message").textContent =
+        "Failed to initialise payment.";
     }
   }
-  
+
   async function handlePaymentSubmit(event) {
     event.preventDefault();
     const payButton = document.getElementById("submit-payment");
@@ -349,20 +365,41 @@
   
   document.addEventListener("DOMContentLoaded", async () => {
     // Try to get booking_id from URL parameters
-    bookingId = getUrlParameter('booking_id');
-    
+    bookingId = getUrlParameter("booking_id");
+
+    // Try to get amount from URL parameters
+    fineAmount = getUrlParameter("amount");
+
     // If not in URL, try to get from localStorage
-    if (!bookingId) {
-      const bookingData = JSON.parse(localStorage.getItem("bookingData"));
-      if (bookingData && bookingData.booking_id) {
-        bookingId = bookingData.booking_id;
+    if (!bookingId || !fineAmount) {
+      const paymentData = JSON.parse(
+        localStorage.getItem("paymentData") || "{}"
+      );
+
+      if (!bookingId && paymentData.booking_id) {
+        bookingId = paymentData.booking_id;
+      }
+
+      if (!fineAmount && paymentData.amount) {
+        fineAmount = paymentData.amount;
       }
     }
-    
+
+    // Fallback to default amount if nothing found from backend
+    if (!fineAmount) {
+      console.warn("No fine amount found, using default amount");
+      fineAmount = 50.0; // Default as fallback
+    }
+
     console.log("Booking ID for fine payment:", bookingId);
-    
-    await initializeStripeElements();
-  
+    console.log("Fine amount for payment:", fineAmount);
+
+    // Update the UI with the fine amount
+    updateFineAmount(fineAmount);
+
+    // Initialize Stripe with the dynamic amount
+    await initializeStripeElements(fineAmount);
+
     const form = document.getElementById("payment-form");
     form.addEventListener("submit", handlePaymentSubmit);
   });
