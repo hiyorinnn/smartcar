@@ -35,6 +35,7 @@ channel = None
 
 def report_error_to_handler(status_code, error_type, message):
     """Send error details to the error handling microservice."""
+    print(f"Reporting error: {status_code}, {error_type}, {message}")  # Debugging
     error_payload = {
         "status_code": status_code,
         "error_type": error_type,
