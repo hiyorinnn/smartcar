@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 
 """
-A standalone script to create exchanges and queues on RabbitMQ.
+A script that only needs to be executed at the start after the rabbitMQ container is started up. It will create the exchange
+smartcar_topic with the queues Notification and Testbed.
+- Notification is the queue which the notification microservice listens to
+- Testbed is a spare queue to collect all messages for testing purposes
+
+We created a container of this file so that docker compose up will run this script, but it can be stopped as soon as the 
+script is run.
 """
 
 import pika

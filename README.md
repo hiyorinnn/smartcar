@@ -28,6 +28,7 @@ cd smartcar
    - `databases/user.sql` - Creates and populates the user table
    - `databases/booking_logs.sql` - Sets up the booking history
    - `databases/car_available.sql` - Creates and populates the car inventory
+   - `databases/error_logs.sql` - Sets up error log history
 
 ### 4. Docker Setup
 1. Build the Docker containers (ensuring fresh build with no cached components):
