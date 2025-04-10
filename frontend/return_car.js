@@ -324,8 +324,16 @@ async function analyzeCarCondition() {
                 uploadStatus.classList.remove('uploading-animation');
             }
             
+            // Store booking_id in localStorage for the payment process
+            const paymentData = {
+                booking_id: selectedBooking.booking_id,
+                amount: response.data.amount || 50.0 // Use amount from response or default
+            };
+            localStorage.setItem('paymentData', JSON.stringify(paymentData));
+            console.log('Stored payment data in localStorage:', paymentData);
+            
             // Use the redirect_url from the response, fall back to default if not provided
-            const redirectUrl = response.data.redirect_url || 'fines_checkout.html';
+            const redirectUrl = response.data.redirect_url || 'fines-checkout.html';
             
             // Redirect to the payment URL after a short delay
             setTimeout(() => {

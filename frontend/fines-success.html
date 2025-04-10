@@ -119,7 +119,7 @@
         <p class="success-message">
             Thank you for paying your fine. Be careful next time!
         </p>
-        <p id="status-update-message" class="status-message"></p>
+        <!-- <p id="status-update-message" class="status-message"></p> -->
         <a href="./index.html" class="btn">Return to Home</a>
     </div>
 
@@ -144,10 +144,18 @@
                     const paymentIntent = getUrlParameter('payment_intent');
                     
                     if (paymentIntent) {
-                        // Try to get booking_id from localStorage
-                        const bookingData = JSON.parse(localStorage.getItem("bookingData"));
-                        if (bookingData && bookingData.booking_id) {
-                            bookingId = bookingData.booking_id;
+                        // Try to get booking_id from localStorage using paymentData
+                        const paymentData = JSON.parse(localStorage.getItem("paymentData") || "{}");
+                        if (paymentData && paymentData.booking_id) {
+                            bookingId = paymentData.booking_id;
+                            console.log('Retrieved booking ID from localStorage paymentData:', bookingId);
+                        } else {
+                            // Fallback to bookingData if paymentData doesn't exist
+                            const bookingData = JSON.parse(localStorage.getItem("bookingData") || "{}");
+                            if (bookingData && bookingData.booking_id) {
+                                bookingId = bookingData.booking_id;
+                                console.log('Retrieved booking ID from localStorage bookingData:', bookingId);
+                            }
                         }
                     }
                 }
