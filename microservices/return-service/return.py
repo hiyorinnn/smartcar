@@ -195,13 +195,14 @@ def return_vehicle():
                     # If payment is successful
                     if payment_response.status_code == 200:
                         # Use the static HTML file path for the redirect
-                        redirect_url = './fines-checkout.html' 
+                        redirect_url = f'./fines-checkout.html?amount={total_charge}&booking_id={booking_id}'
+
                         
                         # Return the response with redirect URL and payment details
                         return jsonify({
                             'message': 'Vehicle return processed with violations',
                             'amount': total_charge,
-                            'redirect_url': redirect_url,  # Add the redirect URL in the response
+                            'redirect_url': redirect_url, 
                         }), 200
                     else:
                         # If payment failed
