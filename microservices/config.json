@@ -1,8 +1,8 @@
 {
-    "AWS_ACCESS_KEY_ID": "AKIA2BY4PPWWM5CB53Q6",
-    "AWS_SECRET_ACCESS_KEY": "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",
+    "AWS_ACCESS_KEY_ID": "",
+    "AWS_SECRET_ACCESS_KEY": "",
     "AWS_REGION": "ap-southeast-1",
-    "SNS_TOPIC_ARN": "arn:aws:sns:ap-southeast-1:691012599212:Notification"
+    "SNS_TOPIC_ARN": ""
   }
   
   
