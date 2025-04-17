@@ -12,11 +12,10 @@ CORS(app)
 
 # AWS setup: To add in environment variables
 AWS_REGION = 'us-east-1'
-S3_BUCKET_NAME = 'esdbucketmicroservice'
-AWS_ACCESS_KEY = 'ASIAVRUVTXJAZ6K3XPTB'
-AWS_SECRET_KEY = 'ifWo3qNLHD32pibu64wSxq0pCT4dfuLWJErmvp9y'
-AWS_SESSION_TOKEN = 'IQoJb3JpZ2luX2VjEA4aCXVzLXdlc3QtMiJGMEQCIEPm52/GHzO5V2CN2zxHLFdOYQfjPLaxEzy26Mkmzr3+AiB8nrSmoE9YWv1cq7LErbiIpEXGW7P3I0bsUah1vjYZmyrBAgiH//////////8BEAAaDDM4MTQ5MjExNjAzMyIMe63GrZzn41OJxsKrKpUCwvdJmlayE3nel7hF1RNdjna7nhFZiUY/2WsVQrYjyDWC5fePTgjzJomn+OBx3UFnoqBz6r2hgv6ktiUyLeL0Y/SiUpK06kCQclGM86qeZow2zQE6NxbIICSqCUyOBXrOKddahEhl10EulyodoHI1jamNua/qEyOieyJxqie4DDNmac6vovtRbp4BI5LCB/qsgCEChpgfaeULVUfckaskT5Z7lg7h4EPPjaKz231GwwHX9vaHkOjTibgiCcqkw0OHs8hEE6ytKN2ChaAwC3hZlpECc7whfR3ckaI+HbMjS5QlhsnQCHH8oZLs5cwowyd/HIgOtvT9nGIgPibDNAMRN/x7xKETkc5uHMT/NP2w5Z+85Hl/vjCunNi/BjqeAdIcOdVPcq+uBDhMn3YIYOd44ORDIY3iPiDIDODQhdpPd80/2UorxAofBU07tIZ+C6BXKCGf7bRNC6oMC1J+y57+OY0e+GysxkfwgOwbDEJSey9PJ4rDkioa+U7AJJ0DW7LNCmnoVC3jSkbPrYGVqFsdJvErdmHqMKSv8eI3/Lhms0eoIFB198G5Dm30WfmgsPr0p5ShQT5Q0y4Qub7K'
-S3_BUCKET_NAME = 'esdbucketmicroservice' 
+S3_BUCKET_NAME = "
+AWS_ACCESS_KEY = "
+AWS_SECRET_KEY = "
+AWS_SESSION_TOKEN = "
 
 # Initialize the S3 client with boto3
 s3 = boto3.client(
