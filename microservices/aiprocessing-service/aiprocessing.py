@@ -12,10 +12,10 @@ CORS(app)
 
 # AWS setup: To add in environment variables
 AWS_REGION = 'us-east-1'
-S3_BUCKET_NAME = "
-AWS_ACCESS_KEY = "
-AWS_SECRET_KEY = "
-AWS_SESSION_TOKEN = "
+S3_BUCKET_NAME = ""
+AWS_ACCESS_KEY = ""
+AWS_SECRET_KEY = ""
+AWS_SESSION_TOKEN = ""
 
 # Initialize the S3 client with boto3
 s3 = boto3.client(
